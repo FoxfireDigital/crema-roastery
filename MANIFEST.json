@@ -1,0 +1,992 @@
+{
+  "name": "Crema",
+  "version": "0.1.0-rc4",
+  "license": "MIT",
+  "files": [
+    {
+      "path": ".dockerignore",
+      "sha256": "9b106a9bbdf649a1c39f5c3d41cfcae7199c9d5cfec6ac95c871112ce23b0db9",
+      "bytes": 53
+    },
+    {
+      "path": ".gitattributes",
+      "sha256": "d60f352d0db1404c70afb4bb8b2ca3fd1c610572aa40720e8a0b7baa7885418c",
+      "bytes": 19
+    },
+    {
+      "path": ".github/ISSUE_TEMPLATE/bug_report.md",
+      "sha256": "da9bb5934a701b9f5ce9217041ee7938124cbcca4099c5e23c6929c846be6e26",
+      "bytes": 425
+    },
+    {
+      "path": ".github/ISSUE_TEMPLATE/feature_request.md",
+      "sha256": "5e910dc95b624349b6d31ba1ddef18f26ffe972ac28d31122eb57c86e08442ad",
+      "bytes": 342
+    },
+    {
+      "path": ".github/workflows/checks.yml",
+      "sha256": "0da3a413406c22c4189df422f8139bdf0ba890bb657bb28f569e717bffaeaa9c",
+      "bytes": 380
+    },
+    {
+      "path": ".github/workflows/verify.yml",
+      "sha256": "09af131218033e806101429a3949e63c3d88adfe4abfde9726eb55d8a7059182",
+      "bytes": 3014
+    },
+    {
+      "path": ".gitignore",
+      "sha256": "fe60afe93455247304831e89260241fad52ba1018a0fc215fef982410571ab41",
+      "bytes": 74
+    },
+    {
+      "path": "CHANGELOG.md",
+      "sha256": "f2e0666bfb12a22508b1126d73d9a953e5ece772b7ce812745fa46efdb788093",
+      "bytes": 1321
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "sha256": "a27f1fe8fc957b45e2421741bcec6ff94c4c406749037dd73e1da41a29f73dd5",
+      "bytes": 732
+    },
+    {
+      "path": "LICENSE",
+      "sha256": "e1f6de38a3239b5123003d4d11d4c641951e2417a69aec8c6198e8d1a753c0a3",
+      "bytes": 1075
+    },
+    {
+      "path": "PRIVACY.md",
+      "sha256": "00866cb8f3087b662c3e9f242ac883ef3e13f25558dc85dec53e8cd5936e9bb6",
+      "bytes": 1364
+    },
+    {
+      "path": "README.md",
+      "sha256": "09a09aac454a5a6905333bb30b1e598f5364f1cd57f2b08d9102773131e84dbc",
+      "bytes": 6535
+    },
+    {
+      "path": "ROADMAP.md",
+      "sha256": "6fe36aa545df45a32193ef8aaa712ee7c64c406615a52f5ea7eb8ad96f2ababe",
+      "bytes": 1761
+    },
+    {
+      "path": "SECURITY.md",
+      "sha256": "78f7536922366f7f8b313b27a9381280b0b3beddebcf7f92fa8b5b47b4fbe50d",
+      "bytes": 1349
+    },
+    {
+      "path": "THIRD_PARTY_NOTICES.md",
+      "sha256": "ac5e9eb2fbc29c4ff59770537be03489e932355a2cabf9b125e02479c1f992ad",
+      "bytes": 814
+    },
+    {
+      "path": "app/.dockerignore",
+      "sha256": "eb87c72cdd5b8ffebd8a1af9378d905d3e51be7c29cdd5d5775dc474ba78a0af",
+      "bytes": 38
+    },
+    {
+      "path": "app/Dockerfile",
+      "sha256": "dbbc3b376eda9d83a493eba3d4f3281d5799687bc163d27b84cdccec8442f901",
+      "bytes": 587
+    },
+    {
+      "path": "app/bootstrap.py",
+      "sha256": "b32c308201ebcbe1146e2bcaa303d1b34e12cf44348ae2bf2268bb81bcea62f1",
+      "bytes": 315
+    },
+    {
+      "path": "app/entrypoint.sh",
+      "sha256": "ebdad02771761c73a66b2742b327ec2d370707b66ceb700c6f38341dcba8ff34",
+      "bytes": 234
+    },
+    {
+      "path": "app/init_instance.py",
+      "sha256": "0dc5f1a686ce776804dfd524a24440abc025df4cbf3154b51301928000b25511",
+      "bytes": 1947
+    },
+    {
+      "path": "app/label_artwork/catalog.json",
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "bytes": 3
+    },
+    {
+      "path": "app/manage.py",
+      "sha256": "7b3dd55263cf8f987b028bdfc73ad4ae0a2b8ab2fd74c27b6793e066124abcbe",
+      "bytes": 201
+    },
+    {
+      "path": "app/portal/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "app/portal/admin.py",
+      "sha256": "8de50b8c772aa93e1e5b60589c46416004aed16609c57916fbca8c708f77e04f",
+      "bytes": 7994
+    },
+    {
+      "path": "app/portal/allocations.py",
+      "sha256": "45f603ca672a8c6250271aef4fd8ef3d5b1fdd134f1ade5b199749f7ef56b5ed",
+      "bytes": 8384
+    },
+    {
+      "path": "app/portal/appearance.py",
+      "sha256": "3c736c6cafb9968927268aab27025cb940fa41e33df929cdedd15949f4b9bcea",
+      "bytes": 5809
+    },
+    {
+      "path": "app/portal/apps.py",
+      "sha256": "d43604af8d44a1c79e5b951d2bbec3ef51621762861b7f87d62aadb9fb48d511",
+      "bytes": 83
+    },
+    {
+      "path": "app/portal/artisan_catalog.json",
+      "sha256": "b2ae35e9e63dd32814f37ff07282a38a702025c43f435a3eb156ad0fc69be41e",
+      "bytes": 30
+    },
+    {
+      "path": "app/portal/artisan_files.py",
+      "sha256": "f093f7a1eab850f49290651144c0e1c1505bc7dbd5827430553220decc3d8ba5",
+      "bytes": 7748
+    },
+    {
+      "path": "app/portal/artisan_helper.ps1",
+      "sha256": "3493c8241992d0a1a03edabbee4427c9edf6413dc0a9645a2e6cdee73fbb332e",
+      "bytes": 7708
+    },
+    {
+      "path": "app/portal/artisan_profiles.py",
+      "sha256": "46ee23d5f2d0c2c11cce544bc3ff234dd3536fbf04370ccd0365505a0d210c47",
+      "bytes": 22486
+    },
+    {
+      "path": "app/portal/artisan_uploads.py",
+      "sha256": "8711b6574374798f469e6e54f4796845dac518217fd93ba038d108bcbc0ffe7b",
+      "bytes": 14801
+    },
+    {
+      "path": "app/portal/artwork_decisions.py",
+      "sha256": "09fafb0d2731e0e677925064164c4180e08398be2d1cd6b5a8a8498fcb080eda",
+      "bytes": 5503
+    },
+    {
+      "path": "app/portal/artwork_library.py",
+      "sha256": "9309b0abdaf50fc24e267f1bf9cb7ae81b5e1f8625aa4a021cf99ba875f48b3a",
+      "bytes": 11268
+    },
+    {
+      "path": "app/portal/artwork_rules.py",
+      "sha256": "58983045726eaf49a9c772e18e8066f9da80cdf2332f464006948b2a85a3bcb0",
+      "bytes": 1070
+    },
+    {
+      "path": "app/portal/autobatches.py",
+      "sha256": "64b90d4f73aeb8fabceb878f455fa535365c16ddaa8cf016914e49b97060b8cc",
+      "bytes": 3018
+    },
+    {
+      "path": "app/portal/batch_photos.py",
+      "sha256": "cf9d4855333740545efcf13aeb688945f12b0b7d657838eb336d990fa6304c2d",
+      "bytes": 10040
+    },
+    {
+      "path": "app/portal/batch_removal.py",
+      "sha256": "3884c27b58232a36068105a1bceb5b8f36ec64b67b8dcb482aab9d837a99586b",
+      "bytes": 3680
+    },
+    {
+      "path": "app/portal/batch_state.py",
+      "sha256": "241dd2c36c529f8b18822057e600d33d570cee7b7b8b24519dcb2b431bcf2dfb",
+      "bytes": 399
+    },
+    {
+      "path": "app/portal/cupping.py",
+      "sha256": "e21ed1fc64a63fa661377676550f77ef240b715727bfd8b6768ec811e6492b1a",
+      "bytes": 8212
+    },
+    {
+      "path": "app/portal/customer_preferences.py",
+      "sha256": "079df7e645415a3ed1abf6b58e6dc79f04966d905689e7dcc48411ab4755f12b",
+      "bytes": 1907
+    },
+    {
+      "path": "app/portal/day_review.py",
+      "sha256": "67130e75b803f343e604b223c57409db951368ccfea87ced1f27dd0c49c9e273",
+      "bytes": 6084
+    },
+    {
+      "path": "app/portal/finished_coverage.py",
+      "sha256": "aac44d86cf3c540dd6ad957b649c2bbb9e842d6d82f8e03893f93e44bb5e44bf",
+      "bytes": 3803
+    },
+    {
+      "path": "app/portal/flavoring.py",
+      "sha256": "1031c390b6ab1e520b68ff0555b3872be36f62baeabda18b8f5637616e4c9a9f",
+      "bytes": 8055
+    },
+    {
+      "path": "app/portal/green_forecast.py",
+      "sha256": "7623c642a94fb09640432353dcf9d81e20a1493658032eebe1f84b5c70c8d150",
+      "bytes": 12361
+    },
+    {
+      "path": "app/portal/green_stock.py",
+      "sha256": "b1f747ab7e297ca20fa420737a895b627b5214c2e9e7903aa02277fa0930f467",
+      "bytes": 12643
+    },
+    {
+      "path": "app/portal/help_guide.py",
+      "sha256": "832d4b7ae2fb3b9926d35e7c0ef4ec1d6d28f885841ecc77de049600da5578e9",
+      "bytes": 583
+    },
+    {
+      "path": "app/portal/history_plans.py",
+      "sha256": "29c7e6aa923ba78deeeceafa244c57e5a560f688e65dc5d0be0327ec3d316bfc",
+      "bytes": 12289
+    },
+    {
+      "path": "app/portal/hours.py",
+      "sha256": "0dd821023609acc491457758fd48070c3d5d807e1aa6375a222f9b306ff7afab",
+      "bytes": 10425
+    },
+    {
+      "path": "app/portal/information_review.py",
+      "sha256": "b3cb5d9a7df502cc4107e9906754a0e997cdfedb27c0da6e50f15b379787dd21",
+      "bytes": 1700
+    },
+    {
+      "path": "app/portal/instance.py",
+      "sha256": "afaf5601455635cabc28b19ee5abac0cd2a3b2c7e0d77af691c9b8f0ab77a2a2",
+      "bytes": 1615
+    },
+    {
+      "path": "app/portal/inventory_actor.py",
+      "sha256": "4ecc08630ed7eb62248700391eb4720da27f6e7ed955628343ec16a09da26fa1",
+      "bytes": 413
+    },
+    {
+      "path": "app/portal/label_bestsellers.py",
+      "sha256": "760288211c9f85a9489fd5c7f70d1b8778cc5832df9b3d52405884d1a1b09cc2",
+      "bytes": 4537
+    },
+    {
+      "path": "app/portal/label_filler.py",
+      "sha256": "7835ffe6e3105d38660c9bccd0955fef58d0a1467aee09d1c6973d2cf56b1190",
+      "bytes": 5764
+    },
+    {
+      "path": "app/portal/label_sheets.py",
+      "sha256": "eab04dbfc0a2cdbed098754aae9ec00da0ac5ff1878853d5faf5c7660687e91f",
+      "bytes": 24937
+    },
+    {
+      "path": "app/portal/management/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "app/portal/management/commands/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "app/portal/management/commands/coffee_tick.py",
+      "sha256": "b4766e497bcb9edf873e9494f3c0a0ceee7a26ba5d15523350cd95f854dd55c8",
+      "bytes": 264
+    },
+    {
+      "path": "app/portal/management/commands/portal_demo.py",
+      "sha256": "048c2b8b28f0770ad6d0aea1bca43cff8b766ff5e26e733d53e9cf540097f746",
+      "bytes": 2358
+    },
+    {
+      "path": "app/portal/migrations/0001_initial.py",
+      "sha256": "0bed0382514d841a849d0e80bbd77a17d65e6e93cb464b37f397625fc6008ac9",
+      "bytes": 80630
+    },
+    {
+      "path": "app/portal/migrations/0002_crema_branding.py",
+      "sha256": "d8ad9497bdf88e990e584acfd245d12b2011b3633d9cc88d8dc73d83b3b82bc8",
+      "bytes": 404
+    },
+    {
+      "path": "app/portal/migrations/0003_store_imports.py",
+      "sha256": "5b9982c2323c9e1522df5da27d8527d06da2f9366f148b65e0cc7b6bbbd7cd01",
+      "bytes": 9003
+    },
+    {
+      "path": "app/portal/migrations/0004_store_imports.py",
+      "sha256": "c52a4bba25cdd4de75dc5e295c3ac572e0e9a23a37cfd9654fe678041fe78ec8",
+      "bytes": 927
+    },
+    {
+      "path": "app/portal/migrations/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "app/portal/models.py",
+      "sha256": "ebbf8cd50c3b4f00e4c5ad6c4a4be582217605c3e15a5c54a5a6e39b88555cf3",
+      "bytes": 66475
+    },
+    {
+      "path": "app/portal/neutral_print.py",
+      "sha256": "13075f8ca730498e8a5b20731e5456df584197d7897d47a6cb595d14c58a3a96",
+      "bytes": 1403
+    },
+    {
+      "path": "app/portal/order_import.py",
+      "sha256": "8bf4c10efbb1da20b0a95807ec64175cfaa7909ffa7ce114736cf59fe13065a9",
+      "bytes": 33909
+    },
+    {
+      "path": "app/portal/order_lookup.py",
+      "sha256": "f3bbb6cd235cd2838ddff4af3043ddb12d1ad50d4577eb7f65b91b253ba09676",
+      "bytes": 8048
+    },
+    {
+      "path": "app/portal/packing.py",
+      "sha256": "7af9990564cf40354caba883511ad81689c1aa303b68101f9eae6ee46944fc92",
+      "bytes": 13369
+    },
+    {
+      "path": "app/portal/payments.py",
+      "sha256": "33f2cfb9a1cd188ad854fffef48ebce8550e7d528da52779e93ad1d0908c61d0",
+      "bytes": 6079
+    },
+    {
+      "path": "app/portal/payroll.py",
+      "sha256": "678ea5f5b3378ca2a4142a1fe2dc6db71feaa82616782bcc1f2dc844e161aafc",
+      "bytes": 8952
+    },
+    {
+      "path": "app/portal/plan_actions.py",
+      "sha256": "df29e4626fb07bfb5233b567b5f840756e20954c73e4301bb9c645ec72cca143",
+      "bytes": 9404
+    },
+    {
+      "path": "app/portal/plan_completion.py",
+      "sha256": "a44e48c77759f344902a917a07b427cf5b8d35e61912b3d061cbb789c60ea077",
+      "bytes": 8910
+    },
+    {
+      "path": "app/portal/planning.py",
+      "sha256": "4c8c4137490c8e0ac42f3da405b23edebd26ddafec04d8b86140278faf6f5ae8",
+      "bytes": 29643
+    },
+    {
+      "path": "app/portal/product_checks.py",
+      "sha256": "a56cd79e6deaab763b7229230392bbbde2bd424571fc346a4d040da7fad04275",
+      "bytes": 13211
+    },
+    {
+      "path": "app/portal/production.py",
+      "sha256": "aa7392105162fd5e100e6923e242ab48b504ff4f184e40f4f4fc41c5592935be",
+      "bytes": 8803
+    },
+    {
+      "path": "app/portal/recovery.py",
+      "sha256": "fc067ef85924f977308c4a19d67b85038dd136a8d9821b3af3f77d4a0494c155",
+      "bytes": 6408
+    },
+    {
+      "path": "app/portal/roast_sheet.py",
+      "sha256": "8a46b6ac96b5fe513dddacd65081ac7e13af5ae4dea6a026a01e4b08003d9f36",
+      "bytes": 8738
+    },
+    {
+      "path": "app/portal/roasted_stock.py",
+      "sha256": "8b15c9260d76447357ddcb482988df2b9911053b9a7f253eaa2f1c72a733105c",
+      "bytes": 24753
+    },
+    {
+      "path": "app/portal/security.py",
+      "sha256": "dd09fc509d6039afeb21eae1d0d454789c0281250a2edc23bb867587661df0c3",
+      "bytes": 5046
+    },
+    {
+      "path": "app/portal/shopfloor.py",
+      "sha256": "8f79b115b9e1b3e7b1a0d37e8859662fc43b6a66c6a9ed547671d6cbbdde6bdb",
+      "bytes": 17891
+    },
+    {
+      "path": "app/portal/shopify.py",
+      "sha256": "0d9f9aaf8fe0a34c927e994f2bf48416c5ce16a8ceb7af69203fc2aafb9c374f",
+      "bytes": 14186
+    },
+    {
+      "path": "app/portal/shopify_automatic.py",
+      "sha256": "ed3516a9bdca0dccd7324c6831cd3bfd76828fc1a98771a0a324ef2fddb3ddf0",
+      "bytes": 8077
+    },
+    {
+      "path": "app/portal/shopify_client.py",
+      "sha256": "2d8715097cb2551d4f3f6729e04c1ad8a25ffbc297fe590a0341704558cb1456",
+      "bytes": 16556
+    },
+    {
+      "path": "app/portal/sourcing.py",
+      "sha256": "efafe600356ece620866021ebad4a4d3d42b65f71d34d50e3dc1bbf191cb3812",
+      "bytes": 14264
+    },
+    {
+      "path": "app/portal/store_adapters.py",
+      "sha256": "a8f4d19d82408555f6cb6a856dcee3ed4a2eb9d2eef7ac35b905b78c4d70e06a",
+      "bytes": 14464
+    },
+    {
+      "path": "app/portal/store_csv.py",
+      "sha256": "ebf56e7eccad0787cb9ebc6761d4d8167b8a369dc2ab2083128f05bef752cec7",
+      "bytes": 9202
+    },
+    {
+      "path": "app/portal/store_http.py",
+      "sha256": "a4f334360df0c96eea0d0051f54f947d011e1ec14b0e133ab04131d2c693b18d",
+      "bytes": 4956
+    },
+    {
+      "path": "app/portal/stores.py",
+      "sha256": "9a0f6ac1f07a8f7312e25f5b821fcd4f7feaa47cec7a92c8b340fd9a0bf86692",
+      "bytes": 16967
+    },
+    {
+      "path": "app/portal/subscriptions.py",
+      "sha256": "67a33cc3021f7763fff56fa7783fd96b09fce352d3065529dfb9f2234d7a8097",
+      "bytes": 5568
+    },
+    {
+      "path": "app/portal/templates/portal/accepted_board.html",
+      "sha256": "501f2bd87e13519a78976b7055ae06cd449c4cfa15605ce42130f2173a268588",
+      "bytes": 2175
+    },
+    {
+      "path": "app/portal/templates/portal/appearance.html",
+      "sha256": "e3e3fd2481a45969fc1702cbed8f2d0aa99053d39cb0c6814348c006e75d4359",
+      "bytes": 6301
+    },
+    {
+      "path": "app/portal/templates/portal/artisan_curve.html",
+      "sha256": "fdf9e071c65207591f6cd543cdce73e27dd1a923245f5eddfd0205e54b11eee3",
+      "bytes": 3609
+    },
+    {
+      "path": "app/portal/templates/portal/artisan_library.html",
+      "sha256": "7b4e62a109d0bbfb673baf393209662eec601c984a4b19a13b00eb56de3361cd",
+      "bytes": 3423
+    },
+    {
+      "path": "app/portal/templates/portal/artisan_log.html",
+      "sha256": "6a5af4e5fcc01a61a620b4e3319d188a7dfaf925f14bdbfa94b97c26e57acf7b",
+      "bytes": 2469
+    },
+    {
+      "path": "app/portal/templates/portal/artisan_log_upload.html",
+      "sha256": "c13139035070107bbb6d20ee94a67d02f02574d42c7833453ca0b64c820df820",
+      "bytes": 2643
+    },
+    {
+      "path": "app/portal/templates/portal/artisan_prepare.html",
+      "sha256": "bf3fb95a805b0a8b73efba5efcde4f1ea7497e57a2fc1be537a108cccdf7603a",
+      "bytes": 2552
+    },
+    {
+      "path": "app/portal/templates/portal/artisan_prepared.html",
+      "sha256": "9671de9f7b93f5502014e39c8c83c823a328f66b35107ce82b331b7e727b675f",
+      "bytes": 2254
+    },
+    {
+      "path": "app/portal/templates/portal/artisan_profile.html",
+      "sha256": "068a1f9be759210e99acf408aac0c26a5827b33f82b36fb989674a993917a81d",
+      "bytes": 2994
+    },
+    {
+      "path": "app/portal/templates/portal/artisan_upload.html",
+      "sha256": "1f9498c2b2f26cc8eed57d35f24c6bd87c6cec773ab0968e1a483278f2fa1e85",
+      "bytes": 2340
+    },
+    {
+      "path": "app/portal/templates/portal/artwork_coverage_table.html",
+      "sha256": "4698fb6f72f40e7e314e91dce498038004c17c73ff8ccf6b64fe3dcec45152fb",
+      "bytes": 752
+    },
+    {
+      "path": "app/portal/templates/portal/artwork_decision_rows.html",
+      "sha256": "7a00f4a42cf1bae2cc7eec3710b68fccdca2200a437bd82052db2e7d9980fe10",
+      "bytes": 2546
+    },
+    {
+      "path": "app/portal/templates/portal/artwork_library.html",
+      "sha256": "a0d7ff58cdf59a05c3bcb8eb9bdeab36f324dd75b804be9195b7042ab2a9b0d8",
+      "bytes": 5496
+    },
+    {
+      "path": "app/portal/templates/portal/artwork_missing_table.html",
+      "sha256": "a0b6e1384a869ad23b71c98eaeb6d74f3b802dfe6496d286e605e35906d06dbe",
+      "bytes": 609
+    },
+    {
+      "path": "app/portal/templates/portal/artwork_upload_controls.html",
+      "sha256": "864557fbb38238e6b9b75c02c8a9c5dce31db00ae07e2490261eee6119a144de",
+      "bytes": 1661
+    },
+    {
+      "path": "app/portal/templates/portal/base.html",
+      "sha256": "88075834b3d01db443340810be4712d3a5b83c2adc0cc2db0a774f0ab85183f3",
+      "bytes": 14452
+    },
+    {
+      "path": "app/portal/templates/portal/batch.html",
+      "sha256": "6d04fed339c1080f1db74c2f3903f99577712bd6256885ae54a112f37d52d5f2",
+      "bytes": 5051
+    },
+    {
+      "path": "app/portal/templates/portal/batch_camera.html",
+      "sha256": "fe7b5280428aeaa207a507dd4ce4ab5e85de70402a0d767ec1170207a2d87d91",
+      "bytes": 8637
+    },
+    {
+      "path": "app/portal/templates/portal/batch_photo.html",
+      "sha256": "e56babf32c3bfb36575f957d285cde99dd8f7e417346e662c6e7a8793be9d123",
+      "bytes": 1830
+    },
+    {
+      "path": "app/portal/templates/portal/batch_photo_section.html",
+      "sha256": "148ae0f01370f9d9457f9c73b3984fd4a6bcb94072176cba21fc343c6665c9ea",
+      "bytes": 836
+    },
+    {
+      "path": "app/portal/templates/portal/batch_photo_styles.html",
+      "sha256": "71aeb9099d255a994d7a0e5c6e76e3aa219d3f44acc346a59f0c9c2d8cb898ba",
+      "bytes": 1178
+    },
+    {
+      "path": "app/portal/templates/portal/batch_photos.html",
+      "sha256": "6745925f23c174892ab31c5f82390b8de3ba2d370f0a24be9d08573870e2036f",
+      "bytes": 4795
+    },
+    {
+      "path": "app/portal/templates/portal/bean_details.html",
+      "sha256": "0eaca43a2c8bcd9b1010108558be07b94a14ac875ec8b71cd982f247ec3ef418",
+      "bytes": 828
+    },
+    {
+      "path": "app/portal/templates/portal/close_plan.html",
+      "sha256": "8ceec727d8796dd886da581fe8e93776746d70065d2d6b5faec7e1f48746f11d",
+      "bytes": 2238
+    },
+    {
+      "path": "app/portal/templates/portal/coffee_coverage.html",
+      "sha256": "4c1a2102def3ab005ac5f9951a8c509b5327d4b275597eb182afb2fe768d9622",
+      "bytes": 4540
+    },
+    {
+      "path": "app/portal/templates/portal/completed_plan.html",
+      "sha256": "11e435133b9f301b90e3a8b5471cfed2165aed6fe013ea133dd74e598ad35e81",
+      "bytes": 3061
+    },
+    {
+      "path": "app/portal/templates/portal/coverage_assets.html",
+      "sha256": "c9fad59cca415417dce5e3fe012d550853ac04fb070c4633b274a287ae70d85b",
+      "bytes": 3507
+    },
+    {
+      "path": "app/portal/templates/portal/cupping.html",
+      "sha256": "2a23d83d8b58440ed013a1cb4705233bbb391bd44f5ecf6d5c3cf8577d952490",
+      "bytes": 3020
+    },
+    {
+      "path": "app/portal/templates/portal/day_review.html",
+      "sha256": "44cd3d19ab6d53ca54ec8e8f0ed35b7bf7dc3a2646f3182eab2c6ed4def4437c",
+      "bytes": 3552
+    },
+    {
+      "path": "app/portal/templates/portal/delete_batch.html",
+      "sha256": "87a7e2f9bcfd0551a2e02d05d804cfc4e4472553b281fad96c9533a63da3eacf",
+      "bytes": 1438
+    },
+    {
+      "path": "app/portal/templates/portal/delete_plan.html",
+      "sha256": "1a819ff215b2fe32329075c4450e2a707e483ab41d29e3d44c17d71150ec5ca8",
+      "bytes": 1272
+    },
+    {
+      "path": "app/portal/templates/portal/deleted_batch.html",
+      "sha256": "6175530a87587fe8bae7e5d8e5afd39dfdc8c177f3e79639819c6561024fd203",
+      "bytes": 798
+    },
+    {
+      "path": "app/portal/templates/portal/edit_hours.html",
+      "sha256": "3db937e869e2b408c1bc7f229e4405f71d6b8d623602837c2962a4afbc8620b9",
+      "bytes": 3867
+    },
+    {
+      "path": "app/portal/templates/portal/flavor_radar.html",
+      "sha256": "8bf58873e4670d0dfd7b685efb66044ccf7bbbe890b94238d2b49911b5567d06",
+      "bytes": 1580
+    },
+    {
+      "path": "app/portal/templates/portal/green_forecast.html",
+      "sha256": "07e4fb30323c1cfdd76cd74f009c0b02f80ac2dc4e9ee721558a833f6a580d7e",
+      "bytes": 9522
+    },
+    {
+      "path": "app/portal/templates/portal/green_stock.html",
+      "sha256": "0583cad44e7990e4531d9d72364f5be83afc83a95081f46c10fa7c75dc6faf3d",
+      "bytes": 9125
+    },
+    {
+      "path": "app/portal/templates/portal/help.html",
+      "sha256": "db292625d17e724d7b15aca89ed53dd15886ec315ab5bd654692a554b555959b",
+      "bytes": 9499
+    },
+    {
+      "path": "app/portal/templates/portal/historical_roasts.html",
+      "sha256": "d5e3e32c02ce090471ca9578954f6465204a489859d80ff55cefd5ebc8cefd6c",
+      "bytes": 2917
+    },
+    {
+      "path": "app/portal/templates/portal/history.html",
+      "sha256": "47292dac2119b18824bd6ac89a304f27afc3cd26cd31d8ef0295ce0b06623b05",
+      "bytes": 1258
+    },
+    {
+      "path": "app/portal/templates/portal/home.html",
+      "sha256": "3c07756c1d9675c3d1d13be7f4529f9d8943ee33885725da8e57d1a528acb6c9",
+      "bytes": 1697
+    },
+    {
+      "path": "app/portal/templates/portal/information_review.html",
+      "sha256": "62962cbbed81f8929f30d9389887a9035aaa75dfadeb2071e7f4479e59b99b52",
+      "bytes": 6316
+    },
+    {
+      "path": "app/portal/templates/portal/label_sheets.html",
+      "sha256": "e902d8d9f1122bedb5871c40aeb529b0cee73fd0ff05175293cfcb4a3776a543",
+      "bytes": 16518
+    },
+    {
+      "path": "app/portal/templates/portal/login.html",
+      "sha256": "d87e7a42aaf5e84893bbca508b816c413989f4cea7c471dcb457a95d79337eec",
+      "bytes": 377
+    },
+    {
+      "path": "app/portal/templates/portal/maintenance.html",
+      "sha256": "851919406a15f8d08db0dfecef6598e15ec36df73c79e2b8736c0d3401d9a6a8",
+      "bytes": 5711
+    },
+    {
+      "path": "app/portal/templates/portal/new_batch.html",
+      "sha256": "9858814d1c2cf0b492a94541ff848507e0edc2c52589c71f49092dbebd71a15d",
+      "bytes": 632
+    },
+    {
+      "path": "app/portal/templates/portal/new_order.html",
+      "sha256": "20bff74c252b011f5383a995093a82edafad74a20a79c05f211d7a3bdf8b256a",
+      "bytes": 495
+    },
+    {
+      "path": "app/portal/templates/portal/order_detail.html",
+      "sha256": "38ea76b8f516dbb01366e025beda22e27bcbb21efeb5b6b5578b78cb60b528f5",
+      "bytes": 2912
+    },
+    {
+      "path": "app/portal/templates/portal/order_import.html",
+      "sha256": "a6ebca6b4dc7b622a041555238657fdf02d01d1dde9b2761c84da1605aa08378",
+      "bytes": 1787
+    },
+    {
+      "path": "app/portal/templates/portal/order_lookup.html",
+      "sha256": "158e9530df0d89f1559468ffd855cb57d137524c4eb4c2feac03cf079bf9d8f5",
+      "bytes": 3753
+    },
+    {
+      "path": "app/portal/templates/portal/order_panel.html",
+      "sha256": "580804b5ab67206b68752bdaeef2d61ac6918bf848167a58626b72c08644eb8b",
+      "bytes": 15913
+    },
+    {
+      "path": "app/portal/templates/portal/orders.html",
+      "sha256": "a383c35b567e4651c2d206868cc4ea8c3770049010e5ec3d7bf558f56ec1e963",
+      "bytes": 866
+    },
+    {
+      "path": "app/portal/templates/portal/packing.html",
+      "sha256": "bdc84fcffb5d7e94372ec797f80bca73341abf9b2f03bea2945b5c96b2ec64e1",
+      "bytes": 11649
+    },
+    {
+      "path": "app/portal/templates/portal/past_plan.html",
+      "sha256": "80f6f14055ee6bec29c86d9814854173f49a6407b82f51d524c709f830fdeb56",
+      "bytes": 5405
+    },
+    {
+      "path": "app/portal/templates/portal/payments.html",
+      "sha256": "42295011fdc9879b31fb5cef3a436abbe807f4e3f3978776f21a18bfb3ff6dab",
+      "bytes": 2446
+    },
+    {
+      "path": "app/portal/templates/portal/payroll.html",
+      "sha256": "04d76b1339f5768185767be657e7b3c7a15aa25776fe2a48dab7cd2a50d16bf8",
+      "bytes": 3597
+    },
+    {
+      "path": "app/portal/templates/portal/planning.html",
+      "sha256": "dcf21a03db42f62015969b884eb0ba4c0db962b16eaa93990f2b672f6c6a1f05",
+      "bytes": 29925
+    },
+    {
+      "path": "app/portal/templates/portal/plans.html",
+      "sha256": "33c75f241b2001aabb13c5b2b1ddef8c5e3209d6cf47feb5f304869e4b917df2",
+      "bytes": 3637
+    },
+    {
+      "path": "app/portal/templates/portal/product_checks.html",
+      "sha256": "85551962cc928c79d0fff68ef62c8646ab8b11074454250c140ee6b0cbef7c66",
+      "bytes": 6666
+    },
+    {
+      "path": "app/portal/templates/portal/purchases.html",
+      "sha256": "1c21e40da66d7f9fd961c3dc05500ababc57d639f522205b7ca503c378b08de0",
+      "bytes": 3522
+    },
+    {
+      "path": "app/portal/templates/portal/recovery.html",
+      "sha256": "523e3a574f9f88c54ba8eb0027953d8d90350f5f3ecd13f64f7fff930f1e4622",
+      "bytes": 788
+    },
+    {
+      "path": "app/portal/templates/portal/remove_hours.html",
+      "sha256": "1a511e66bf88484bae92df37856b32f5e7f223d942ba27a960a48360a815449a",
+      "bytes": 1330
+    },
+    {
+      "path": "app/portal/templates/portal/request_problem.html",
+      "sha256": "9cca28aa776cc86ed13dfa28ed16c26a03e2b97408d75efb55263206aa03ba8c",
+      "bytes": 406
+    },
+    {
+      "path": "app/portal/templates/portal/review_import.html",
+      "sha256": "948bcb97abfa796fa1ebd198a7e4dc006f3c3e470403c4a60c0427b37f22a9b4",
+      "bytes": 11688
+    },
+    {
+      "path": "app/portal/templates/portal/roast_sheet.html",
+      "sha256": "a1ae1c4cbd328e1040a62df977e3a7763a7784176abafa9d7fc1c37b2ef22a98",
+      "bytes": 14639
+    },
+    {
+      "path": "app/portal/templates/portal/roasted_stock.html",
+      "sha256": "b115479169488f65c94b4c540eb58cc5970a9ed6b72d40407aa07bcfd6fd6182",
+      "bytes": 10086
+    },
+    {
+      "path": "app/portal/templates/portal/save_state_assets.html",
+      "sha256": "c8a4df84313a377c0c4eba1edcb38b5ec07b99826e3ca64ecaa8ef896d5bfcd5",
+      "bytes": 5936
+    },
+    {
+      "path": "app/portal/templates/portal/setup.html",
+      "sha256": "2276207afdf9f314363420f7bcd72b2678036eff24f0819d97205bb2f1b343d8",
+      "bytes": 3221
+    },
+    {
+      "path": "app/portal/templates/portal/shopfloor_styles.html",
+      "sha256": "6a1e01dbb654538c24a00a08bca5c7af544e0dfcc03eb654133c32959285c97d",
+      "bytes": 560
+    },
+    {
+      "path": "app/portal/templates/portal/shopify.html",
+      "sha256": "8a5d0830c6bb5fb6f8c9efbbfcb2a62fff7c587c064ca57440bc3409eeaa7c64",
+      "bytes": 5287
+    },
+    {
+      "path": "app/portal/templates/portal/sourcing_history.html",
+      "sha256": "17fe798295c01b7d7c848b82214e7bbd40a59ab7f79b949a8372fdc4cf07c979",
+      "bytes": 507
+    },
+    {
+      "path": "app/portal/templates/portal/store_csv.html",
+      "sha256": "96fc95fae3d478accf6760babff8cdcd0ed8cfb40d4efc7dbc933c4fd9eaefcc",
+      "bytes": 1688
+    },
+    {
+      "path": "app/portal/templates/portal/stores.html",
+      "sha256": "6040eb67ed52b261bf7dcce3a982fe5a3af548045b5ff217ad4b15f4174b12df",
+      "bytes": 3104
+    },
+    {
+      "path": "app/portal/templates/portal/subscriptions.html",
+      "sha256": "15288fd3999f26584d5a8180fa1c5061d78911c572c1772253a5b2b873e5ca20",
+      "bytes": 4248
+    },
+    {
+      "path": "app/portal/templates/portal/suppliers.html",
+      "sha256": "be45b2c832024a10bc55b11c449624157f0aea7903a03b305e6930d99610d21c",
+      "bytes": 1808
+    },
+    {
+      "path": "app/portal/templates/portal/supplies.html",
+      "sha256": "fc40f62284a08860a36bf8a3699f8671b1abbd13d155c3e412c889a83e8e2842",
+      "bytes": 8269
+    },
+    {
+      "path": "app/portal/templates/portal/theme_styles.html",
+      "sha256": "c6cf6cd1cc4027eccfcb0c784ad95e6176dfc2336765583c0d0417ed468df452",
+      "bytes": 896
+    },
+    {
+      "path": "app/portal/templates/portal/timesheets.html",
+      "sha256": "74dd0beae4897391a79225c5899640f0c6c21a696dffed9890693427993b0502",
+      "bytes": 3245
+    },
+    {
+      "path": "app/portal/templates/portal/void_payment.html",
+      "sha256": "07d0d74239eca5c5d06ceae1e0f9fab5d5b4e17c5d06f945e79d81361ed57c23",
+      "bytes": 508
+    },
+    {
+      "path": "app/portal/templates/portal/wholesale.html",
+      "sha256": "118a8a92aceb5c67ebefaa258ba92d1f1611fe05437d384fc8e12a0377bd7d5f",
+      "bytes": 11071
+    },
+    {
+      "path": "app/portal/templates/portal/wholesale_item.html",
+      "sha256": "4b6e841e42647b65144fb758cc1c824eb0bc418a40c94c9be9cf81f67aff889b",
+      "bytes": 1912
+    },
+    {
+      "path": "app/portal/templates/portal/workflow_script.html",
+      "sha256": "a203f97f54531125d005bf85df54489dce8f9e7c218e8de572e4d7f83a766296",
+      "bytes": 1790
+    },
+    {
+      "path": "app/portal/templates/portal/workflow_styles.html",
+      "sha256": "6419119c4c3ecb51077ca91682c980072d4a0c94b03d2e66b8d9476d03dd2193",
+      "bytes": 4589
+    },
+    {
+      "path": "app/portal/views.py",
+      "sha256": "81aeece81054496f5d456f21aa16579f32db761c5342d03a72d9b7e647c9eb4d",
+      "bytes": 14756
+    },
+    {
+      "path": "app/portal/wholesale.py",
+      "sha256": "798f4f46c73f636ed6205d02e6a2215da9ee488002a9c9f010ae3211e8e687ce",
+      "bytes": 13614
+    },
+    {
+      "path": "app/portal/workflow.py",
+      "sha256": "b24a95ebfbda7170fea54b72e6555709c0277f0b961376e50220e5515a6ffe3e",
+      "bytes": 11952
+    },
+    {
+      "path": "app/portal/yield_learning.py",
+      "sha256": "df937343278a00c28a25465b70430df87a15ac22d446db8571ac00083ec6692d",
+      "bytes": 4113
+    },
+    {
+      "path": "app/project_settings.py",
+      "sha256": "e356f3d15d1844cd701e1771e2e764800c3f1ed96ac81df573a91ff01c5a6d2e",
+      "bytes": 4507
+    },
+    {
+      "path": "app/project_urls.py",
+      "sha256": "975144fd1cf1ea7eae0c43d74b800248c9fd989eb8c4b37b2094293bd37fc61f",
+      "bytes": 9722
+    },
+    {
+      "path": "app/project_wsgi.py",
+      "sha256": "20a4a327c878833c3c60bd19037b831dc95325f542da93d65b9327bbeba14acd",
+      "bytes": 162
+    },
+    {
+      "path": "app/requirements.txt",
+      "sha256": "d9c03df5282a011b47431c87799a377e02d81cf1e81aa76f9d453a0aa9429dff",
+      "bytes": 127
+    },
+    {
+      "path": "app/worker.py",
+      "sha256": "bde6223db70094ed897a8d70b1cbbbf1c619cea565628a9c8cfad981cd852e05",
+      "bytes": 384
+    },
+    {
+      "path": "compose.build.yaml",
+      "sha256": "4c55af0a949b77b7b056ae8aec28ba4e0a13aeb0fa749cb8f38dff98a8704256",
+      "bytes": 110
+    },
+    {
+      "path": "compose.yaml",
+      "sha256": "705bde2f1903ed3fb5526cf5de9e938ed1a1fb6d0738cdccfe88f60f086f45b4",
+      "bytes": 2740
+    },
+    {
+      "path": "docs/BACKUPS.md",
+      "sha256": "766fa011c12760c87c6e3437c45052f3897e3832ce427f33e8a4d6d358c3b4d2",
+      "bytes": 2739
+    },
+    {
+      "path": "docs/DEPLOYMENT.md",
+      "sha256": "65d70a61aab78a7eb13b451c5d3cc10fea39b93f9d06bc2c25705f67bdfffe3f",
+      "bytes": 3216
+    },
+    {
+      "path": "docs/MARKETPLACES.md",
+      "sha256": "3973146957ae29665b683cb83f73d89237f833ef72922b8a639a2413b7956c79",
+      "bytes": 6044
+    },
+    {
+      "path": "docs/RELEASE.md",
+      "sha256": "133aacbc5ab07a9ba6cda167ce474b26d1bdb5c0028425cefce51f760b88d8e4",
+      "bytes": 3033
+    },
+    {
+      "path": "docs/SERVICE-MODEL.md",
+      "sha256": "f9dd49771a6904abbd97020619434b9794923cee0e72ffda4c500a09ba3d20ec",
+      "bytes": 1150
+    },
+    {
+      "path": "docs/SHOPIFY.md",
+      "sha256": "98149a8344e6f26fd5a112f35cda4e50363e330a6735ac526bade348b6a84061",
+      "bytes": 1420
+    },
+    {
+      "path": "docs/TRUENAS.md",
+      "sha256": "a1c020b33fd20bea39beee1def92aed83131354f689300c7f75472b5bce65c42",
+      "bytes": 2856
+    },
+    {
+      "path": "tools/audit_dependencies.py",
+      "sha256": "95ecf4c55a374fc26013c966a158e98073c4ca3ddc9cd7caf21f2d3a92c05a0c",
+      "bytes": 1236
+    },
+    {
+      "path": "tools/privacy_check.py",
+      "sha256": "f90865a98b2346218dc762671b634d0b7a6e9ce55aac15c911a51344d54376eb",
+      "bytes": 2405
+    },
+    {
+      "path": "tools/production_checks.py",
+      "sha256": "5869457bdca84446f68c9074ae55186d05001622ff8d2f7ef2cbbc4f9c72e47a",
+      "bytes": 7956
+    },
+    {
+      "path": "tools/sourcing_checks.py",
+      "sha256": "b37d4482feff4c3b4399644d1e1af95b4590c15f26a333350242035f9ac560cd",
+      "bytes": 7300
+    },
+    {
+      "path": "tools/store_checks.py",
+      "sha256": "d0372f1748f1025a093cc948f64da3ed70e98e5f8ba78c2ccee5eace3908a742",
+      "bytes": 12980
+    },
+    {
+      "path": "tools/test_initializer.py",
+      "sha256": "04a2cf0899d5a4804b66b227a37f81ef1e92c975a65e76dd915f61cdffa3b118",
+      "bytes": 1493
+    },
+    {
+      "path": "tools/test_release.py",
+      "sha256": "bf820e11d0f171995f6e637277867617ecba22c4ecb913a844553593103860c3",
+      "bytes": 4698
+    }
+  ]
+}

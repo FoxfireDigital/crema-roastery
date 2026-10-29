@@ -1,0 +1,15 @@
+<article class="card wholesale-item" data-item>
+<div class="wholesale-row-head"><h2>Coffee <span data-row-number></span></h2><strong data-row-total></strong><button type="button" class="secondary remove-item">Remove row</button></div>
+{{ form.non_field_errors }}<div hidden>{{ form.DELETE }}</div>
+<div class="wholesale-fields">
+<div><label for="{{ form.coffee.id_for_label }}">Coffee</label>{{ form.coffee }}{{ form.coffee.errors }}<small data-assortment hidden>a configured assortment coffee, the configured Medium base, a configured dark blend and a configured assortment blend — one 2.5 oz bag each.</small></div>
+<div><label for="{{ form.size.id_for_label }}">Bag size</label>{{ form.size }}{{ form.size.errors }}</div>
+<div><label for="{{ form.count.id_for_label }}" data-count-label>Bags</label>{{ form.count }}{{ form.count.errors }}</div>
+<div><label for="{{ form.grind.id_for_label }}">Grind</label>{{ form.grind }}{{ form.grind.errors }}</div>
+</div><p class="muted" data-roast-note>Uses the coffee’s standard roast unless an eligible custom roast is chosen.</p>
+<details {% if form.label_variant.errors or form.roast_level.errors or form.target_finish_temp_f.errors %}open{% endif %}><summary>Packaging label / custom roast</summary><div class="wholesale-fields">
+<div><label for="{{ form.label_variant.id_for_label }}">Packaging label</label>{{ form.label_variant }}{{ form.label_variant.errors }}</div>
+<div><label for="{{ form.roast_level.id_for_label }}">Roast override</label>{{ form.roast_level }}{{ form.roast_level.errors }}</div>
+<div><label for="{{ form.target_finish_temp_f.id_for_label }}">Custom finish temperature (°F)</label>{{ form.target_finish_temp_f }}{{ form.target_finish_temp_f.errors }}</div>
+</div><p class="muted">Custom roasts require a single-origin row totaling at least 5 lb. Blends, flavors and frac assortments keep their standard roasts.</p></details>
+</article>

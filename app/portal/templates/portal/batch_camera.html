@@ -1,0 +1,83 @@
+<script nonce="{{ request.csp_nonce }}">(()=>{
+ const form=document.getElementById('batch-photo-form');if(!form)return;
+ const start=document.getElementById('camera-start'),stop=document.getElementById('camera-stop'),capture=document.getElementById('camera-capture'),video=document.getElementById('batch-camera'),choice=document.getElementById('camera-choice'),cameraStatus=document.getElementById('camera-status'),preview=document.getElementById('photo-preview'),panel=document.getElementById('photo-preview-panel'),retake=document.getElementById('photo-retake'),clear=document.getElementById('photo-clear'),save=document.getElementById('photo-save'),status=document.getElementById('photo-save-status'),image=form.querySelector('[name=image]'),origin=form.querySelector('[name=origin]'),confirmed=form.querySelector('[name=confirmed]');
+ let stream=null,generation=0,captured=null,previewUrl='',saving=false,encoding=false;
+ const supported=window.isSecureContext&&navigator.mediaDevices&&navigator.mediaDevices.getUserMedia;
+ document.getElementById('camera-controls').hidden=false;
+ function report(element,message,error=false){element.textContent=message;element.classList.toggle('error',error)}
+ function hasPhoto(){return !!captured||!!image.files.length}
+ function updateSave(){save.disabled=saving||!hasPhoto();image.required=!captured}
+ function releasePreview(){if(previewUrl)URL.revokeObjectURL(previewUrl);previewUrl=''}
+ function showPreview(file){releasePreview();previewUrl=URL.createObjectURL(file);preview.src=previewUrl;panel.hidden=false;retake.hidden=origin.value!=='camera';updateSave()}
+ function clearPhoto(){captured=null;image.value='';origin.value='upload';confirmed.checked=false;releasePreview();preview.removeAttribute('src');panel.hidden=true;updateSave()}
+ function stopCamera(message='Camera is off.'){
+  generation++;if(stream)stream.getTracks().forEach(track=>track.stop());stream=null;video.srcObject=null;video.hidden=true;capture.disabled=true;stop.disabled=true;start.disabled=!supported||saving;choice.disabled=false;encoding=false;report(cameraStatus,message);
+ }
+ async function startCamera(){
+  if(!supported||saving)return;stopCamera();clearPhoto();const session=++generation;
+  start.disabled=true;stop.disabled=false;choice.disabled=true;report(cameraStatus,'Waiting for camera permission…');
+  try{
+   const constraints={audio:false,video:{width:{ideal:1920},height:{ideal:1080}}};if(choice.value)constraints.video.deviceId={exact:choice.value};else constraints.video.facingMode={ideal:'environment'};
+   const next=await navigator.mediaDevices.getUserMedia(constraints);
+   if(session!==generation||document.hidden){next.getTracks().forEach(track=>track.stop());return}
+   stream=next;video.srcObject=next;video.hidden=false;await video.play();
+   if(session!==generation){next.getTracks().forEach(track=>track.stop());return}
+   for(const track of next.getVideoTracks())track.addEventListener('ended',()=>{if(stream===next)stopCamera('Camera disconnected. Start it again or upload a photo.')});
+   if(navigator.mediaDevices.enumerateDevices){
+    const devices=(await navigator.mediaDevices.enumerateDevices()).filter(device=>device.kind==='videoinput');
+    if(session!==generation)return;
+    const selected=next.getVideoTracks()[0]?.getSettings().deviceId;choice.replaceChildren();
+    for(const [index,device] of devices.entries()){const option=document.createElement('option');option.value=device.deviceId;option.textContent=device.label||'Camera '+(index+1);choice.append(option)}
+    if(selected)choice.value=selected;document.getElementById('camera-choice-label').hidden=devices.length<2;
+   }
+   choice.disabled=false;capture.disabled=!(video.videoWidth&&video.videoHeight);report(cameraStatus,'Camera preview is on. Frame the cooled coffee, then capture.');
+  }catch(error){
+   if(session!==generation)return;stopCamera();
+   report(cameraStatus,error.name==='NotAllowedError'?'Camera permission was not granted. Allow it in your browser or upload a photo.':error.name==='NotFoundError'?'No camera was found. Connect one or upload a photo.':'Camera could not start. Choose another camera, retry, or upload a photo.',true);
+  }
+ }
+ start.addEventListener('click',startCamera);stop.addEventListener('click',()=>stopCamera());
+ choice.addEventListener('change',()=>{if(stream)startCamera()});
+ video.addEventListener('loadedmetadata',()=>{if(stream&&!encoding)capture.disabled=!(video.videoWidth&&video.videoHeight)});
+ capture.addEventListener('click',()=>{
+  if(!stream||!video.videoWidth||!video.videoHeight||encoding)return;
+  encoding=true;capture.disabled=true;const session=generation,canvas=document.createElement('canvas'),scale=Math.min(1,1920/Math.max(video.videoWidth,video.videoHeight));
+  canvas.width=Math.max(1,Math.round(video.videoWidth*scale));canvas.height=Math.max(1,Math.round(video.videoHeight*scale));
+  try{
+   canvas.getContext('2d').drawImage(video,0,0,canvas.width,canvas.height);
+   canvas.toBlob(blob=>{
+    if(session!==generation)return;
+    if(!blob){encoding=false;capture.disabled=false;report(cameraStatus,'The camera frame could not be captured. Retry or upload a photo.',true);return}
+    captured=new File([blob],'cooled-batch-'+form.dataset.batch+'.jpg',{type:'image/jpeg'});image.value='';origin.value='camera';confirmed.checked=false;
+    stopCamera('Still photo captured. Camera is off. Review the photo before saving.');showPreview(captured);report(status,'Not saved yet. Confirm the batch, then save.');
+   },'image/jpeg',0.9);
+  }catch(error){encoding=false;capture.disabled=false;report(cameraStatus,'Could not capture this frame. Retry or upload a photo.',true)}
+ });
+ image.addEventListener('change',()=>{
+  stopCamera();captured=null;origin.value='upload';confirmed.checked=false;
+  const file=image.files[0];if(!file){clearPhoto();return}
+  if(file.size>10*1024*1024){clearPhoto();report(status,'Choose a photo up to 10 MB.',true);return}
+  showPreview(file);report(status,'Not saved yet. Review the photo and confirm the batch.');
+ });
+ retake.addEventListener('click',startCamera);clear.addEventListener('click',()=>{stopCamera();clearPhoto();report(status,'Unsaved photo cleared. You can continue without a photo.')});
+ form.addEventListener('submit',async event=>{
+  event.preventDefault();if(saving||!hasPhoto()||!form.reportValidity())return;
+  stopCamera();saving=true;updateSave();start.disabled=true;retake.disabled=true;clear.disabled=true;image.disabled=true;report(status,'Saving photo…');
+  const body=new FormData(form);if(captured)body.set('image',captured);else if(image.files[0])body.set('image',image.files[0]);
+  try{
+   const response=await fetch(form.action,{method:'POST',body,credentials:'same-origin',headers:{Accept:'application/json'}});
+   if(response.status===401||(response.redirected&&new URL(response.url).pathname==='/login/'))throw Error('Sign in again, then reload the photo form before saving.');
+   let result=null;try{result=await response.json()}catch(error){}
+   if(!response.ok||!result?.saved)throw Error(result?.error||(response.status===403?'The security check expired. Reload before saving.':'The photo could not be confirmed as saved. Your preview is kept; retry Save.'));
+   const destination=new URL(result.photo_url,location.origin);
+   if(destination.origin!==location.origin||!/^\/batch-photos\/[a-f0-9-]+\/$/.test(destination.pathname)||String(result.batch_id)!==form.dataset.batch)throw Error('The saved batch could not be verified. Reload to check its photos.');
+   report(status,result.duplicate?'This photo is already attached. Opening its record…':'Photo saved. Opening its record…');location.assign(destination.href);
+  }catch(error){saving=false;image.disabled=false;retake.disabled=false;clear.disabled=false;start.disabled=!supported;updateSave();report(status,error.message,true)}
+ });
+ document.addEventListener('visibilitychange',()=>{if(document.hidden)stopCamera('Camera is off. Start it again when ready.')});
+ window.addEventListener('pagehide',()=>{stopCamera();releasePreview()});
+ window.addEventListener('pageshow',event=>{if(event.persisted&&saving){location.reload();return}if(hasPhoto()&&!previewUrl)showPreview(captured||image.files[0])});
+ window.addEventListener('beforeunload',event=>{stopCamera();if(hasPhoto()&&!saving){event.preventDefault();event.returnValue=''}});
+ if(!supported){start.disabled=true;report(cameraStatus,window.isSecureContext?'This browser does not offer webcam capture. You can upload a photo.':'Open the secure HTTPS portal address for webcam capture. You can still upload a photo here.')}
+ updateSave();
+})();</script>

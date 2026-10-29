@@ -1,0 +1,4 @@
+# Optional source-build path. Published releases will use a registry image.
+services:
+  web:
+    build: ./app

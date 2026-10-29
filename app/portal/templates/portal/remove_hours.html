@@ -1,0 +1,8 @@
+{% extends 'portal/base.html' %}{% block content %}
+<h1>{% if restore %}Restore{% else %}Delete{% endif %} time entry</h1>
+<section class="card" style="max-width:650px">
+<p><strong>{{ shift.user.username }}</strong><br>{{ shift.started_at|date:'M j, Y g:i A' }} → {{ shift.ended_at|date:'M j, Y g:i A'|default:'Still clocked in' }}<br><small>{{ portal_timezone }}</small></p>
+{% if restore %}<p>This returns the entry to your hours and exports with its original clock times and breaks.{% if not shift.ended_at %} It will become your current active shift again.{% endif %}</p>{% else %}<p>This removes the entry from your worked hours, weekly total, and exports. You can restore it later under <strong>Deleted entries</strong>.{% if not shift.ended_at %} This is your active shift; deleting it also clears your current clock-in.{% endif %}</p>{% endif %}
+{% if error %}<p class="danger" role="alert">{{ error }}</p>{% endif %}
+<form method="post">{% csrf_token %}<input type="hidden" name="revision" value="{{ revision }}"><button type="submit"{% if not restore %} style="background:var(--red);color:var(--on_primary)"{% endif %}>{% if restore %}Restore entry{% else %}Delete entry{% endif %}</button><a class="button secondary" href="/timesheets/{% if restore %}?deleted=1{% endif %}">Cancel</a></form>
+</section>{% endblock %}

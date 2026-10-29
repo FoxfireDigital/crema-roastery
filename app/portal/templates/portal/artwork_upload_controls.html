@@ -1,0 +1,18 @@
+{{ artwork_label_map|json_script:'artwork-label-coffees' }}
+<script nonce="{{ request.csp_nonce }}">(()=>{
+ const form=document.getElementById('artwork-upload');if(!form)return;
+ const channel=form.querySelector('[name=channel]'),size=form.querySelector('[name=size_oz]'),coffee=form.querySelector('[name=coffee]'),label=form.querySelector('[name=label_variant]'),layout=form.querySelector('[name=per_sheet]'),notice=document.getElementById('artwork-upload-guidance');
+ const labels=JSON.parse(document.getElementById('artwork-label-coffees').textContent);
+ function refresh(){
+  const allowed=channel.value==='wholesale'?[12,80,2.5]:[16,80,2.5];
+  for(const option of size.options){option.disabled=!!option.value&&!allowed.includes(Number(option.value));option.hidden=option.disabled;}
+  if(size.selectedOptions[0]?.disabled)size.value='';
+  for(const option of label.options){option.disabled=!!option.value&&(channel.value!=='wholesale'||labels[option.value]!==coffee.value);option.hidden=option.disabled;}
+  if(label.selectedOptions[0]?.disabled)label.value='';
+  const requiredLayout=Number(size.value)===2.5?'8':'4';
+  for(const option of layout.options)option.disabled=!!size.value&&option.value!==requiredLayout;
+  if(size.value)layout.value=requiredLayout;
+  notice.textContent=channel.value==='wholesale'?'Wholesale: 12 oz, 5 lb and 2.5 oz fracs. Match the weight printed on the original. Special customer labels stay separate.':'Retail: 16 oz, 5 lb and 2.5 oz fracs. Use the standard brand label. Choose Wholesale for 12 oz artwork.';
+ }
+ for(const control of [channel,size,coffee])control.addEventListener('change',refresh);refresh();
+})();</script>

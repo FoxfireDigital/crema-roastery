@@ -1,0 +1,93 @@
+# Primary install: Docker Compose 2.23.1+. Edit image, domain, origin and timezone.
+# Candidate image is a local build; no public registry image exists yet.
+name: crema
+x-portal-image: &portal-image crema:0.1.0-rc4
+x-domain: &domain coffee.example.org
+x-app-environment: &app-environment
+  PORTAL_BASE_URL: https://coffee.example.org
+  PORTAL_TIME_ZONE: UTC
+  DB_HOST: postgres
+  DB_PASSWORD_FILE: /run/roastery-secrets/postgres
+  DJANGO_SECRET_KEY_FILE: /run/roastery-secrets/django
+services:
+  initialize:
+    image: *portal-image
+    pull_policy: never
+    command: [python, init_instance.py]
+    volumes:
+      - instance_keys:/var/lib/roastery-secrets
+      - database:/database-check:ro
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    restart: "no"
+  postgres:
+    image: postgres:16-bookworm
+    environment:
+      POSTGRES_USER: coffee
+      POSTGRES_DB: coffee
+      POSTGRES_PASSWORD_FILE: /run/roastery-secrets/postgres
+    volumes:
+      - database:/var/lib/postgresql/data
+      - instance_keys:/run/roastery-secrets:ro
+    depends_on:
+      initialize: {condition: service_completed_successfully}
+    healthcheck:
+      test: [CMD-SHELL, pg_isready -U coffee -d coffee]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+    restart: unless-stopped
+  web:
+    image: *portal-image
+    pull_policy: never
+    environment: *app-environment
+    volumes: [instance_keys:/run/roastery-secrets:ro]
+    depends_on:
+      postgres: {condition: service_healthy}
+    read_only: true
+    tmpfs: ["/tmp:size=64m,mode=1777"]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/healthz/', timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+  worker:
+    image: *portal-image
+    pull_policy: never
+    environment: *app-environment
+    volumes: [instance_keys:/run/roastery-secrets:ro]
+    depends_on:
+      web: {condition: service_healthy}
+    command: [python, worker.py]
+    read_only: true
+    tmpfs: ["/tmp:size=32m,mode=1777"]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    restart: unless-stopped
+  proxy:
+    image: caddy:2-alpine
+    ports: ["80:80", "443:443"]
+    environment:
+      PORTAL_DOMAIN: *domain
+    configs:
+      - source: caddyfile
+        target: /etc/caddy/Caddyfile
+    volumes: [caddy_data:/data, caddy_config:/config]
+    depends_on:
+      web: {condition: service_healthy}
+    restart: unless-stopped
+configs:
+  caddyfile:
+    content: |
+      {$$PORTAL_DOMAIN} {
+          reverse_proxy web:8000
+      }
+volumes:
+  database:
+  instance_keys:
+  caddy_data:
+  caddy_config:

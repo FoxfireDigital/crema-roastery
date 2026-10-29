@@ -1,0 +1,7 @@
+<style id="portal-palettes">
+{% for palette in appearance_palettes %}{% if forloop.first %}:root,{% endif %}html[data-palette="{{ palette.id }}"]{color-scheme:{% if palette.dark %}dark{% else %}light{% endif %};{% for key,value in palette.tokens.items %}--{{ key }}:{{ value }};{% endfor %}}
+{% endfor %}
+/* A paper copy stays light regardless of the account's screen palette.
+   Label PDFs and supplied artwork keep their original colors. */
+@media print{:root,html[data-palette]{color-scheme:light;--surface:#ffffff;--panel:#ffffff;--soft:#f3f3f3;--soft_hover:#eeeeee;--selected:#eeeeee;--selected_ink:#202020;--ink:#202020;--heading:#202020;--muted:#444444;--line:#888888;--input_line:#666666;--forest:#24513c;--forest_dark:#173b2b;--on_primary:#ffffff;--red:#9c201b;--error_bg:#fff0ec;--warning:#664400;--warning_bg:#fff5db;--good:#235433;--success_bg:#eef4ee;--shadow:transparent}}
+</style>

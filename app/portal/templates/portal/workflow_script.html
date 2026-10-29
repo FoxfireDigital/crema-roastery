@@ -1,0 +1,10 @@
+<script nonce="{{ request.csp_nonce }}">
+document.addEventListener('DOMContentLoaded',()=>{
+ const banner=document.querySelector('#portal-connection');function network(){if(banner)banner.hidden=navigator.onLine}window.addEventListener('online',network);window.addEventListener('offline',network);network();
+ const forms=[...document.querySelectorAll('form[data-track-changes]')],baseline=new Map(),submitted=new Set();
+ function state(form){return JSON.stringify([...new FormData(form)].filter(([key])=>!['csrfmiddlewaretoken','allocations_json','changes'].includes(key)))}
+ for(const form of forms){baseline.set(form,state(form));const feedback=form.querySelector('[data-save-feedback]');function changed(){const dirty=state(form)!==baseline.get(form);if(feedback)feedback.textContent=dirty?'Unsaved changes':'';window.coffeeSaveStates.set(form,dirty?'dirty':'saved',dirty?'Unsaved changes':'Saved')}form.addEventListener('input',changed);form.addEventListener('change',changed);form.addEventListener('submit',event=>{if(event.defaultPrevented)return;if(!navigator.onLine){event.preventDefault();if(feedback)feedback.textContent='Offline — not saved. Your edits stay here.';window.coffeeSaveStates.set(form,'failed','Offline — not saved');return}submitted.add(form);form.setAttribute('aria-busy','true');if(feedback)feedback.textContent='Saving…';window.coffeeSaveStates.set(form,'saving','Saving…')});}
+ document.querySelector('#save-drafts-form')?.addEventListener('submit',event=>{if(!event.defaultPrevented)forms.filter(f=>f.classList.contains('draft-row')).forEach(f=>submitted.add(f))});
+ window.addEventListener('beforeunload',event=>{if(forms.some(form=>!submitted.has(form)&&state(form)!==baseline.get(form))){event.preventDefault();event.returnValue=''}});
+});
+</script>

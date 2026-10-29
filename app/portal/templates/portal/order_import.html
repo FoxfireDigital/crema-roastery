@@ -1,0 +1,17 @@
+{% extends 'portal/base.html' %}{% block content %}
+<h1>Import orders</h1><p><a class="button" href="/stores/">Connected stores &amp; refresh status</a><a class="button secondary" href="/stores/csv/">Import another orders CSV</a></p><p><a class="button secondary" href="/imports/find/">Find a Shopify order</a></p><p><a class="button secondary" href="/wholesale/">Add wholesale order</a></p>
+{% if not dismissed %}<section class='card' aria-label='Shopify connection status'>
+{% if shopify_status.connected %}
+<p><strong>Shopify connected</strong> · {{ shopify_status.shop_domain }}</p>
+{% if shopify_status.last_sync_at %}<p>Last refresh: {{ shopify_status.last_sync_at|date:'M j, Y · g:i A' }} · {{ shopify_status.last_count }} orders checked.</p>{% endif %}
+{% if shopify_status.last_error %}<p class='danger'>{{ shopify_status.last_error }}</p>{% endif %}
+{% if shopify_status.more %}<p>More orders remain. Continue from the saved position.</p>{% endif %}
+<form action='/shopify/refresh/' method='post'>{% csrf_token %}<button {% if shopify_status.busy %}disabled{% endif %}>{% if shopify_status.busy %}Refresh in progress{% elif shopify_status.more %}Continue Shopify refresh{% else %}Refresh Shopify data{% endif %}</button> <a href='/shopify/'>Connection settings</a> <a href='/products/'>Check products</a></form>
+{% else %}
+<p><strong>Shopify isn’t connected yet.</strong> You can keep importing order exports below.</p>
+<a class='button' href='/shopify/'>Connect Shopify from your signed-in laptop</a>
+{% endif %}
+<p class='muted'>Refreshing loads orders for review. Only the orders you select are added to a roast plan.</p>
+</section>
+<p><a href='/plans/'>Open plans</a> <a href='/'>Roasting sheet</a></p>
+{% endif %}{% include 'portal/order_panel.html' %}{% endblock %}
