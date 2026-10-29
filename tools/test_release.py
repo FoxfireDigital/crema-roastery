@@ -43,6 +43,8 @@ from store_checks import run_store_checks
 run_store_checks(Path(temp.name),client,owner)
 from production_checks import run_production_checks
 run_production_checks(Path(temp.name),client,owner)
+from artisan_checks import run_artisan_checks
+run_artisan_checks()
 for path in ['/setup/','/','/planning/','/packing/','/stock/','/green-beans/','/wholesale/','/products/','/information/','/help/','/artisan/']:
     response=client.get(path);assert response.status_code==200,(path,response.status_code)
 assert not Batch.objects.exists() and not ImportOrder.objects.exists() and not Shift.objects.exists()

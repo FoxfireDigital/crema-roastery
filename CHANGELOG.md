@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.0-rc5 — private review candidate
+
+* Fixed prepared Artisan backgrounds to use the native Python-literal file format required by Artisan 3.1, preserving boolean/null values and source curves.
+* Rejected incomplete background files before issuing a preparation package.
+* Allowed configured machine names in the Windows helper, retaining checksums, idle confirmation and the existing-instance handoff.
+
 ## 0.1.0-rc4 — private review candidate
 
 * Added independent store identities, encrypted connection credentials, store-specific product mappings and refresh history.

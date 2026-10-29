@@ -1,6 +1,6 @@
 {
   "name": "Crema",
-  "version": "0.1.0-rc4",
+  "version": "0.1.0-rc5",
   "license": "MIT",
   "files": [
     {
@@ -35,8 +35,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "f2e0666bfb12a22508b1126d73d9a953e5ece772b7ce812745fa46efdb788093",
-      "bytes": 1321
+      "sha256": "4b78fc56dcbd16793299bf5ed9f37693f018c5c392867e88487bd3f0cdb619ac",
+      "bytes": 1731
     },
     {
       "path": "CONTRIBUTING.md",
@@ -55,7 +55,7 @@
     },
     {
       "path": "README.md",
-      "sha256": "09a09aac454a5a6905333bb30b1e598f5364f1cd57f2b08d9102773131e84dbc",
+      "sha256": "e8cc555769c0ef42ada904000d2497af1e78660c793394a887a78b925323a1e4",
       "bytes": 6535
     },
     {
@@ -140,18 +140,18 @@
     },
     {
       "path": "app/portal/artisan_files.py",
-      "sha256": "f093f7a1eab850f49290651144c0e1c1505bc7dbd5827430553220decc3d8ba5",
-      "bytes": 7748
+      "sha256": "74c973fe29d66baccfb0b7690cef666bf013a5ccfcdaa738b1b36fa661d6aaa0",
+      "bytes": 8084
     },
     {
       "path": "app/portal/artisan_helper.ps1",
-      "sha256": "3493c8241992d0a1a03edabbee4427c9edf6413dc0a9645a2e6cdee73fbb332e",
-      "bytes": 7708
+      "sha256": "1322277416b4a98755639ee6fd8238bdf44256cdd76b51361a29ee5e98f7954e",
+      "bytes": 7990
     },
     {
       "path": "app/portal/artisan_profiles.py",
-      "sha256": "46ee23d5f2d0c2c11cce544bc3ff234dd3536fbf04370ccd0365505a0d210c47",
-      "bytes": 22486
+      "sha256": "6a1a3ef52429ed415eaa35790fbf41a23aa688f9d27f653b80282b4ea6fe3901",
+      "bytes": 22914
     },
     {
       "path": "app/portal/artisan_uploads.py",
@@ -910,7 +910,7 @@
     },
     {
       "path": "compose.yaml",
-      "sha256": "705bde2f1903ed3fb5526cf5de9e938ed1a1fb6d0738cdccfe88f60f086f45b4",
+      "sha256": "acd96a8f22ebd92037af7c943b3eefd0a5b2b5fce4ee58e94115cc6d1b5dc7eb",
       "bytes": 2740
     },
     {
@@ -930,7 +930,7 @@
     },
     {
       "path": "docs/RELEASE.md",
-      "sha256": "133aacbc5ab07a9ba6cda167ce474b26d1bdb5c0028425cefce51f760b88d8e4",
+      "sha256": "23e4d9e453c078bb6dfb7df79713a2005fc8e0529c71ffec4f9213b628f33e8c",
       "bytes": 3033
     },
     {
@@ -947,6 +947,11 @@
       "path": "docs/TRUENAS.md",
       "sha256": "a1c020b33fd20bea39beee1def92aed83131354f689300c7f75472b5bce65c42",
       "bytes": 2856
+    },
+    {
+      "path": "tools/artisan_checks.py",
+      "sha256": "a419234cc0231d18154c72c9d1741c4a4fdfac22d59fb7913ab8afad6e40f186",
+      "bytes": 2633
     },
     {
       "path": "tools/audit_dependencies.py",
@@ -980,8 +985,8 @@
     },
     {
       "path": "tools/test_release.py",
-      "sha256": "bf820e11d0f171995f6e637277867617ecba22c4ecb913a844553593103860c3",
-      "bytes": 4698
+      "sha256": "24c6931bd22951034a8cf4fce98a5adbdd9b3d95e5da502bcd5b135514b437cb",
+      "bytes": 4765
     }
   ]
 }

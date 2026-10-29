@@ -6,7 +6,8 @@ function Read-ArtisanPackage([string]$Folder) {
     $manifestPath = Join-Path $packageRoot 'manifest.json'
     if ((Get-Item -LiteralPath $manifestPath).Length -gt 65536) { throw 'The manifest is too large.' }
     $manifest = Get-Content -LiteralPath $manifestPath -Raw -Encoding UTF8 | ConvertFrom-Json
-    if ($manifest.format -ne 1 -or $manifest.roaster -notin @('Large roaster','Small roaster') -or $manifest.mode -notin @('first','second')) { throw 'Unsupported preparation package.' }
+    if ($manifest.format -ne 1 -or $manifest.roaster -isnot [string] -or [string]::IsNullOrWhiteSpace($manifest.roaster) -or $manifest.roaster.Length -gt 40 -or $manifest.roaster -match '[\x00-\x1f\x7f]' -or $manifest.mode -notin @('first','second')) { throw 'Unsupported preparation package.' }
+    if ($manifest.profile_format -ne 'artisan-python-literal') { throw 'This preparation uses an older file format. Download and extract a fresh package from the portal.' }
     foreach ($fileName in @('reference.alog','alarms.alrm')) {
         $expected = $manifest.files.$fileName
         $target = Join-Path $packageRoot $fileName

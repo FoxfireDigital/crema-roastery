@@ -43,6 +43,14 @@ def decode_document(raw):
         elif not isinstance(value,(str,int,float,bool,type(None))):reject('The file contains unsupported data types.')
     return data
 
+
+def encode_document(data):
+    """Artisan 3.1 reads native .alog files as Python literals, not JSON."""
+    raw=repr(data).encode('utf-8')
+    if len(raw)>MAX_FILE:reject('The prepared Artisan document exceeds 2 MB.')
+    if decode_document(raw)!=data:reject('The prepared Artisan document did not round-trip safely.')
+    return raw
+
 def numeric(value):
     try:return isinstance(value,(int,float)) and not isinstance(value,bool) and math.isfinite(value)
     except (OverflowError,ValueError):return False

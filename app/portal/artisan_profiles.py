@@ -12,7 +12,7 @@ from django.shortcuts import get_object_or_404,render,redirect
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods,require_GET,require_POST
 from .models import ArtisanProfileRevision,ArtisanPreparation,Coffee,PlannedBatch,ROAST_LEVELS
-from .artisan_files import bytes_for,source_entry,decode_document,comparison,curve
+from .artisan_files import bytes_for,source_entry,decode_document,encode_document,comparison,curve,inspect as inspect_profile
 
 ROOT=Path(__file__).resolve().parent
 ALARM_KEYS={'alarmflags':'alarmflag','alarmguards':'alarmguard','alarmnegguards':'alarmnegguard','alarmtimes':'alarmtime','alarmoffsets':'alarmoffset','alarmconds':'alarmcond','alarmsources':'alarmsource','alarmtemperatures':'alarmtemperature','alarmactions':'alarmaction','alarmbeep':'alarmbeep','alarmstrings':'alarmstrings'}
@@ -66,11 +66,13 @@ def alarms_for(configuration):
 def derived(entry,configuration):
     original=bytes_for(entry);profile=decode_document(original)
     if not isinstance(profile,dict) or profile.get('mode')!='F':raise ValidationError('This profile needs a Fahrenheit review.')
+    inspect_profile(original,entry['file'],reference=True)
+    if not isinstance(profile.get('temp1'),(list,tuple)) or len(profile['temp1'])!=len(profile['timex']) or not all(isinstance(profile.get(key),(list,tuple)) for key in ['extratemp1','extratemp2']):raise ValidationError('This reference lacks Artisan background curves. Save a complete .alog from Artisan and upload it again.')
     result=copy.deepcopy(profile);alarms=alarms_for(configuration)
     for external,internal in ALARM_KEYS.items():result[internal]=alarms[external]
     result['alarmsetlabel']='Crema — Charge / Drop / Off'
     # Change only embedded alarm fields; original curves, events and weights stay intact.
-    return json.dumps(result,ensure_ascii=True,separators=(',',':')).encode(),json.dumps(alarms,separators=(',',':')).encode()
+    return encode_document(result),json.dumps(alarms,separators=(',',':')).encode()
 
 class ProfileForm(forms.Form):
     revision=forms.IntegerField(min_value=0,widget=forms.HiddenInput)
@@ -244,7 +246,7 @@ def preparation_current(prepared):
 def package_bytes(entry,configuration,description,prepared=None):
     profile,alarms=derived(entry,configuration)
     payload={'reference.alog':profile,'alarms.alrm':alarms}
-    manifest={**description,'format':1,'created_utc':timezone.now().isoformat(),'files':{name:hashlib.sha256(content).hexdigest() for name,content in payload.items()},'preparation_id':str(prepared.pk) if prepared else None}
+    manifest={**description,'format':1,'profile_format':'artisan-python-literal','created_utc':timezone.now().isoformat(),'files':{name:hashlib.sha256(content).hexdigest() for name,content in payload.items()},'preparation_id':str(prepared.pk) if prepared else None}
     payload['manifest.json']=json.dumps(manifest,indent=2).encode()
     payload['Prepare-Artisan.ps1']=(ROOT/'artisan_helper.ps1').read_bytes()
     payload['Prepare-Artisan.cmd']=b'@echo off\r\npowershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0Prepare-Artisan.ps1"\r\n'
