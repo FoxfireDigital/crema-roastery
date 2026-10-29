@@ -24,11 +24,6 @@
       "bytes": 342
     },
     {
-      "path": ".github/workflows/checks.yml",
-      "sha256": "0da3a413406c22c4189df422f8139bdf0ba890bb657bb28f569e717bffaeaa9c",
-      "bytes": 380
-    },
-    {
       "path": ".github/workflows/verify.yml",
       "sha256": "09af131218033e806101429a3949e63c3d88adfe4abfde9726eb55d8a7059182",
       "bytes": 3014
@@ -360,8 +355,8 @@
     },
     {
       "path": "app/portal/plan_actions.py",
-      "sha256": "df29e4626fb07bfb5233b567b5f840756e20954c73e4301bb9c645ec72cca143",
-      "bytes": 9404
+      "sha256": "dbe5b6126a31efbd4c384686cb8da11a5bdcef10dd17bc58092680a16af39c2a",
+      "bytes": 9403
     },
     {
       "path": "app/portal/plan_completion.py",
@@ -370,8 +365,8 @@
     },
     {
       "path": "app/portal/planning.py",
-      "sha256": "4c8c4137490c8e0ac42f3da405b23edebd26ddafec04d8b86140278faf6f5ae8",
-      "bytes": 29643
+      "sha256": "d61d3a737649ef883e67d6879817f35b249d964682fe4e9ad29b0d7ff0a8dc70",
+      "bytes": 29665
     },
     {
       "path": "app/portal/product_checks.py",
@@ -690,8 +685,8 @@
     },
     {
       "path": "app/portal/templates/portal/order_import.html",
-      "sha256": "a6ebca6b4dc7b622a041555238657fdf02d01d1dde9b2761c84da1605aa08378",
-      "bytes": 1787
+      "sha256": "467e4924752c3b1bf6f3cc475f970607e3d7093c16498db852917f165470f0d9",
+      "bytes": 1760
     },
     {
       "path": "app/portal/templates/portal/order_lookup.html",
@@ -730,8 +725,8 @@
     },
     {
       "path": "app/portal/templates/portal/planning.html",
-      "sha256": "dcf21a03db42f62015969b884eb0ba4c0db962b16eaa93990f2b672f6c6a1f05",
-      "bytes": 29925
+      "sha256": "75039aa1af92ff6f4e4bbfd496f47c91b1cc09e45bbdc8d9856ed5fe0fada625",
+      "bytes": 30124
     },
     {
       "path": "app/portal/templates/portal/plans.html",
@@ -975,8 +970,8 @@
     },
     {
       "path": "tools/store_checks.py",
-      "sha256": "d0372f1748f1025a093cc948f64da3ed70e98e5f8ba78c2ccee5eace3908a742",
-      "bytes": 12980
+      "sha256": "8fb356073b6efdae6ef6ea42fd30651fa8ed6dfa1878bfb3d8e399a18145da5e",
+      "bytes": 13170
     },
     {
       "path": "tools/test_initializer.py",

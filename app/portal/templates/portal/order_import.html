@@ -9,7 +9,7 @@
 <form action='/shopify/refresh/' method='post'>{% csrf_token %}<button {% if shopify_status.busy %}disabled{% endif %}>{% if shopify_status.busy %}Refresh in progress{% elif shopify_status.more %}Continue Shopify refresh{% else %}Refresh Shopify data{% endif %}</button> <a href='/shopify/'>Connection settings</a> <a href='/products/'>Check products</a></form>
 {% else %}
 <p><strong>Shopify isn’t connected yet.</strong> You can keep importing order exports below.</p>
-<a class='button' href='/shopify/'>Connect Shopify from your signed-in laptop</a>
+<a class='button' href='/shopify/'>Connect Shopify</a>
 {% endif %}
 <p class='muted'>Refreshing loads orders for review. Only the orders you select are added to a roast plan.</p>
 </section>

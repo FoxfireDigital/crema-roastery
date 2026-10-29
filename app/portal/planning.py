@@ -303,7 +303,7 @@ def planner(request):
             data['references']=list(group.orders.values_list('reference',flat=True).distinct())
             if data['target'] or data['rows']:groups.append(data)
             total_target+=data['target'];total_green+=data['green_needed']
-    orders=IncomingOrderLine.objects.filter(group__plan=plan).select_related('group__coffee','group__label_variant') if plan else []
+    orders=IncomingOrderLine.objects.filter(group__plan=plan).select_related('group__coffee','group__label_variant','import_order__store') if plan else []
     missing_defaults=Coffee.objects.filter(active=True,experimental=False,kind='single_origin',standard_roast='')
     context={'plan':plan,'plans':RoastPlan.objects.all()[:25],'form':form,'editing':editing,'groups':groups,'orders':orders,'roasters':Roaster.objects.filter(active=True),'total_target':total_target,'total_green':total_green,'missing_defaults':missing_defaults}
     for machine in context['roasters']:machine.yield_mid=(machine.capacity or Decimal(0))/2

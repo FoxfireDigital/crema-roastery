@@ -110,6 +110,8 @@ def run_store_checks(root,client,user):
         # Credential fields stay blank on edit and never enter the connection page.
         html=client.get('/stores/',{'edit':a.pk});assert html.status_code==200 and b'test-consumer-secret' not in html.content and b'test-consumer-key' not in html.content
         assert client.get('/imports/').status_code==200 and b'Fictional Woo' in client.get('/imports/').content
+        planner=client.get('/planning/',{'plan':plan.pk})
+        assert planner.status_code==200 and b'Fictional Woo' in planner.content and b'Imported from Shopify' not in planner.content
         assert client.get('/stores/',{'edit':'invalid-uuid'}).status_code==404
         # Never create a second inbox for the same merchant credentials or URL.
         values={'name':'Duplicate fixture','platform':'woocommerce','origin':a.origin,'version':'0','key':'test-consumer-key','secret':'test-consumer-secret','active':'on'}

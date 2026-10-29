@@ -45,7 +45,7 @@ def accept_plan(request,pk):
                 plan.accepted_at=timezone.now();plan.accepted_by=request.user;plan.version+=1
                 plan.save(update_fields=['accepted_at','accepted_by','version'])
                 PlanEvent.objects.create(plan=plan,actor=request.user,action='accepted')
-        messages.success(request,'Plan accepted. Its roasts are on the front page: Large roaster first, then Small roaster, light to dark.')
+        messages.success(request,'Plan accepted. Its roasts are on the front page by machine capacity, largest first, then light to dark.')
         return redirect('/')
     except ValidationError as error:
         messages.error(request,'; '.join(error.messages));return redirect('/planning/?plan='+str(pk))
