@@ -960,8 +960,8 @@
     },
     {
       "path": "docs/DEPLOYMENT-QA.md",
-      "sha256": "c503b26c96754b8e331cd70c25e96686837231dd4cb57aa952d8644e76ae2c25",
-      "bytes": 3801
+      "sha256": "0b83a442b95a4020b6b54c2dcc8cd46e2d858a04eab69dbbcd6a09f7eccd0b20",
+      "bytes": 3809
     },
     {
       "path": "docs/DEPLOYMENT.md",
@@ -980,8 +980,8 @@
     },
     {
       "path": "docs/IMAGE-REVIEW.md",
-      "sha256": "e3477824ec0450291caaaff516686be541cf08ec2496539ef2a90709da332ef7",
-      "bytes": 5366
+      "sha256": "5cd1e11f37e924a25553a026b00c805acc87dd56b25dff3bfc54b1fb0b4f4e33",
+      "bytes": 5374
     },
     {
       "path": "docs/MARKETPLACES.md",

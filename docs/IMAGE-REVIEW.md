@@ -7,10 +7,10 @@ The distribution candidate includes a restricted build context, source/version l
 Run from a clean, reviewed source checkout on a Docker host:
 
 ```sh
-export CREMA_VERSION=0.1.0-rc9
+export CREMA_VERSION=0.1.0-rc10
 export CREMA_REVISION=$(git rev-parse HEAD)
 docker compose -f compose.yaml -f compose.build.yaml build --pull web
-python tools/verify_image.py --image crema:0.1.0-rc9 \
+python tools/verify_image.py --image "crema:$CREMA_VERSION" \
   --version "$CREMA_VERSION" --revision "$CREMA_REVISION" \
   --output ./image-review --test-context
 ```
