@@ -11,7 +11,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   dependencies:
-    name: Dependency audit
+    name: Python dependency audit
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -63,7 +63,7 @@ jobs:
           POSTGRES_PASSWORD: synthetic-disposable-ci-password
         ports: ['5432:5432']
         options: >-
-          --health-cmd "pg_isready -U coffee -d coffee"
+          --health-cmd "pg_isready -h 127.0.0.1 -U coffee -d coffee"
           --health-interval 5s --health-timeout 3s --health-retries 30
     env:
       TEST_DB_HOST: 127.0.0.1
@@ -79,7 +79,7 @@ jobs:
       - run: python -m pip install -r app/requirements.txt
       - run: python tools/test_release.py
   container:
-    name: Container build
+    name: Image and recovery trial
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -89,7 +89,8 @@ jobs:
       - run: docker compose -f compose.yaml -f compose.build.yaml config --quiet
       - run: docker compose -f compose.yaml -f compose.build.yaml build --pull web
         env:
-          CREMA_VERSION: 0.1.0-rc8
+          CREMA_VERSION: 0.1.0-rc9
           CREMA_REVISION: ${{ github.sha }}
-      - run: python tools/verify_image.py --image crema:0.1.0-rc8 --version 0.1.0-rc8 --revision "$GITHUB_SHA" --output /tmp/crema-image-review --test-context
+      - run: python tools/verify_image.py --image crema:0.1.0-rc9 --version 0.1.0-rc9 --revision "$GITHUB_SHA" --output /tmp/crema-image-review --test-context
       - run: python tools/audit_dependencies.py /tmp/crema-image-review/components.json
+      - run: python tools/test_compose.py --image crema:0.1.0-rc9 --revision "$GITHUB_SHA" --output /tmp/crema-deployment-review

@@ -26,3 +26,5 @@ Check the dump command succeeded before continuing. Encrypt this folder with a m
 5. Record the backup identifier, download, decrypt and restore result. Preserve current production data before any actual recovery cutover, including newer work absent from that backup.
 
 The supplied app intentionally does not claim automatic backup success when these operator tasks have not been performed.
+
+The Linux-only [disposable deployment/recovery trial](DEPLOYMENT-QA.md) exercises a consistent dump and matching keys restored into separate volumes with fictional data. It checks account access, encrypted mock credentials, original bytes, wrong-key rejection and exclusion of later source writes. It does not replace testing a download/decryption/restore from your actual offsite backup destination.

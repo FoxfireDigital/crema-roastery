@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.0-rc9 — private recovery review candidate
+
+* Added a reusable Linux Compose trial with synthetic installation, HTTPS/CSRF, restart and PostgreSQL checks to CI.
+* Changed PostgreSQL readiness to TCP so the temporary initialization socket is not mistaken for the final application database server.
+* Added full dump/key restoration into separate database/key volumes, record comparisons, account login, encrypted mock credential and original-byte checks, plus wrong-key/corrupt-dump rejection.
+* Added a distribution-review worksheet identifying native-library/provenance and corresponding-source questions that package notice collection alone does not close.
+
+No production schema or roast-day workflow change is included. The synthetic restore test does not establish offsite recovery, hardware/alarm behavior or independent security/license clearance.
+
 ## 0.1.0-rc8 — private distribution review candidate
 
 * Restricted the generic image build context to required application sources and empty generic catalogs; added actual-image checks with fictional private-state canaries.

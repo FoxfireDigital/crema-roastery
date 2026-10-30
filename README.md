@@ -1,6 +1,6 @@
 # Crema
 
-Self-hosted coffee production planning, from received orders through roasting, bagging and labels. MIT licensed. One separate installation and database per roastery. 0.1.0-rc8 is a private distribution review candidate. It must pass the staged upgrade and operational gates before a public beta.
+Self-hosted coffee production planning, from received orders through roasting, bagging and labels. MIT licensed. One separate installation and database per roastery. 0.1.0-rc9 is a private recovery review candidate. It must pass the staged upgrade and operational gates before a public beta.
 
 ## What it includes
 
@@ -71,3 +71,5 @@ See CONTRIBUTING.md, SECURITY.md, PRIVACY.md and docs/RELEASE.md. No telemetry, 
 See [ROADMAP.md](ROADMAP.md) for the proposed stages to 1.0, release acceptance criteria and subsequent 1.x priorities. The production front page remains the accepted roast sheet.
 
 The generic image includes component declarations and available notices. See [image review](docs/IMAGE-REVIEW.md) for source/revision verification, build-context checks and remaining distribution gates. Dependencies retain their own licenses.
+
+The Linux [deployment/recovery trial](docs/DEPLOYMENT-QA.md) verifies fictional data restored into separate volumes. The [distribution worksheet](docs/DISTRIBUTION-REVIEW.md) tracks dependency/native-library questions that still need review.
