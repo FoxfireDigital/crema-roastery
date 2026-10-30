@@ -73,7 +73,7 @@ def review_production(request,pk):
         try:
             with transaction.atomic():
                 plan=RoastPlan.all_objects.select_for_update().get(pk=order.imported_plan_id)
-                order=ImportOrder.objects.select_for_update().select_related('imported_plan').get(pk=pk)
+                order=ImportOrder.objects.select_for_update(of=('self',)).select_related('imported_plan').get(pk=pk)
                 if order.imported_plan_id!=plan.pk:raise ValidationError('This order moved to another plan. Reload before confirming.')
                 supplied=signing.loads(request.POST.get('review_token',''),salt=SALT,max_age=1800)
                 expected={'order':order.pk,'source':source_fingerprint(order),'plan_version':plan.version,'actor':request.user.pk}
