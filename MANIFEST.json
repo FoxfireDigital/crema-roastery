@@ -920,7 +920,7 @@
     },
     {
       "path": "compose.yaml",
-      "sha256": "acd96a8f22ebd92037af7c943b3eefd0a5b2b5fce4ee58e94115cc6d1b5dc7eb",
+      "sha256": "89b5103a5269eab284b0a67d2cf136b148bb50954ac800aaf60b55b7daea4661",
       "bytes": 2740
     },
     {
@@ -945,7 +945,7 @@
     },
     {
       "path": "docs/RELEASE.md",
-      "sha256": "23e4d9e453c078bb6dfb7df79713a2005fc8e0529c71ffec4f9213b628f33e8c",
+      "sha256": "2c9eddc11428312ebf9bfdbe307d56f45d4bb5bece598e8ae59fd53312954f37",
       "bytes": 3033
     },
     {
