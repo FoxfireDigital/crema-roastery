@@ -1,6 +1,6 @@
 {
   "name": "Crema",
-  "version": "0.1.0-rc7",
+  "version": "0.1.0-rc8",
   "license": "MIT",
   "files": [
     {
@@ -25,18 +25,18 @@
     },
     {
       "path": ".github/workflows/verify.yml",
-      "sha256": "09af131218033e806101429a3949e63c3d88adfe4abfde9726eb55d8a7059182",
-      "bytes": 3014
+      "sha256": "b74520c538508dd88204ca5c23d42bbd76bfe1f276c96614be01db1e537961d9",
+      "bytes": 3360
     },
     {
       "path": ".gitignore",
-      "sha256": "fe60afe93455247304831e89260241fad52ba1018a0fc215fef982410571ab41",
-      "bytes": 74
+      "sha256": "6ef60fa464a619d7b5e4ef638ab1d99fa8c0e367bfaeba63cacbf204d07d1eb8",
+      "bytes": 88
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "5293819da4512b671b780915a0fa051e329b18b82194237614a450cdc97fcab5",
-      "bytes": 3182
+      "sha256": "7ad7e4eb6b17f910a44a5950a3ade7eee09b7c4963ca9d6f64c06e424a02e891",
+      "bytes": 4330
     },
     {
       "path": "CONTRIBUTING.md",
@@ -55,18 +55,18 @@
     },
     {
       "path": "README.md",
-      "sha256": "488a3691d5448073a8aa512601cf5024a79da75facda55e8b899f17f780fa539",
-      "bytes": 6535
+      "sha256": "802bf7481edca3fd12a1f43c762f2317c67460d721d8595ae5f693a2cc74c134",
+      "bytes": 6973
     },
     {
       "path": "ROADMAP.md",
-      "sha256": "6fe36aa545df45a32193ef8aaa712ee7c64c406615a52f5ea7eb8ad96f2ababe",
-      "bytes": 1761
+      "sha256": "b3eca6e1e2fd64e1c7886a9f8f62e76e5a73c96d73d0cf80f212d6e94b561dbc",
+      "bytes": 16843
     },
     {
       "path": "SECURITY.md",
-      "sha256": "78f7536922366f7f8b313b27a9381280b0b3beddebcf7f92fa8b5b47b4fbe50d",
-      "bytes": 1349
+      "sha256": "00c5d99da68eada7210e7aed5d97e5b8a105048016c9f0f5c715ef82d20b9e00",
+      "bytes": 1633
     },
     {
       "path": "THIRD_PARTY_NOTICES.md",
@@ -75,18 +75,28 @@
     },
     {
       "path": "app/.dockerignore",
-      "sha256": "eb87c72cdd5b8ffebd8a1af9378d905d3e51be7c29cdd5d5775dc474ba78a0af",
-      "bytes": 38
+      "sha256": "264d7f06f208feb707258fcc678ffa6f90390222c546a3aa54370d2532f476ad",
+      "bytes": 430
     },
     {
       "path": "app/Dockerfile",
-      "sha256": "dbbc3b376eda9d83a493eba3d4f3281d5799687bc163d27b84cdccec8442f901",
-      "bytes": 587
+      "sha256": "199c5ac56d6009711f4bdb4a9c006bb8e08a878ad8a7870e2352133480ba77fe",
+      "bytes": 1016
+    },
+    {
+      "path": "app/LICENSE",
+      "sha256": "e1f6de38a3239b5123003d4d11d4c641951e2417a69aec8c6198e8d1a753c0a3",
+      "bytes": 1075
     },
     {
       "path": "app/bootstrap.py",
       "sha256": "b32c308201ebcbe1146e2bcaa303d1b34e12cf44348ae2bf2268bb81bcea62f1",
       "bytes": 315
+    },
+    {
+      "path": "app/build_notices.py",
+      "sha256": "a86b0aa5733b9ead94fd639909893e3e64c510ea197c2a2c36cd29f27d208b10",
+      "bytes": 4653
     },
     {
       "path": "app/entrypoint.sh",
@@ -930,12 +940,12 @@
     },
     {
       "path": "compose.build.yaml",
-      "sha256": "4c55af0a949b77b7b056ae8aec28ba4e0a13aeb0fa749cb8f38dff98a8704256",
-      "bytes": 110
+      "sha256": "996749fffcd95fe15f7cd25ff8d8ac72418c7b760130dd8f47d572ecf3c550a9",
+      "bytes": 241
     },
     {
       "path": "compose.yaml",
-      "sha256": "7802897a191960dafb7db355e4e2464cee20b2d0a5d9f2c2e839a43d4d88baf3",
+      "sha256": "9d4aff80a7a361f3b04d57103de3ae4ef2ccc963401cdb2a797fbaa651674dd2",
       "bytes": 2740
     },
     {
@@ -959,14 +969,24 @@
       "bytes": 2657
     },
     {
+      "path": "docs/IMAGE-REVIEW.md",
+      "sha256": "3100ae7b7288c9f00ec6d09c7604dc190114202e6477f95f8ac24c44855fa12a",
+      "bytes": 5366
+    },
+    {
       "path": "docs/MARKETPLACES.md",
       "sha256": "99514665d8bbdacfe761f052fd15f96d8408588ada12d71e70cbb3e05b95c9c2",
       "bytes": 6894
     },
     {
       "path": "docs/RELEASE.md",
-      "sha256": "43d851e53934ed17d41ff37f712991b7046b9bbc72a627d8f86e8c72ac60796e",
-      "bytes": 3033
+      "sha256": "eacf0212f03d87d3c9697a0a45456f87cae29cff000acedcb0a82b9533807644",
+      "bytes": 3489
+    },
+    {
+      "path": "docs/SECURITY-REVIEW.md",
+      "sha256": "a6e472a7baafd770ca9afe7676e873672fdc2a57299672f318f5155d7d26730a",
+      "bytes": 6561
     },
     {
       "path": "docs/SERVICE-MODEL.md",
@@ -990,8 +1010,8 @@
     },
     {
       "path": "tools/audit_dependencies.py",
-      "sha256": "95ecf4c55a374fc26013c966a158e98073c4ca3ddc9cd7caf21f2d3a92c05a0c",
-      "bytes": 1236
+      "sha256": "351c5d528eae6e92a02fa8d4de0da84e5ecd8fb853a26e6560c8f5a94f3cc013",
+      "bytes": 1433
     },
     {
       "path": "tools/green_checks.py",
@@ -1027,6 +1047,11 @@
       "path": "tools/test_release.py",
       "sha256": "b4ace4f7ae983bf502580ad84652a19e7b72644828fd758d9ccccfce4aad3871",
       "bytes": 4850
+    },
+    {
+      "path": "tools/verify_image.py",
+      "sha256": "0a5bd14d682d94eb65672af67d9fd8743911a1040a3032e6646527f416fd32dd",
+      "bytes": 7403
     }
   ]
 }

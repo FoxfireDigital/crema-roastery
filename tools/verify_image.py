@@ -1,0 +1,112 @@
+"""Inspect a built generic image offline, without starting its app or mounting data."""
+from pathlib import Path
+import argparse
+import hashlib
+import json
+import secrets
+import shutil
+import subprocess
+import tempfile
+
+ROOT = Path(__file__).resolve().parents[1]
+PROBE = r'''
+import os,json,hashlib
+from pathlib import Path
+def sha(path):
+    with path.open('rb') as f:return hashlib.file_digest(f,'sha256').hexdigest()
+files={};writable=[]
+for path in Path('/srv').rglob('*'):
+    rel=path.relative_to('/srv').as_posix()
+    if not path.is_file() or rel.startswith('staticfiles/'):continue
+    files[rel]=sha(path)
+    if os.access(path,os.W_OK):writable.append(rel)
+root=Path('/usr/share/crema')
+inventory=json.loads((root/'components.json').read_text())
+notices=[]
+for item in [inventory['applicationNotice'],*[entry for group in ['python','debian'] for package in inventory[group] for entry in package['notices']]]:
+    p=(root/item['path']).resolve()
+    assert p.is_relative_to(root) and sha(p)==item['sha256'],'Notice integrity mismatch'
+    notices.append(item['path'])
+assert json.loads(Path('/srv/portal/artisan_catalog.json').read_text())=={'profiles':[],'alarms':[]}
+assert json.loads(Path('/srv/label_artwork/catalog.json').read_text())==[]
+assert not any(Path('/var/lib/roastery-secrets').iterdir()),'Image contains instance keys'
+print(json.dumps({'uid':os.getuid(),'gid':os.getgid(),'files':files,'writableApplicationFiles':writable,'inventory':inventory,'noticeCount':len(notices)}))
+'''
+
+
+def run(args, **kwargs):
+    result = subprocess.run(args, capture_output=True, text=True, check=False, **kwargs)
+    if result.returncode:
+        raise SystemExit('Image inspection failed: ' + result.stderr[-2000:])
+    return result.stdout
+
+
+def expected_files():
+    fixed = {'LICENSE', 'requirements.txt', 'manage.py', 'project_settings.py', 'project_urls.py', 'project_wsgi.py', 'bootstrap.py', 'init_instance.py', 'worker.py', 'build_notices.py', 'entrypoint.sh', 'label_artwork/catalog.json', 'portal/artisan_helper.ps1', 'portal/artisan_catalog.json'}
+    result = {}
+    for path in (ROOT / 'app').rglob('*'):
+        if not path.is_file():
+            continue
+        relative = path.relative_to(ROOT / 'app').as_posix()
+        included = relative in fixed or (relative.startswith('portal/') and (path.suffix == '.py' or relative.startswith('portal/templates/') and path.suffix == '.html'))
+        if included and '__pycache__' not in path.parts:
+            result[relative] = hashlib.sha256(path.read_bytes()).hexdigest()
+    return result
+
+
+def test_context(args):
+    """Build a copied context with fictional unwanted files; inspect actual bytes."""
+    image = 'crema-context-check:' + secrets.token_hex(8)
+    with tempfile.TemporaryDirectory(prefix='crema-context-') as directory:
+        context = Path(directory) / 'app'
+        shutil.copytree(ROOT / 'app', context, ignore=shutil.ignore_patterns('__pycache__', '*.pyc'))
+        canaries = ['.env', 'local-secret.txt', 'state/app.sqlite3', 'portal/.env', 'portal/backups/test.dump', 'portal/templates/export.csv', 'portal/templates/private-note.txt', 'label_artwork/unreviewed.png']
+        for relative in canaries:
+            path = context / relative
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text('FICTIONAL_BUILD_CONTEXT_CANARY_ONLY\n')
+        try:
+            run(['docker', 'build', '--build-arg', 'CREMA_VERSION=' + args.version, '--build-arg', 'CREMA_REVISION=' + args.revision, '-t', image, str(context)], timeout=600)
+            probe = json.loads(run(['docker', 'run', '--rm', '-i', '--network=none', '--read-only', '--cap-drop=ALL', '--security-opt=no-new-privileges:true', '--entrypoint=python', image, '-'], input=PROBE))
+            expected = expected_files()
+            assert probe['files'] == expected, 'Build-context mismatch: extra=%s missing=%s modified=%s' % (sorted(set(probe['files']) - set(expected)), sorted(set(expected) - set(probe['files'])), sorted(name for name in expected.keys() & probe['files'].keys() if expected[name] != probe['files'][name]))
+            print('PASS: actual image excludes all %s fictional private-state canaries while retaining required sources.' % len(canaries))
+        finally:
+            # Only this unique disposable test image; never prune shared images.
+            subprocess.run(['docker', 'image', 'rm', image], capture_output=True, text=True)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--image', required=True)
+    parser.add_argument('--version', required=True)
+    parser.add_argument('--revision', required=True)
+    parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--test-context', action='store_true', help='Also build a disposable copy with fictional unwanted files.')
+    args = parser.parse_args()
+    if not args.image or args.image.startswith('-'):
+        parser.error('Use an explicit image name.')
+    info = json.loads(run(['docker', 'image', 'inspect', args.image]))[0]
+    labels = info['Config'].get('Labels') or {}
+    assert info['Config']['User'] == '10001:10001', 'Application image must run as its non-root user.'
+    assert labels.get('org.opencontainers.image.version') == args.version, 'Wrong version label.'
+    assert labels.get('org.opencontainers.image.revision') == args.revision, 'Wrong source revision label.'
+    assert (ROOT / 'LICENSE').read_text() == (ROOT / 'app/LICENSE').read_text(), 'Application MIT notice differs from source notice.'
+    # Never start the entrypoint/migrations or attach host credentials/volumes.
+    data = json.loads(run(['docker', 'run', '--rm', '-i', '--network=none', '--read-only', '--cap-drop=ALL', '--security-opt=no-new-privileges:true', '--entrypoint=python', args.image, '-'], input=PROBE))
+    assert data['uid'] == data['gid'] == 10001, 'Unexpected runtime identity.'
+    expected = expected_files()
+    assert data['files'] == expected, 'Image application files differ from reviewed source (missing, modified or unexpected files).'
+    assert not data['writableApplicationFiles'], 'Runtime user can modify application files.'
+    assert data['inventory']['python'] and data['inventory']['debian'], 'Component inventory is incomplete.'
+    args.output.mkdir(parents=True, exist_ok=True)
+    (args.output / 'components.json').write_text(json.dumps(data['inventory'], indent=2) + '\n')
+    report = {'image': args.image, 'imageId': info['Id'], 'registryDigests': info.get('RepoDigests', []), 'version': args.version, 'revision': args.revision, 'platform': info['Os'] + '/' + info['Architecture'], 'applicationFiles': len(expected), 'uid': data['uid'], 'emptyPrivateCatalogs': True, 'emptyInstanceKeys': True, 'applicationWritable': False, 'noticeCount': data['noticeCount'], 'pythonPackages': len(data['inventory']['python']), 'debianPackages': len(data['inventory']['debian']), 'missingNoticeFiles': data['inventory']['missingNoticeFiles'], 'limitation': 'Offline application-image inspection; not an independent security audit, full license/source compliance review, registry-pull trial or proxy/database image review.'}
+    (args.output / 'image-verification.json').write_text(json.dumps(report, indent=2) + '\n')
+    print(json.dumps(report, indent=2))
+    if args.test_context:
+        test_context(args)
+
+
+if __name__ == '__main__':
+    main()

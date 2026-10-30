@@ -7,3 +7,5 @@ The application includes CSRF checks, signed review forms, stale-edit checks, re
 Do not include credentials, customer records, screenshots of private data or exploit-ready production details in public issues. Report suspected vulnerabilities privately to the repository maintainer using the eventual repository’s private vulnerability-reporting facility. No public security mailbox has been invented for this candidate.
 
 Check dependency advisories before each release and update pinned versions deliberately. A first public launch and any paid hosting offering should receive an independent review of authentication, proxy configuration, access boundaries, backup recovery and merchant data handling.
+
+The proposed scope and evidence requirements are in [docs/SECURITY-REVIEW.md](docs/SECURITY-REVIEW.md). That checklist is preparation, not a completed independent assessment. Built-image inspection and component notices are described in [docs/IMAGE-REVIEW.md](docs/IMAGE-REVIEW.md).

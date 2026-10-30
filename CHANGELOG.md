@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.1.0-rc8 — private distribution review candidate
+
+* Restricted the generic image build context to required application sources and empty generic catalogs; added actual-image checks with fictional private-state canaries.
+* Included Crema's MIT notice and captured installed Python/Debian component versions, available license notices and native-library hashes inside the application image. This is preparation for distribution review, not legal clearance or a complete standardized SBOM.
+* Added source/version image labels and offline image verification for source hashes, non-root identity, empty keys/catalogs and immutable application files. CI checks the built image rather than only a successful build.
+* Pinned an updated image package installer and included actually installed Python tooling in advisory checks, closing a gap in resolver-only dependency checks.
+* Expanded the staged roadmap through 1.0 and subsequent 1.x themes; retained the accepted roast sheet.
+
+No runtime production workflow or database schema change is included. An existing deployment does not update itself; promote only after the applicable release checks.
+
 ## 0.1.0-rc7 — private review candidate
 
 * Added optional, audited green-stock checks with one-click Skip that records availability as not checked.

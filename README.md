@@ -1,6 +1,6 @@
 # Crema
 
-Self-hosted coffee production planning, from received orders through roasting, bagging and labels. MIT licensed. One separate installation and database per roastery. 0.1.0-rc7 is a private review candidate. It must pass the staged upgrade and operational gates before a public beta.
+Self-hosted coffee production planning, from received orders through roasting, bagging and labels. MIT licensed. One separate installation and database per roastery. 0.1.0-rc8 is a private distribution review candidate. It must pass the staged upgrade and operational gates before a public beta.
 
 ## What it includes
 
@@ -67,3 +67,7 @@ Before an upgrade, make a verified backup and test the new version against a res
 MIT allows self-hosting, modification, paid hosting, setup, migration and support. The license does not grant rights to somebody else’s artwork, trademarks, customer data or roast profiles. Start managed services with separate installations; this is not a shared multi-tenant service or billing platform.
 
 See CONTRIBUTING.md, SECURITY.md, PRIVACY.md and docs/RELEASE.md. No telemetry, shared cloud account or production dataset is included.
+
+See [ROADMAP.md](ROADMAP.md) for the proposed stages to 1.0, release acceptance criteria and subsequent 1.x priorities. The production front page remains the accepted roast sheet.
+
+The generic image includes component declarations and available notices. See [image review](docs/IMAGE-REVIEW.md) for source/revision verification, build-context checks and remaining distribution gates. Dependencies retain their own licenses.

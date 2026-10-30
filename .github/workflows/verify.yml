@@ -87,4 +87,9 @@ jobs:
         with:
           persist-credentials: false
       - run: docker compose -f compose.yaml -f compose.build.yaml config --quiet
-      - run: docker compose -f compose.yaml -f compose.build.yaml build web
+      - run: docker compose -f compose.yaml -f compose.build.yaml build --pull web
+        env:
+          CREMA_VERSION: 0.1.0-rc8
+          CREMA_REVISION: ${{ github.sha }}
+      - run: python tools/verify_image.py --image crema:0.1.0-rc8 --version 0.1.0-rc8 --revision "$GITHUB_SHA" --output /tmp/crema-image-review --test-context
+      - run: python tools/audit_dependencies.py /tmp/crema-image-review/components.json
