@@ -8,7 +8,12 @@ function Read-ArtisanPackage([string]$Folder) {
     $manifest = Get-Content -LiteralPath $manifestPath -Raw -Encoding UTF8 | ConvertFrom-Json
     if ($manifest.format -ne 1 -or $manifest.roaster -isnot [string] -or [string]::IsNullOrWhiteSpace($manifest.roaster) -or $manifest.roaster.Length -gt 40 -or $manifest.roaster -match '[\x00-\x1f\x7f]' -or $manifest.mode -notin @('first','second')) { throw 'Unsupported preparation package.' }
     if ($manifest.profile_format -ne 'artisan-python-literal') { throw 'This preparation uses an older file format. Download and extract a fresh package from the portal.' }
-    foreach ($fileName in @('reference.alog','alarms.alrm')) {
+    $fileNames = @('reference.alog','alarms.alrm')
+    if ($null -ne $manifest.roast_title) {
+        if ($manifest.roast_title -isnot [string] -or [string]::IsNullOrWhiteSpace($manifest.roast_title) -or $manifest.roast_title.Length -gt 300 -or $manifest.roast_title -match '[\x00-\x1f\x7f]') { throw 'Invalid roast title.' }
+        $fileNames += 'roast-title.txt'
+    }
+    foreach ($fileName in $fileNames) {
         $expected = $manifest.files.$fileName
         $target = Join-Path $packageRoot $fileName
         if ($expected -notmatch '^[a-f0-9]{64}$' -or (Get-Item -LiteralPath $target).Length -gt 2000000) { throw 'Invalid preparation file.' }
@@ -16,6 +21,7 @@ function Read-ArtisanPackage([string]$Folder) {
         try { $actual = [BitConverter]::ToString($algorithm.ComputeHash([IO.File]::ReadAllBytes($target))).Replace('-','').ToLowerInvariant() } finally { $algorithm.Dispose() }
         if ($actual -ne $expected) { throw "Checksum mismatch: $fileName. Prepare the load again." }
     }
+    if ($null -ne $manifest.roast_title -and ([IO.File]::ReadAllText((Join-Path $packageRoot 'roast-title.txt'),[Text.Encoding]::UTF8).TrimEnd("`r","`n")) -cne $manifest.roast_title) { throw 'The title and manifest disagree.' }
     $alarms = Get-Content -LiteralPath (Join-Path $packageRoot 'alarms.alrm') -Raw -Encoding UTF8 | ConvertFrom-Json
     if (($alarms.alarmactions -join ',') -ne '16,13,15' -or ($alarms.alarmguards -join ',') -ne '-1,0,1' -or ($alarms.alarmtimes -join ',') -ne '-1,0,6') { throw 'Unexpected alarm sequence.' }
     $culture = [Globalization.CultureInfo]::InvariantCulture
@@ -56,7 +62,7 @@ try {
     try {
         $age = [DateTimeOffset]::UtcNow - [DateTimeOffset]::Parse($manifest.created_utc)
         if ($age.TotalHours -gt 24 -or $age.TotalMinutes -lt -5) { throw 'This download is old or its date is invalid. Prepare the load again in the portal.' }
-        $summary = "Plan #$($manifest.plan_id), roast #$($manifest.planned_batch_id)`n$($manifest.coffee) - $($manifest.roast_level)`nRoaster: $($manifest.roaster) | Green: $($manifest.green_oz) oz`nSession: $($manifest.mode)`nProfile: $($manifest.name), revision $($manifest.revision)`nBT Charge $($manifest.charge) F / Drop $($manifest.drop) F / Off $($manifest.off) F"
+        $summary = "Plan #$($manifest.plan_id), roast #$($manifest.planned_batch_id)`n$($manifest.coffee) - $($manifest.roast_level)`nRoaster: $($manifest.roaster) | Green: $($manifest.green_oz) oz`nSession: $($manifest.mode)`nTitle: $($manifest.roast_title)`nProfile: $($manifest.name), revision $($manifest.revision)`nBT Charge $($manifest.charge) F / Drop $($manifest.drop) F / Off $($manifest.off) F"
         $question = "$summary`n`nConfirm the correct USB roaster is connected. First means this machine has been idle at least 10 minutes; Second means continuing warm roasting.`n`nArtisan must be idle, with monitoring OFF, no recording in progress, and any previous roast saved. Close comparison/designer views. Has the plan/profile remained unchanged since downloading, and is it ready to prepare?"
         if ([Windows.Forms.MessageBox]::Show($question,$title,'YesNo','Question') -ne 'Yes') { return }
         $pipe = Connect-ArtisanMain
@@ -79,6 +85,11 @@ try {
         $verify = "Reference request sent to the existing main Artisan window. This is not an acknowledgement that it loaded.`n`nVerify the expected background curve is visible, monitoring is still OFF, and no viewer window opened. If Artisan was monitoring or did not load it, choose No and retry only when idle.`n`nIs the correct background now loaded and Artisan still idle?"
         if ([Windows.Forms.MessageBox]::Show($verify,$title,'YesNo','Question') -ne 'Yes') { return }
         Send-ArtisanFile $pipe (Join-Path $PSScriptRoot 'alarms.alrm')
+        if ($manifest.roast_title) {
+            if ([Windows.Forms.MessageBox]::Show("Roast title: $($manifest.roast_title)`n`nBackground loading does not change Artisan's active roast title. Copy this title to your clipboard? This replaces the current clipboard text. Then open Roast > Properties, paste into Title and confirm before roasting. Artisan's own autosave settings remain unchanged.",$title,'YesNo','Question') -eq 'Yes') {
+                [Windows.Forms.Clipboard]::SetText($manifest.roast_title)
+            }
+        }
         [Windows.Forms.MessageBox]::Show("Alarm request sent.`n`nOpen Config > Alarms and verify Charge $($manifest.charge) F, Drop $($manifest.drop) F, Off $($manifest.off) F. Drop follows Charge; Off waits for the Drop event. All use BT rising above the threshold. Enable Load from background for embedded alarms.`n`nOff is Artisan monitoring OFF, not a guaranteed physical heater shutdown. No monitoring or roast was started by this helper. Portal production boxes and weights are unchanged.",$title,'OK','Information') | Out-Null
     } finally {
         if ($null -ne $pipe) { $pipe.Dispose() }

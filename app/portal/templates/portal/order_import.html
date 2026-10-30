@@ -1,6 +1,6 @@
 {% extends 'portal/base.html' %}{% block content %}
-<h1>Import orders</h1><p><a class="button" href="/stores/">Connected stores &amp; refresh status</a><a class="button secondary" href="/stores/csv/">Import another orders CSV</a></p><p><a class="button secondary" href="/imports/find/">Find a Shopify order</a></p><p><a class="button secondary" href="/wholesale/">Add wholesale order</a></p>
-{% if not dismissed %}<section class='card' aria-label='Shopify connection status'>
+<h1>Import orders</h1><p><a class="button" href="/stores/">Marketplaces &amp; refresh status</a><a class="button secondary" href="/stores/csv/">Import another orders CSV</a>{% if shopify_selected %}<a class="button secondary" href="/imports/find/">Find a Shopify order</a>{% endif %}<a class="button secondary" href="/wholesale/">Add wholesale order</a></p>
+{% if not dismissed %}{% if shopify_selected %}<section class='card' aria-label='Shopify connection status'>
 {% if shopify_status.connected %}
 <p><strong>Shopify connected</strong> · {{ shopify_status.shop_domain }}</p>
 {% if shopify_status.last_sync_at %}<p>Last refresh: {{ shopify_status.last_sync_at|date:'M j, Y · g:i A' }} · {{ shopify_status.last_count }} orders checked.</p>{% endif %}
@@ -12,6 +12,6 @@
 <a class='button' href='/shopify/'>Connect Shopify</a>
 {% endif %}
 <p class='muted'>Refreshing loads orders for review. Only the orders you select are added to a roast plan.</p>
-</section>
+</section>{% endif %}
 <p><a href='/plans/'>Open plans</a> <a href='/'>Roasting sheet</a></p>
 {% endif %}{% include 'portal/order_panel.html' %}{% endblock %}

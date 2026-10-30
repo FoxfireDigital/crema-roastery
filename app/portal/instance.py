@@ -9,7 +9,9 @@ def instance_context(request):
     from django.conf import settings
     from .models import Coffee,Roaster
     needs_setup=request.user.is_authenticated and request.user.is_staff and (not Coffee.objects.filter(active=True).exists() or not Roaster.objects.filter(active=True,max_green_oz__gt=0).exists())
-    c=configuration();return {'portal_name':c.name if c else 'Crema','portal_timezone':settings.TIME_ZONE,'shop_admin_url':c.shop_admin_url if c else '','needs_roastery_setup':needs_setup}
+    from .marketplaces import selection
+    c=configuration();platforms=selection(c) if request.user.is_authenticated else []
+    return {'portal_name':c.name if c else 'Crema','portal_timezone':settings.TIME_ZONE,'shop_admin_url':c.shop_admin_url if c else '','needs_roastery_setup':needs_setup,'chosen_marketplaces':platforms,'shopify_selected':'shopify' in platforms}
 
 from django.contrib.admin.views.decorators import staff_member_required
 from django.views.decorators.http import require_GET

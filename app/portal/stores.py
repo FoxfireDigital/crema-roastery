@@ -127,6 +127,15 @@ class StoreForm(forms.ModelForm):
         model=StoreConnection
         fields=['name','platform','origin','site_id','active','automatic','include_customer_names']
         labels={'origin':'Store HTTPS address','site_id':'Wix site ID (Wix only)','automatic':'Check this store automatically every five minutes','include_customer_names':'Import customer names (optional; appropriate store permissions required)'}
+    def __init__(self,*args,**kwargs):
+        super().__init__(*args,**kwargs)
+        from .marketplaces import selection
+        chosen=selection()
+        allowed=set(chosen)|{'csv'}
+        if not self.instance._state.adding:allowed.add(self.instance.platform)
+        self.fields['platform'].choices=[('', 'Choose a selected marketplace')]+[(k,v) for k,v in StoreConnection.PLATFORMS if k in allowed]
+        online=[key for key in chosen if key!='manual']
+        if self.instance._state.adding and len(online)==1:self.initial.setdefault('platform',online[0])
     def clean(self):
         v=super().clean();platform=v.get('platform');url=v.get('origin','')
         if platform=='shopify':
@@ -147,11 +156,16 @@ class StoreForm(forms.ModelForm):
 
 def save_connection(post,actor,selected=None):
     with transaction.atomic():
+        from .models import PortalConfiguration
+        config,_=PortalConfiguration.objects.get_or_create(pk=1)
+        PortalConfiguration.objects.select_for_update().get(pk=config.pk)
         current=StoreConnection.objects.select_for_update().get(pk=selected.pk) if selected else StoreConnection(updated_by=actor)
         old_version=current.version;old_identity=(current.platform,current.origin,current.site_id)
         old_credentials=credentials(current);form=StoreForm(post,instance=current)
         if not form.is_valid():raise ValidationError([str(e) for errors in form.errors.values() for e in errors])
         v=form.cleaned_data
+        from .marketplaces import selection
+        if v['platform']!='csv' and v['platform'] not in selection() and (not selected or v.get('active')):raise ValidationError('Select this marketplace above before adding or activating its connection.')
         if v['version']!=old_version:raise ValidationError('This connection changed. Reload before saving.')
         if selected and current.orders.exists() and old_identity!=(v['platform'],v['origin'],v['site_id']):raise ValidationError('This connection already owns orders. Add a separate connection for another store or platform.')
         value={name:v[name] or old_credentials.get(name,'') for name in ['token','key','secret']}
@@ -177,17 +191,25 @@ def save_connection(post,actor,selected=None):
 @staff_member_required
 @require_http_methods(['GET','POST'])
 def connections(request):
+    from .marketplaces import MarketplaceForm,selection,selection_token,save_selection
+    marketplace_form=MarketplaceForm(initial={'marketplaces':selection(),'selection_token':selection_token()})
+    if request.method=='POST' and request.POST.get('action')=='marketplaces':
+        marketplace_form,saved=save_selection(request.POST)
+        if saved:
+            messages.success(request,'Marketplace choices saved. Add a connection for each store you use.');return redirect('/stores/')
     try:selected=get_object_or_404(StoreConnection,pk=uuid.UUID(request.GET['edit'])) if request.GET.get('edit') else None
     except ValueError:
         from django.http import Http404
         raise Http404('Choose a saved connection.')
-    form=StoreForm(request.POST if request.method=='POST' else None,instance=selected,initial={'version':selected.version if selected else 0});error='';status=200
-    if request.method=='POST':
+    editing=request.method=='POST' and request.POST.get('action')!='marketplaces'
+    form=StoreForm(request.POST if editing else None,instance=selected,initial={'version':selected.version if selected else 0});error='';status=400 if marketplace_form.is_bound else 200
+    if editing:
         try:save_connection(request.POST,request.user,selected);messages.success(request,'Connection saved. Refresh to check access and load orders for review.');return redirect('/stores/')
         except (ValidationError,IntegrityError) as exc:error='; '.join(exc.messages) if isinstance(exc,ValidationError) else 'That connection name is already used.';status=400
     rows=list(StoreConnection.objects.all())
     for row in rows:row.busy=bool(row.lease_at and row.lease_at>timezone.now()-timedelta(minutes=10))
-    return render(request,'portal/stores.html',{'form':form,'selected':selected,'stores':rows,'error':error,'runs':StoreSyncRun.objects.select_related('store').order_by('-pk')[:30]},status=status)
+    labels=dict(StoreConnection.PLATFORMS,manual='Manual orders / CSV only')
+    return render(request,'portal/stores.html',{'form':form,'selected':selected,'stores':rows,'error':error,'marketplace_form':marketplace_form,'selected_platform_names':[labels[key] for key in selection()],'has_marketplace_choice':bool(selection()),'runs':StoreSyncRun.objects.select_related('store').order_by('-pk')[:30]},status=status)
 
 @staff_member_required
 @require_POST

@@ -28,11 +28,15 @@ def photo_url(batch):
     if batch and not batch.removed_at and not batch.merged_into_id and (batch.roasted_at or batch.roasted_oz is not None):return '/batches/'+str(batch.pk)+'/photos/'
     return ''
 
+def artisan_upload_url(batch):
+    if photo_url(batch):return '/batches/'+str(batch.pk)+'/artisan/upload/'
+    return ''
+
 
 def row_result(row):
     batch=row.batch if row.batch_id else None
     from .finished_coverage import plan_coverage
-    return {'photo_url':photo_url(batch),'revision':row_token(row),'weight':str(batch.roasted_oz.quantize(Decimal('.1'))) if batch and batch.roasted_oz is not None else '',
+    return {'photo_url':photo_url(batch),'artisan_upload_url':artisan_upload_url(batch),'revision':row_token(row),'weight':str(batch.roasted_oz.quantize(Decimal('.1'))) if batch and batch.roasted_oz is not None else '',
             'steps':{key:bool(batch and getattr(batch,key)) for key in STEPS},'operator':batch.operator.username if batch else '—','undo_event':undo_event(row),'coverage':plan_coverage(row.group.plan)}
 
 
@@ -51,7 +55,9 @@ def roast_sheet(request):
     from .finished_coverage import plan_coverage
     coverages=[plan_coverage(plan) for plan in RoastPlan.objects.filter(accepted_at__isnull=False).order_by('date','pk')]
     for board in boards:
-        for row in board['rows']:row.sheet_revision=row_token(row);row.undo_event=undo_event(row);row.sheet_photo_url=photo_url(row.batch if row.batch_id else None)
+        for row in board['rows']:
+            batch=row.batch if row.batch_id else None
+            row.sheet_revision=row_token(row);row.undo_event=undo_event(row);row.sheet_photo_url=photo_url(batch);row.artisan_upload_url=artisan_upload_url(batch)
     return render(request,'portal/roast_sheet.html',{'accepted_boards':boards,'coverages':coverages,'roast_sheet':True,**clock_context(request.user)})
 
 

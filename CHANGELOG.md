@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-rc6 — private review candidate
+
+* Added explicit single or multiple marketplace selection, with relevant connection fields and a manual/CSV-only option. Existing connections and their order identities are retained.
+* Named prepared Artisan backgrounds using coffee, scheduled green ounces, First/Second and roast code; added title copying for Artisan's separate active roast properties.
+* Exposed completed Artisan log uploads from the roast sheet and preparation page, including after an automatic row save; expanded confirmed-upload and native-format regressions.
+
+The existing Artisan background handoff does not set the active roast title. Paste the generated title into Roast Properties; automatic title entry and automatic finished-file uploads are not provided.
+
 ## 0.1.0-rc5 — private review candidate
 
 * Fixed prepared Artisan backgrounds to use the native Python-literal file format required by Artisan 3.1, preserving boolean/null values and source curves.

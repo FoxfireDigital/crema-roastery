@@ -50,3 +50,8 @@ Do not resolve an access error by creating another connection for the same store
 * [Wix Search Orders](https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/orders/search-orders)
 * [Squarespace Orders overview](https://developers.squarespace.com/commerce-apis/orders-overview)
 * [Shopify Admin GraphQL Orders](https://shopify.dev/docs/api/admin-graphql/2026-10/queries/orders)
+# Choosing marketplaces
+
+In **Roastery setup → Choose marketplaces**, select the platform you use. Select multiple checkboxes for multiple marketplaces; several stores on the same platform are also supported. Choose **No online marketplace** for manual orders and CSV only. Manual orders and CSV remain available alongside every platform.
+
+Save these choices before adding a connection. The connection form offers only selected platforms and displays the relevant credential fields. Choosing a platform does not authorize or connect a merchant account. Existing installations retain their saved platforms during upgrade. Pause active stores before removing a platform; paused stores, credentials, mappings and past orders are retained. The existing Shopify OAuth connection remains selected while present, preserving its original order identities.

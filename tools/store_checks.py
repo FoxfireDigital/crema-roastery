@@ -8,7 +8,7 @@ def run_store_checks(root,client,user):
     from django.core.files.uploadedfile import SimpleUploadedFile
     from django.test import Client
     from django.utils import timezone
-    from portal.models import StoreConnection,StoreSyncRun,StoreProductMapping,StoreEvent,ImportOrder,IncomingOrderLine,RoastPlan,Batch,ProductMapping,Coffee
+    from portal.models import StoreConnection,StoreSyncRun,StoreProductMapping,StoreEvent,ImportOrder,IncomingOrderLine,RoastPlan,Batch,ProductMapping,Coffee,PortalConfiguration
     from portal.store_adapters import woo,wix,squarespace,make_line,finish,fetch_page
     from portal.stores import stage,synchronize,source_key,save_connection
     from portal.store_csv import preview_upload,apply_preview,expire_previews
@@ -20,9 +20,36 @@ def run_store_checks(root,client,user):
         except ValidationError:return
         raise AssertionError('Unsafe store operation accepted')
     with transaction.atomic():
+        from portal.marketplaces import selection,selection_token
+        from portal.stores import StoreForm
+        config=PortalConfiguration.objects.get(pk=1)
+        assert not selection()
+        response=client.get('/stores/');assert response.status_code==200 and b'Choose or change marketplaces' in response.content and b'id="store-form"' not in response.content
+        response=client.post('/stores/',{'action':'marketplaces','selection_token':selection_token(),'marketplaces':['manual']});assert response.status_code==302
+        assert set(dict(StoreForm().fields['platform'].choices))=={'','csv'}
+        assert b'Connect Shopify' not in client.get('/imports/').content
+        token=selection_token()
+        response=client.post('/stores/',{'action':'marketplaces','selection_token':token,'marketplaces':['woocommerce']});assert response.status_code==302
+        assert StoreForm().initial['platform']=='woocommerce' and set(dict(StoreForm().fields['platform'].choices))=={'','woocommerce','csv'}
+        assert client.post('/stores/',{'action':'marketplaces','selection_token':token,'marketplaces':['wix']}).status_code==400
+        assert selection()==['woocommerce']
+        assert client.post('/stores/',{'action':'marketplaces','selection_token':selection_token(),'marketplaces':['forged']}).status_code==400
+        assert client.post('/stores/',{'action':'marketplaces','selection_token':selection_token(),'marketplaces':['manual','woocommerce']}).status_code==400
+        reject(lambda:save_connection({'name':'Unselected platform','platform':'wix','site_id':'fixture','token':'fixture','version':'0','active':'on'},user))
+        response=client.post('/stores/',{'action':'marketplaces','selection_token':selection_token(),'marketplaces':['woocommerce','squarespace']});assert response.status_code==302
+        assert 'platform' not in StoreForm().initial
         now=timezone.now()-timedelta(seconds=10);stamp=now.isoformat().replace('+00:00','Z')
         a=StoreConnection.objects.create(name='Fictional Woo',platform='woocommerce',origin='https://store.example.org',updated_by=user,credentials_cipher=encrypt(json.dumps({'key':'test-consumer-key','secret':'test-consumer-secret'})))
         b=StoreConnection.objects.create(name='Fictional Squarespace',platform='squarespace',updated_by=user,credentials_cipher=encrypt(json.dumps({'token':'fixture-access-token'})))
+        old_connections=list(StoreConnection.objects.values())
+        assert client.post('/stores/',{'action':'marketplaces','selection_token':selection_token(),'marketplaces':['manual']}).status_code==400
+        assert list(StoreConnection.objects.values())==old_connections
+        # A paused platform may leave the setup choices without deleting its history or credentials.
+        b.active=False;b.save(update_fields=['active'])
+        assert client.post('/stores/',{'action':'marketplaces','selection_token':selection_token(),'marketplaces':['woocommerce']}).status_code==302
+        b.refresh_from_db();assert not b.active and b.credentials_cipher
+        b.active=True;b.save(update_fields=['active'])
+        client.post('/stores/',{'action':'marketplaces','selection_token':selection_token(),'marketplaces':['woocommerce','squarespace']})
         raw={'id':2055,'number':'2055','date_created_gmt':stamp.rstrip('Z'),'date_modified_gmt':stamp.rstrip('Z'),'date_paid_gmt':stamp.rstrip('Z'),'status':'processing','line_items':[{'id':11,'name':'Demo Hearth - 16 oz / Whole bean','quantity':1,'sku':'sample-medium'}]}
         normalized=woo(raw);assert normalized['financial_status']=='paid' and normalized['lines'][0]['grind']=='whole'
         stage(a,[normalized]);stage(a,[normalized]);assert a.orders.count()==1

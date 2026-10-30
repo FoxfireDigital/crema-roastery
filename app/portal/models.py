@@ -1065,6 +1065,7 @@ class SourcingEvent(models.Model):
 
 class PortalConfiguration(models.Model):
     name=models.CharField(max_length=100,default='Crema')
+    marketplaces=models.JSONField(null=True,blank=True,default=None,editable=False)
     flavor_base=models.ForeignKey(Coffee,on_delete=models.PROTECT,null=True,blank=True,related_name='+')
     frac_one=models.ForeignKey(Coffee,on_delete=models.PROTECT,null=True,blank=True,related_name='+')
     frac_two=models.ForeignKey(Coffee,on_delete=models.PROTECT,null=True,blank=True,related_name='+')

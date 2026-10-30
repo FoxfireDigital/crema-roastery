@@ -1,11 +1,14 @@
 """Fail closed on private assets/state in this source release."""
 from pathlib import Path
-import re,json,sys,zipfile
+import re,json,sys,zipfile,hashlib
 ROOT=Path(__file__).resolve().parents[1]
 # Known markers are represented in pieces so the scanner has no private data.
 markers=['fox'+'fire.digital','chan'+'tal','xhn'+'x4x','fl'+'oyd','trail'+'blazer','sunrise '+'warrior','voya'+'ger','C:'+ '/'+'Users/','C:'+chr(92)+'Users'+chr(92)]
 forbidden={'.env','.git','state','backups','__pycache__'}
 binary_suffixes={'.sqlite3','.db','.dump','.png','.jpg','.jpeg','.webp','.zip','.xlsx','.csv','.alog','.alrm','.xml','.pfx','.pem','.key','.dpapi'}
+# Reviewed transformation of existing platform choices only; no catalog/customer seeds.
+# Exact bytes are allowlisted so changing this migration requires a fresh privacy review.
+reviewed_migrations={'app/portal/migrations/0005_marketplace_selection.py':'8b9ec808c90c8dbc5dc33d8dc3bbbcaa8172c6fad026748ebfdc051d10a79df5'}
 def check_items(items):
     checked=0;fail=[]
     for name,raw in items:
@@ -20,7 +23,9 @@ def check_items(items):
         if re.search(r'\b(?:10\.\d+\.\d+\.\d+|192\.168\.\d+\.\d+)\b',text):fail.append(name+': private LAN address')
         if name.endswith('artisan_catalog.json') and json.loads(text)!={'profiles':[],'alarms':[]}:fail.append(name+': nonempty profile catalog')
         if name.endswith('label_artwork/catalog.json') and json.loads(text)!=[]:fail.append(name+': nonempty label catalog')
-        if '/migrations/' in name and re.search(r'RunPython|RunSQL',text):fail.append(name+': unexpected seeded migration')
+        if '/migrations/' in name and re.search(r'RunPython|RunSQL',text):
+            approved=next((sha for path,sha in reviewed_migrations.items() if name==path or name.endswith('/'+path)),None)
+            if hashlib.sha256(raw.replace(b'\r\n',b'\n')).hexdigest()!=approved:fail.append(name+': unexpected seeded or unreviewed data migration')
         checked+=1
     if fail:raise SystemExit('Release privacy check failed:\n'+'\n'.join(fail))
     print('PASS: source-only privacy checks ('+str(checked)+' files).')

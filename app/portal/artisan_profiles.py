@@ -63,7 +63,20 @@ def alarms_for(configuration):
             'alarmsources':[1,1,1],'alarmtemperatures':[float(charge),float(drop),float(drop+Decimal('.1'))],
             'alarmactions':[16,13,15],'alarmbeep':[0,0,0],'alarmstrings':['Charge','Drop','Off']}
 
-def derived(entry,configuration):
+ROAST_CODES={'Light':'C','Light/Medium':'C+','Medium':'FC','Medium/Dark':'FC+','Dark':'V','French':'F'}
+
+def roast_title(description):
+    name=description.get('coffee','')
+    if not isinstance(name,str) or not name.strip() or any(not c.isprintable() for c in name):raise ValidationError('Use a printable coffee name for the Artisan title.')
+    try:
+        weight=Decimal(str(description['green_oz']))
+        if not weight.is_finite() or weight<=0:raise ValueError()
+        mode={'first':'1','second':'2'}[description['mode']]
+        code=ROAST_CODES[description['roast_level']]
+    except (KeyError,ValueError,InvalidOperation):raise ValidationError('Check the green weight, session and roast level before naming this roast.')
+    return f"{name.strip()} {weight.quantize(Decimal('.1'),rounding=ROUND_HALF_UP):.1f}oz {mode} {code}"
+
+def derived(entry,configuration,title=None):
     original=bytes_for(entry);profile=decode_document(original)
     if not isinstance(profile,dict) or profile.get('mode')!='F':raise ValidationError('This profile needs a Fahrenheit review.')
     inspect_profile(original,entry['file'],reference=True)
@@ -71,7 +84,8 @@ def derived(entry,configuration):
     result=copy.deepcopy(profile);alarms=alarms_for(configuration)
     for external,internal in ALARM_KEYS.items():result[internal]=alarms[external]
     result['alarmsetlabel']='Crema — Charge / Drop / Off'
-    # Change only embedded alarm fields; original curves, events and weights stay intact.
+    if title is not None:result['title']=title
+    # Only derived title/alarms change; original curves, events and weights stay intact.
     return encode_document(result),json.dumps(alarms,separators=(',',':')).encode()
 
 class ProfileForm(forms.Form):
@@ -223,6 +237,7 @@ def prepare_artisan(request,pk):
                 if requested is not None:c['drop']=str(tenths(requested))
                 profile,alarms=derived(entry,c)
                 snapshot={'profile_key':entry['key'],'original_name':entry['file'],'original_sha256':entry['sha256'],'revision':revision.revision,'name':c['name'],'mode':mode,'roaster':row.roaster.name,'coffee':row.group.coffee.name,'roast_level':row.group.roast_level,'green_oz':str(row.batch.green_oz if row.batch_id else row.green_oz),'requested_drop':str(requested) if requested is not None else None,'charge':c['charge'],'drop':c['drop'],'off':str(tenths(c['drop'])+Decimal('.1')),'plan_id':row.group.plan_id,'planned_batch_id':row.pk,'fingerprint':row_fingerprint(row),'configuration':c}
+                snapshot['roast_title']=roast_title(snapshot)
                 prepared=ArtisanPreparation.objects.create(revision=revision,planned_batch=row,snapshot=snapshot,created_by=request.user)
             return redirect('artisan_preparation',preparation_id=prepared.pk)
         except (ValidationError,ValueError) as exc:error=' '.join(exc.messages) if isinstance(exc,ValidationError) else 'Choose a valid profile.';status=409
@@ -234,7 +249,9 @@ def preparation_detail(request,preparation_id):
     if not staff(request):return HttpResponseForbidden('Staff access is required.')
     prepared=get_object_or_404(ArtisanPreparation,pk=preparation_id)
     stale=not preparation_current(prepared)
-    return render(request,'portal/artisan_prepared.html',{'prepared':prepared,'s':prepared.snapshot,'stale':stale})
+    from .roast_sheet import artisan_upload_url
+    row=prepared.planned_batch
+    return render(request,'portal/artisan_prepared.html',{'prepared':prepared,'s':prepared.snapshot,'stale':stale,'roast_title':roast_title(prepared.snapshot),'upload_url':artisan_upload_url(row.batch if row.batch_id else None)})
 
 def preparation_current(prepared):
     try:
@@ -244,13 +261,18 @@ def preparation_current(prepared):
     except (ValidationError,AttributeError):return False
 
 def package_bytes(entry,configuration,description,prepared=None):
-    profile,alarms=derived(entry,configuration)
+    title=roast_title(description) if all(key in description for key in ['coffee','green_oz','mode','roast_level']) else None
+    profile,alarms=derived(entry,configuration,title)
     payload={'reference.alog':profile,'alarms.alrm':alarms}
+    if title is not None:payload['roast-title.txt']=(title+'\n').encode('utf-8')
     manifest={**description,'format':1,'profile_format':'artisan-python-literal','created_utc':timezone.now().isoformat(),'files':{name:hashlib.sha256(content).hexdigest() for name,content in payload.items()},'preparation_id':str(prepared.pk) if prepared else None}
+    if title is not None:manifest['roast_title']=title
     payload['manifest.json']=json.dumps(manifest,indent=2).encode()
     payload['Prepare-Artisan.ps1']=(ROOT/'artisan_helper.ps1').read_bytes()
-    payload['Prepare-Artisan.cmd']=b'@echo off\r\npowershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0Prepare-Artisan.ps1"\r\n'
+    payload['Prepare-Artisan.cmd']=b'@echo off\r\npowershell.exe -STA -NoProfile -ExecutionPolicy Bypass -File "%~dp0Prepare-Artisan.ps1"\r\n'
     payload['READ-ME.txt']=("Extract this complete folder on the Windows roasting computer, then run Prepare-Artisan.cmd. It reuses the existing main Artisan instance or starts Artisan if closed. Confirm idle state and the connected roaster before sending. It never starts monitoring, recording or a roast. A sent request is not a verified load: inspect the background and Config > Alarms in Artisan.\n\nEnable Config > Alarms > Load from background when using embedded alarms. The helper also sends the explicit paired .alrm file. Targets are BT rises ABOVE the displayed value, as supported by Artisan, not a guarantee of an exact crossing sample. Off is Artisan's monitoring action, not a guaranteed physical heater shutdown.\n\nSaved reference weights are original metadata. Use the portal's displayed green load; do not copy reference weights. First applies after this particular machine was idle for at least 10 minutes; Second is for continuing warm roasting.\n\nIf the plan/profile changes after downloading, discard this folder and prepare again. Packages do not receive live updates. No portal password or Shopify credential is included.\n").encode()
+    if title is not None:
+        payload['READ-ME.txt']+=(f"\nRoast title: {title}\nFormat: coffee name, scheduled green ounces, First=1/Second=2, roast code C/C+/FC/FC+/V/F. The reference title is set automatically. Background loading does NOT set Artisan's active roast title. Accept the clipboard prompt, open Roast > Properties, paste into Title and confirm before roasting. Artisan retains its own autosave settings; use a date/time or batch counter in filenames to distinguish repeated titles.\n\nAfter the roast, save the completed foreground .alog in Artisan. Record Roasted in Crema, then use Upload finished roast on Today or this preparation page. Preview the file, choose its reference, confirm the physical batch and attach. The log can be reviewed alongside its reference without changing weights, stock or production status.\n").encode('utf-8')
     buffer=io.BytesIO()
     with zipfile.ZipFile(buffer,'w',zipfile.ZIP_DEFLATED) as archive:
         for name,content in payload.items():archive.writestr(name,content)
