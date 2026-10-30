@@ -1,6 +1,6 @@
 # Release candidate and launch checklist
 
-0.1.0-rc11 is being prepared privately for review. A public repository or download has not been published. The selected name is Crema. Domain, registry and name availability have not been cleared for public launch.
+0.1.0-rc12 is being prepared privately for review. A public repository or download has not been published. The selected name is Crema. Domain, registry and name availability have not been cleared for public launch.
 
 The primary installation artifact is compose.yaml. It generates its own persistent instance keys and embeds the proxy config. The application image is currently built locally using compose.build.yaml. A public YAML-only release needs an approved published image reference/digest and pull policy; no registry has been published yet. A review install and a rerun/restart were tested against an isolated PostgreSQL stack, including nonempty-database and partial-key recovery guards.
 

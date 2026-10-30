@@ -1,0 +1,16 @@
+<section class="card" id="artisan-logs" style="scroll-margin-top:100px">
+<h2>Completed Artisan logs</h2>
+<p>Review the uploaded roast here, alongside the reference saved with its attachment. Logs leave production measurements, stock and original files unchanged.</p>
+{% if not batch.removed_at and not batch.merged_into_id %}{% if batch.roasted_at or batch.roasted_oz != None %}<a class="button" href="/batches/{{ batch.pk }}/artisan/upload/">Attach completed Artisan log</a>{% endif %}{% endif %}
+{% for preview in artisan_log_previews %}
+<article class="completed-artisan-log" aria-label="Completed log {{ preview.log.source.filename }}">
+<h3>{{ preview.log.source.filename }}{% if preview.log.removed_at %} · Unlinked{% endif %}</h3>
+<p class="muted">{{ preview.log.created_at|date:'M j, Y g:i A' }} · {{ preview.log.created_by.username }}{% if preview.log.reference_snapshot %} · Reference: {{ preview.log.reference_snapshot.name }}{% endif %}</p>
+<p><a class="button secondary" href="/artisan/logs/{{ preview.log.pk }}/">Review log &amp; notes</a><a class="button secondary" href="/artisan/logs/{{ preview.log.pk }}/download/">Download original .alog</a></p>
+{% if preview.log.notes %}<p>{{ preview.log.notes|linebreaksbr }}</p>{% endif %}
+{% if preview.error %}<p class="notice warning">{{ preview.error }}</p>{% endif %}
+{% include 'portal/artisan_curve.html' with curve_chart=preview.curve_chart only %}
+</article>
+{% empty %}<p class="muted">No completed log attached yet. After roasting, upload the saved foreground .alog to see its graph here.</p>{% endfor %}
+{% if artisan_log_page.has_other_pages %}<nav aria-label="Completed Artisan logs pages">{% if artisan_log_page.has_previous %}<a class="button secondary" href="?logs_page={{ artisan_log_page.previous_page_number }}#artisan-logs">Newer logs</a>{% endif %}<span>Page {{ artisan_log_page.number }} of {{ artisan_log_page.paginator.num_pages }}</span>{% if artisan_log_page.has_next %}<a class="button secondary" href="?logs_page={{ artisan_log_page.next_page_number }}#artisan-logs">Older logs</a>{% endif %}</nav>{% endif %}
+</section>

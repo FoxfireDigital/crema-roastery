@@ -11,7 +11,7 @@ from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 from .models import Batch,BatchProgressEvent,HistoricalRoast,Coffee,RoastPlan
 
-FIELDS=['roasted_oz','actual_finish_temp_f','measured_at','roasted_at','bagged_at','sealed_at']
+FIELDS=['roasted_oz','actual_finish_temp_f','measured_at','roasted_at','cooled_at','bagged_at','sealed_at']
 
 def batch_state(batch):
     result={}
@@ -93,7 +93,8 @@ def batch_detail(request,pk):
         coverage['rows']=[item for item in coverage['rows'] if item['group_id']==batch.planned_group_id]
         coverage['totals']={key:sum((item[key] for item in coverage['rows']),Decimal(0)) for key in NUMBERS}
     from .batch_photos import photo_context
-    return render(request,'portal/batch.html',{**(photo_context(batch) if request.user.is_staff else {}),'batch':batch,'coverage':coverage,'result_form':form,'revision':state_token(batch),'closed_plan':closed_plan if closed_plan and closed_plan.closed_at else None,'can_undo':can_undo and not (closed_plan and closed_plan.closed_at),'events':batch.progress_events.select_related('actor')[:15],'merge_events':batch.merge_events.select_related('source','actor')},status=status)
+    from .artisan_uploads import batch_log_context
+    return render(request,'portal/batch.html',{**(photo_context(batch) if request.user.is_staff else {}),**(batch_log_context(batch,request.GET.get('logs_page')) if request.user.is_staff else {}),'batch':batch,'coverage':coverage,'result_form':form,'revision':state_token(batch),'closed_plan':closed_plan if closed_plan and closed_plan.closed_at else None,'can_undo':can_undo and not (closed_plan and closed_plan.closed_at),'events':batch.progress_events.select_related('actor')[:15],'merge_events':batch.merge_events.select_related('source','actor')},status=status)
 
 
 def yield_suggestion(group,roaster=None,green_oz=None,current_loss=None):

@@ -1,6 +1,6 @@
 {
   "name": "Crema",
-  "version": "0.1.0-rc11",
+  "version": "0.1.0-rc12",
   "license": "MIT",
   "files": [
     {
@@ -25,7 +25,7 @@
     },
     {
       "path": ".github/workflows/verify.yml",
-      "sha256": "55af819b9e023424e3499ce711e5ef05dda7a2a32fe92261b3130ce05da33132",
+      "sha256": "ecebf9db561116623708c37477234c8bccfb7853645432d5a3fb7508b6a78464",
       "bytes": 3522
     },
     {
@@ -35,8 +35,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "38c789621c98c45150b6f5635f707ca6106ab77a5f0187ec9e6bbe246c56a48c",
-      "bytes": 7006
+      "sha256": "3e63e894aedd101b7de3e6291dc23a07020b1ca0f30c2f1f5328a5c3e2eef8e3",
+      "bytes": 7757
     },
     {
       "path": "CONTRIBUTING.md",
@@ -55,12 +55,12 @@
     },
     {
       "path": "README.md",
-      "sha256": "f5b8e7499f9b385e17c409d3e3b03dc7f20a6e0d237a549d28d169c8d7f869cc",
+      "sha256": "4b1dd561a127effcb23433ca2ee42d3e9dd0a0c43a2af62b444a59d52691baf9",
       "bytes": 7240
     },
     {
       "path": "ROADMAP.md",
-      "sha256": "23bed4aae1856efd824b80cb15e0da98218728a1bc36d284ed6593b02c5d523f",
+      "sha256": "cd8105edd72942ab088162db7fb41cb021be71dd04fdca916a91cc7b39ba7ff0",
       "bytes": 16831
     },
     {
@@ -165,8 +165,8 @@
     },
     {
       "path": "app/portal/artisan_uploads.py",
-      "sha256": "8711b6574374798f469e6e54f4796845dac518217fd93ba038d108bcbc0ffe7b",
-      "bytes": 14801
+      "sha256": "4f86ba7ba3ce3d8674ec1ede0f9a20219c656070f2b6323faf263707398e18fe",
+      "bytes": 15841
     },
     {
       "path": "app/portal/artwork_decisions.py",
@@ -344,14 +344,19 @@
       "bytes": 742
     },
     {
+      "path": "app/portal/migrations/0007_batch_cooled_at.py",
+      "sha256": "071f660a302764eed3ce16db28375b578a5615c0424ccd91906d4dded2104a50",
+      "bytes": 268
+    },
+    {
       "path": "app/portal/migrations/__init__.py",
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "bytes": 0
     },
     {
       "path": "app/portal/models.py",
-      "sha256": "d631a8fc1da95452b09ba3d6e9eda1054cf0b02c12b0192a7ddcc60ae8dca7a1",
-      "bytes": 66932
+      "sha256": "2cf92f0378ccf1800f4eaa4fefeba264873e18873a62cd4d9378c6dd8c3ed43a",
+      "bytes": 67021
     },
     {
       "path": "app/portal/neutral_print.py",
@@ -405,8 +410,8 @@
     },
     {
       "path": "app/portal/production.py",
-      "sha256": "aa7392105162fd5e100e6923e242ab48b504ff4f184e40f4f4fc41c5592935be",
-      "bytes": 8803
+      "sha256": "23df5f7ed4457cf499447384657bf922d1dff04a2432f3339deb68c64cd462e8",
+      "bytes": 8957
     },
     {
       "path": "app/portal/production_orders.py",
@@ -420,8 +425,8 @@
     },
     {
       "path": "app/portal/roast_sheet.py",
-      "sha256": "7ec83f9e6e38fd3a68705078f6af436bb101265d0ac15fb9d9dca8fd5f338e3f",
-      "bytes": 8993
+      "sha256": "f4fe360f9310ebb19e7b3fc64bf0a8548c00fa6107330cb7859d3e12aba22a90",
+      "bytes": 9122
     },
     {
       "path": "app/portal/roasted_stock.py",
@@ -560,13 +565,18 @@
     },
     {
       "path": "app/portal/templates/portal/base.html",
-      "sha256": "e02686332d3e8121969d8e9f647e989462f14fcb04b59ec42b5b630dbbd6c91c",
-      "bytes": 14497
+      "sha256": "e7b45460b772377df8b14fec81bc398468f9a7a652d690714edca34d49db015b",
+      "bytes": 14605
     },
     {
       "path": "app/portal/templates/portal/batch.html",
-      "sha256": "6d04fed339c1080f1db74c2f3903f99577712bd6256885ae54a112f37d52d5f2",
-      "bytes": 5051
+      "sha256": "2347c837471281dfd3ecd1c4938d466beadf80b795a3efc38d1598a42d0c1c8d",
+      "bytes": 4380
+    },
+    {
+      "path": "app/portal/templates/portal/batch_artisan_logs.html",
+      "sha256": "22d4f3c69cad98fd5d5e4e39a82bb529f6e11c3a39ce8ef934140cf6cc946ab2",
+      "bytes": 2108
     },
     {
       "path": "app/portal/templates/portal/batch_camera.html",
@@ -670,8 +680,8 @@
     },
     {
       "path": "app/portal/templates/portal/help.html",
-      "sha256": "4d3e779e13fac5dd42f3bcabaaac7d149b078888f1a3aaf2438246d745896fb6",
-      "bytes": 11357
+      "sha256": "e4e469430270dfee1b58c31afd9d9458c209f1455971eb5d8060727c366d0421",
+      "bytes": 11917
     },
     {
       "path": "app/portal/templates/portal/historical_roasts.html",
@@ -815,8 +825,8 @@
     },
     {
       "path": "app/portal/templates/portal/roast_sheet.html",
-      "sha256": "c20b884ec1ae61099626ae3d5e567d6717995d10935be4931b6515b915ae9422",
-      "bytes": 15030
+      "sha256": "2d2f668b08ef6470f25e69dc7b26973babc82d1253092431695be0c1a210cf3f",
+      "bytes": 15081
     },
     {
       "path": "app/portal/templates/portal/roasted_stock.html",
@@ -960,7 +970,7 @@
     },
     {
       "path": "compose.yaml",
-      "sha256": "fb80596c21e67b914452f7360e8ee076a64129487849eaa29571ddc9f69d1c7f",
+      "sha256": "ecd6c0a88da3afca6d2986ca17a45346438b92e0f365858b45918159f45db174",
       "bytes": 2907
     },
     {
@@ -975,7 +985,7 @@
     },
     {
       "path": "docs/DEPLOYMENT-QA.md",
-      "sha256": "88e97ff21b1c1a7307a5a3eb24df95acea7338f2ae8f1dfb25504c73da4109b0",
+      "sha256": "a71df9f92229e6eddee49597d1dd442ae9712a6ef5af98990782105337234ca4",
       "bytes": 3809
     },
     {
@@ -995,7 +1005,7 @@
     },
     {
       "path": "docs/IMAGE-REVIEW.md",
-      "sha256": "488dc9a4d6d205d721127e3af15afdebf000ad5b9be15da647d211f0e20df057",
+      "sha256": "a093d77644149db49e511ea41594e022132fb4afeb96ae28326fabfb75dc1da6",
       "bytes": 5374
     },
     {
@@ -1005,7 +1015,7 @@
     },
     {
       "path": "docs/RELEASE.md",
-      "sha256": "9212d0a2e45aaf3ab3558104eff8bf48c155925fcccb45bf4045958ebb03f03c",
+      "sha256": "0ce031142513750ffc4be5ab80740da1bc606549ad2a10a2411418e1f4edc239",
       "bytes": 3826
     },
     {
@@ -1029,14 +1039,19 @@
       "bytes": 1420
     },
     {
+      "path": "docs/TODAY-AND-LOGS.md",
+      "sha256": "1b977c39789663e807d9da655d5982550340527a5acabfc88138b16a2577a4a7",
+      "bytes": 1450
+    },
+    {
       "path": "docs/TRUENAS.md",
       "sha256": "a1c020b33fd20bea39beee1def92aed83131354f689300c7f75472b5bce65c42",
       "bytes": 2856
     },
     {
       "path": "tools/artisan_checks.py",
-      "sha256": "588060b0c128cf858551de3ac42339e82349003dafa338ac616f49a56b15ddd5",
-      "bytes": 9766
+      "sha256": "cca718e060b317e38d065f53761f4b2e0a1c48a987e2414cad3d089569ebdc60",
+      "bytes": 11785
     },
     {
       "path": "tools/audit_dependencies.py",
@@ -1060,8 +1075,8 @@
     },
     {
       "path": "tools/production_checks.py",
-      "sha256": "5869457bdca84446f68c9074ae55186d05001622ff8d2f7ef2cbbc4f9c72e47a",
-      "bytes": 7956
+      "sha256": "d8994b8ae5efb1d0d019f8a42653a67462e590773a874018804c95522d33b596",
+      "bytes": 9832
     },
     {
       "path": "tools/production_order_checks.py",

@@ -12,7 +12,7 @@ from django.views.decorators.http import require_POST
 from .models import Batch,BatchProgressEvent,PlannedBatch,RoastPlan
 from .production import batch_state
 
-STEPS=('measured_at','roasted_at','bagged_at','sealed_at')
+STEPS=('measured_at','roasted_at','cooled_at')
 
 
 def sheet_state(batch):
@@ -33,10 +33,14 @@ def artisan_upload_url(batch):
     return ''
 
 
+def artisan_logs_url(batch):
+    return '/batches/'+str(batch.pk)+'/#artisan-logs' if batch else ''
+
+
 def row_result(row):
     batch=row.batch if row.batch_id else None
     from .finished_coverage import plan_coverage
-    return {'photo_url':photo_url(batch),'artisan_upload_url':artisan_upload_url(batch),'revision':row_token(row),'weight':str(batch.roasted_oz.quantize(Decimal('.1'))) if batch and batch.roasted_oz is not None else '',
+    return {'photo_url':photo_url(batch),'artisan_upload_url':artisan_upload_url(batch),'artisan_logs_url':artisan_logs_url(batch),'revision':row_token(row),'weight':str(batch.roasted_oz.quantize(Decimal('.1'))) if batch and batch.roasted_oz is not None else '',
             'steps':{key:bool(batch and getattr(batch,key)) for key in STEPS},'operator':batch.operator.username if batch else '—','undo_event':undo_event(row),'coverage':plan_coverage(row.group.plan)}
 
 
@@ -57,7 +61,7 @@ def roast_sheet(request):
     for board in boards:
         for row in board['rows']:
             batch=row.batch if row.batch_id else None
-            row.sheet_revision=row_token(row);row.undo_event=undo_event(row);row.sheet_photo_url=photo_url(batch);row.artisan_upload_url=artisan_upload_url(batch)
+            row.sheet_revision=row_token(row);row.undo_event=undo_event(row);row.sheet_photo_url=photo_url(batch);row.artisan_upload_url=artisan_upload_url(batch);row.artisan_logs_url=artisan_logs_url(batch)
     return render(request,'portal/roast_sheet.html',{'accepted_boards':boards,'coverages':coverages,'roast_sheet':True,**clock_context(request.user)})
 
 
@@ -65,8 +69,7 @@ class SheetResultForm(forms.Form):
     roasted_oz=forms.DecimalField(max_digits=9,decimal_places=1,min_value=Decimal('.1'),required=False)
     measured_at=forms.BooleanField(required=False)
     roasted_at=forms.BooleanField(required=False)
-    bagged_at=forms.BooleanField(required=False)
-    sealed_at=forms.BooleanField(required=False)
+    cooled_at=forms.BooleanField(required=False)
 
     def clean(self):
         data=super().clean()

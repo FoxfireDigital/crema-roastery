@@ -129,6 +129,26 @@ def saved_reference(log):
     if not entry or entry['sha256']!=s['sha256']:raise ValidationError('Saved reference checksum mismatch.')
     return curve(bytes_for(entry),entry['file'])
 
+
+def batch_log_context(batch,page_number=None):
+    """Inline previews use verified originals and the attachment's frozen reference."""
+    from django.core.paginator import Paginator
+    logs=batch.artisan_logs.select_related('source','reference_source','created_by','removed_by').order_by('-created_at','-pk')
+    page=Paginator(logs,5).get_page(page_number)
+    previews=[]
+    for log in page:
+        chart=None;error=''
+        try:
+            actual=curve(source_raw(log.source),log.source.filename)
+            try:reference=saved_reference(log)
+            except ValidationError:
+                reference=None;error='The saved reference could not be verified. Only the uploaded roast is shown.'
+            chart=comparison(actual,reference)
+        except ValidationError:
+            error='This stored curve could not be verified for preview. Review the log details before using it.'
+        previews.append({'log':log,'curve_chart':chart,'error':error})
+    return {'artisan_log_previews':previews,'artisan_log_page':page}
+
 @login_required
 @require_http_methods(['GET','POST'])
 def upload_batch_log(request,pk):

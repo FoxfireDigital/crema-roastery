@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.0-rc12 — roasting and log review
+
+* Today now records Measured, Roasted and an explicit Cooled step. Bagging/sealing controls stay on the separate packing checklist; Today corrections preserve existing packing timestamps. Existing batches receive no invented cooling timestamps.
+* Added direct roast/log review buttons on Today and paginated actual/reference curve overlays beneath Completed Artisan logs on the batch screen. Original files, notes and staff access remain intact; unverifiable curves show a warning.
+* Grouped Connections & orders directly below Coffee & artwork in the More menu.
+* Added a nullable cooling timestamp, stale-save/undo and packing-preservation regressions, inline curve/reference-integrity and access checks.
+
 ## 0.1.0-rc11 — private production-status candidate
 
 * Added a signed, staff-confirmed “still needs production” review for unchanged paid fulfilled orders already assigned to active plans. It preserves existing demand/results and the marketplace's true shipping status.

@@ -106,6 +106,30 @@ def run_artisan_checks(client,user):
         assert client.get(f'/artisan/logs/{log.pk}/download/').content==raw
         assert client.post(url,{'action':'attach','ticket':ticket,'confirmed':'on'}).status_code==302
         assert BatchArtisanLog.objects.filter(batch=batch).count()==1
+        # Graphs render on the batch screen itself, using the attachment's frozen
+        # reference; missing references degrade to the actual curve, not a 500.
+        log.reference_source=log.source
+        log.reference_snapshot={'key':'fictional-inline','sha256':log.source.sha256,'file':log.source.filename,'name':'Fictional saved reference'}
+        log.save(update_fields=['reference_source','reference_snapshot'])
+        detail=client.get(f'/batches/{batch.pk}/')
+        assert detail.status_code==200,detail.content
+        html=detail.content.decode()
+        assert 'id="artisan-logs"' in html and 'Actual roast and reference curve' in html and '<polyline class="curve-reference"' in html
+        assert '<polyline class="curve-actual"' in html and 'Fictional saved reference' in html
+        assert detail.context['artisan_log_previews'][0]['curve_chart']['reference']
+        log.reference_snapshot['sha256']='0'*64;log.save(update_fields=['reference_snapshot'])
+        detail=client.get(f'/batches/{batch.pk}/')
+        assert detail.status_code==200 and b'Only the uploaded roast is shown.' in detail.content and b'<polyline class="curve-actual"' in detail.content
+        assert client.get(f'/artisan/logs/{log.pk}/download/').content==raw
+        from django.contrib.auth import get_user_model
+        from django.test import Client
+        viewer=get_user_model().objects.create_user('fictional-log-viewer',password='Fictional-viewer-only-192!')
+        viewer_client=Client(HTTP_HOST='localhost');viewer_client.force_login(viewer)
+        assert b'id="artisan-logs"' not in viewer_client.get(f'/batches/{batch.pk}/').content
+        assert viewer_client.get(f'/artisan/logs/{log.pk}/').status_code==403
+        source=log.source;source.original_b64=base64.b64encode(b'corrupted fixture').decode();source.save(update_fields=['original_b64'])
+        detail=client.get(f'/batches/{batch.pk}/')
+        assert detail.status_code==200 and b'This stored curve could not be verified' in detail.content
         batch.refresh_from_db();assert before==(batch.green_oz,batch.roasted_oz,batch.roasted_at)
         batch.roasted_at=None;batch.roasted_oz=None;assert artisan_upload_url(batch)==''
         transaction.set_rollback(True)

@@ -53,9 +53,28 @@ def run_production_checks(root,client,user):
         # The operator may mark roasted before measuring finished output.
         row=PlannedBatch.objects.select_related('group__plan','roaster','batch').get(pk=row.pk)
         response=client.post(f'/roasts/{row.pk}/',{'revision':row_token(row),'measured_at':'on','roasted_at':'on'});assert response.status_code==200
-        row.refresh_from_db();assert row.batch.roasted_at and row.batch.roasted_oz is None
+        row.refresh_from_db();assert row.batch.roasted_at and row.batch.roasted_oz is None and row.batch.cooled_at is None
         response=client.post(f'/roasts/{row.pk}/',{'revision':row_token(row),'roasted_oz':'17.6','measured_at':'on','roasted_at':'on','bagged_at':'on','sealed_at':'on'});assert response.status_code==200,response.content
-        row.refresh_from_db();assert row.batch.roasted_oz==Decimal('17.6')
+        row.refresh_from_db();assert row.batch.roasted_oz==Decimal('17.6') and not row.batch.cooled_at and not row.batch.bagged_at and not row.batch.sealed_at
+        # Cooling is an explicit roasting step, independent of packing. Old clients
+        # cannot set bagging/sealing through Today, and corrections preserve them.
+        now=timezone.now();Batch.objects.filter(pk=row.batch_id).update(bagged_at=now,sealed_at=now)
+        row=PlannedBatch.objects.select_related('group__plan','batch').get(pk=row.pk)
+        green_before=GreenMovement.objects.filter(item=green).count()
+        response=client.post(f'/roasts/{row.pk}/',{'revision':row_token(row),'roasted_oz':'17.6','cooled_at':'on'})
+        assert response.status_code==400,'Cooling without preceding steps was accepted'
+        response=client.post(f'/roasts/{row.pk}/',{'revision':row_token(row),'roasted_oz':'17.6','measured_at':'on','roasted_at':'on','cooled_at':'on'})
+        assert response.status_code==200,response.content
+        row.refresh_from_db();assert row.batch.cooled_at and row.batch.bagged_at==now and row.batch.sealed_at==now
+        assert GreenMovement.objects.filter(item=green).count()==green_before
+        html=client.get('/').content.decode()
+        assert 'name="cooled_at"' in html and 'name="bagged_at"' not in html and 'name="sealed_at"' not in html
+        assert f'/batches/{row.batch_id}/#artisan-logs' in html and 'Review roast / logs' in html
+        assert html.index('class="nav-column"')<html.index('Coffee & artwork')<html.index('Connections & orders')<html.index('<section><h2>Other tools')
+        result=response.json()
+        undone=client.post(f'/roasts/{row.pk}/undo/',{'revision':result['revision'],'event':result['undo_event']})
+        assert undone.status_code==200,undone.content
+        row.refresh_from_db();assert not row.batch.cooled_at and row.batch.bagged_at==now and row.batch.sealed_at==now
         coverage=plan_coverage(plan)['totals'];assert coverage['recorded_total']==Decimal('33.6') and coverage['bulk_used']==16 and coverage['remaining_to_record']==0
         before=list(PlannedBatch.objects.filter(group=group).values_list('pk','green_oz'))
         sync_plan(plan,user);assert before==list(PlannedBatch.objects.filter(group=group).values_list('pk','green_oz'))

@@ -79,6 +79,7 @@ class Batch(models.Model):
     roast_level=models.CharField(max_length=20,choices=LEVELS)
     measured_at=models.DateTimeField(null=True,blank=True)
     roasted_at=models.DateTimeField(null=True,blank=True)
+    cooled_at=models.DateTimeField(null=True,blank=True)
     bagged_at=models.DateTimeField(null=True,blank=True)
     sealed_at=models.DateTimeField(null=True,blank=True)
     note=models.TextField(blank=True)
@@ -98,7 +99,7 @@ class Batch(models.Model):
     def status(self):
         if self.removed_at:return 'Deleted / excluded'
         if self.merged_into_id:return f'Measured input combined into batch #{self.merged_into_id}'
-        return 'Sealed' if self.sealed_at else 'Bagged' if self.bagged_at else 'Roasted' if self.roasted_at else 'Measured' if self.measured_at else 'Pending'
+        return 'Sealed' if self.sealed_at else 'Bagged' if self.bagged_at else 'Cooled' if self.cooled_at else 'Roasted' if self.roasted_at else 'Measured' if self.measured_at else 'Pending'
     @property
     def loss_percent(self):
         if self.green_oz and self.roasted_oz is not None:
