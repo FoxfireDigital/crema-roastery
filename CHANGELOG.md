@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.0-rc7 — private review candidate
+
+* Added optional, audited green-stock checks with one-click Skip that records availability as not checked.
+* Added green-origin substitution requests and explicit approval for a plan group's unmeasured loads. Global recipes, ordered coffees and already measured ingredient history are preserved.
+* Ranked alternatives by documented roast suitability first, then shared flavor tags; added optional origin metadata, caffeine/quantity guards and stale-request protection.
+* Included approved plan ingredients in green deductions and forecasts, and invalidated old production/preparation revisions after approval or cancellation.
+
 ## 0.1.0-rc6 — private review candidate
 
 * Added explicit single or multiple marketplace selection, with relevant connection fields and a manual/CSV-only option. Existing connections and their order identities are retained.

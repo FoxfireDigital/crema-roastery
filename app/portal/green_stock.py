@@ -42,6 +42,13 @@ def recipe_percentages(coffee_id):
     except (KeyError,ValueError,TypeError,ArithmeticError):return {}
 
 
+def batch_percentages(batch):
+    if batch.green_item_id:return {str(batch.green_item_id):'100'}
+    if batch.planned_group_id and batch.planned_group.coffee_id==batch.coffee_id:
+        from .green_review import parts_for_group
+        return parts_for_group(batch.planned_group)
+    return recipe_percentages(batch.coffee_id)
+
 def sync_batch(batch,previous):
     """Caller holds the batch lock/transaction. Existing old loads are not backfilled."""
     usage=GreenBatchUsage.objects.select_for_update().filter(batch=batch).first()
@@ -50,9 +57,9 @@ def sync_batch(batch,previous):
     if usage:
         percentages=usage.percentages
         if previous and (previous.green_item_id!=batch.green_item_id or previous.coffee_id!=batch.coffee_id and not batch.green_item_id):
-            percentages={str(batch.green_item_id):'100'} if batch.green_item_id else recipe_percentages(batch.coffee_id)
+            percentages=batch_percentages(batch)
             if not percentages:raise ValidationError('Set a green recipe or direct origin before changing this already-accounted load’s green source.')
-    else:percentages={str(batch.green_item_id):'100'} if batch.green_item_id else recipe_percentages(batch.coffee_id)
+    else:percentages=batch_percentages(batch)
     if not percentages:return
     desired=split(batch.green_oz,percentages) if used(batch) else {}
     old={k:Decimal(v) for k,v in (usage.amounts if usage else {}).items()}

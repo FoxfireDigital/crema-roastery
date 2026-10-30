@@ -16,6 +16,7 @@ from portal.packing import packing_list,save_packing,save_progress
 from portal.label_sheets import label_sheets,artwork,reprint_run,update_run
 from portal.label_sheets import artwork_print_preview
 from portal.green_stock import green_stock_page
+from portal.green_review import green_review_action
 from portal.batch_removal import delete_batch
 from portal.payroll import payroll_page,export_payroll
 from portal.artwork_library import library
@@ -45,6 +46,7 @@ from portal.instance import setup_page
 from portal.stores import connections,refresh_store
 from portal.store_csv import csv_import,csv_example
 urlpatterns=[
+    path('plans/<int:pk>/green-review/',green_review_action,name='green_review_action'),
     path('stores/csv/',csv_import,name='store_csv'),
     path('stores/csv/example/',csv_example,name='store_csv_example'),
     path('stores/',connections,name='store_connections'),

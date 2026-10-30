@@ -1,6 +1,6 @@
 {
   "name": "Crema",
-  "version": "0.1.0-rc6",
+  "version": "0.1.0-rc7",
   "license": "MIT",
   "files": [
     {
@@ -35,8 +35,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "3da72ebc658d4dc8f8053789e8d164a1bddd89a825dccc00ee6a39b476e3b811",
-      "bytes": 2512
+      "sha256": "5293819da4512b671b780915a0fa051e329b18b82194237614a450cdc97fcab5",
+      "bytes": 3182
     },
     {
       "path": "CONTRIBUTING.md",
@@ -55,7 +55,7 @@
     },
     {
       "path": "README.md",
-      "sha256": "5bd17b96a9dec75bc21f893801776f39c98dd99f66d1eccf0976fe55dbcddedb",
+      "sha256": "488a3691d5448073a8aa512601cf5024a79da75facda55e8b899f17f780fa539",
       "bytes": 6535
     },
     {
@@ -220,13 +220,18 @@
     },
     {
       "path": "app/portal/green_forecast.py",
-      "sha256": "7623c642a94fb09640432353dcf9d81e20a1493658032eebe1f84b5c70c8d150",
-      "bytes": 12361
+      "sha256": "a7fa1909408c6cea5390008b7841b6fdbc9675124cd9bd153b53f24311a4c591",
+      "bytes": 12654
+    },
+    {
+      "path": "app/portal/green_review.py",
+      "sha256": "68e875ff1731bf62050472aa6321bfad41ff4f72ffe0194810aadf9fefe92272",
+      "bytes": 11890
     },
     {
       "path": "app/portal/green_stock.py",
-      "sha256": "b1f747ab7e297ca20fa420737a895b627b5214c2e9e7903aa02277fa0930f467",
-      "bytes": 12643
+      "sha256": "7a4ea0635e4396631dc2cbdaf72019dc26f363c87d3e22531842dc51f98b136a",
+      "bytes": 12828
     },
     {
       "path": "app/portal/help_guide.py",
@@ -324,14 +329,19 @@
       "bytes": 959
     },
     {
+      "path": "app/portal/migrations/0006_green_substitution_details.py",
+      "sha256": "7a063270a7a1eaa04423c898f1aaadc5985cc2bb49c8cd6f1fbea6b911482e4d",
+      "bytes": 742
+    },
+    {
       "path": "app/portal/migrations/__init__.py",
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "bytes": 0
     },
     {
       "path": "app/portal/models.py",
-      "sha256": "570bb318ba1e4a8dcdb920428bc8a306ddb67ab29698a092836cf48183e327b1",
-      "bytes": 66559
+      "sha256": "d631a8fc1da95452b09ba3d6e9eda1054cf0b02c12b0192a7ddcc60ae8dca7a1",
+      "bytes": 66932
     },
     {
       "path": "app/portal/neutral_print.py",
@@ -375,8 +385,8 @@
     },
     {
       "path": "app/portal/planning.py",
-      "sha256": "d61d3a737649ef883e67d6879817f35b249d964682fe4e9ad29b0d7ff0a8dc70",
-      "bytes": 29665
+      "sha256": "72b9d4e236dffdaba257cd1ab898facba6d2969820b680fe36df620890c500d2",
+      "bytes": 29777
     },
     {
       "path": "app/portal/product_checks.py",
@@ -430,8 +440,8 @@
     },
     {
       "path": "app/portal/sourcing.py",
-      "sha256": "efafe600356ece620866021ebad4a4d3d42b65f71d34d50e3dc1bbf191cb3812",
-      "bytes": 14264
+      "sha256": "0d37eca9dc1a4d609d8a862c188d3bc12f0ad31f34acf69fc0b097e9f148c09d",
+      "bytes": 14587
     },
     {
       "path": "app/portal/store_adapters.py",
@@ -634,14 +644,19 @@
       "bytes": 9522
     },
     {
+      "path": "app/portal/templates/portal/green_review_card.html",
+      "sha256": "e59fa87cc6c38f5f7b826b6d37cac7950a2f20265c15d79576c61494a74f07b8",
+      "bytes": 5258
+    },
+    {
       "path": "app/portal/templates/portal/green_stock.html",
       "sha256": "0583cad44e7990e4531d9d72364f5be83afc83a95081f46c10fa7c75dc6faf3d",
       "bytes": 9125
     },
     {
       "path": "app/portal/templates/portal/help.html",
-      "sha256": "d064d2f6d79937fc013116be476872f2cc2c00e933feb3f0106f046435783fe3",
-      "bytes": 10624
+      "sha256": "4d3e779e13fac5dd42f3bcabaaac7d149b078888f1a3aaf2438246d745896fb6",
+      "bytes": 11357
     },
     {
       "path": "app/portal/templates/portal/historical_roasts.html",
@@ -735,8 +750,8 @@
     },
     {
       "path": "app/portal/templates/portal/planning.html",
-      "sha256": "75039aa1af92ff6f4e4bbfd496f47c91b1cc09e45bbdc8d9856ed5fe0fada625",
-      "bytes": 30124
+      "sha256": "f7866a6d8a327e8a60818bcae74c2dc901b8f5b5fcdefd8f80a31cf19e0122c2",
+      "bytes": 30170
     },
     {
       "path": "app/portal/templates/portal/plans.html",
@@ -895,8 +910,8 @@
     },
     {
       "path": "app/project_urls.py",
-      "sha256": "975144fd1cf1ea7eae0c43d74b800248c9fd989eb8c4b37b2094293bd37fc61f",
-      "bytes": 9722
+      "sha256": "5c374750841b826591876c3c3c9bdbcb33b7dc37aece155f8e7453df2e212b63",
+      "bytes": 9863
     },
     {
       "path": "app/project_wsgi.py",
@@ -920,7 +935,7 @@
     },
     {
       "path": "compose.yaml",
-      "sha256": "89b5103a5269eab284b0a67d2cf136b148bb50954ac800aaf60b55b7daea4661",
+      "sha256": "7802897a191960dafb7db355e4e2464cee20b2d0a5d9f2c2e839a43d4d88baf3",
       "bytes": 2740
     },
     {
@@ -939,13 +954,18 @@
       "bytes": 3216
     },
     {
+      "path": "docs/GREEN-STOCK.md",
+      "sha256": "4c3b1d571b5522f90f8a8ec54434f48605e35874468f485605711f0d2a275137",
+      "bytes": 2657
+    },
+    {
       "path": "docs/MARKETPLACES.md",
       "sha256": "99514665d8bbdacfe761f052fd15f96d8408588ada12d71e70cbb3e05b95c9c2",
       "bytes": 6894
     },
     {
       "path": "docs/RELEASE.md",
-      "sha256": "2c9eddc11428312ebf9bfdbe307d56f45d4bb5bece598e8ae59fd53312954f37",
+      "sha256": "43d851e53934ed17d41ff37f712991b7046b9bbc72a627d8f86e8c72ac60796e",
       "bytes": 3033
     },
     {
@@ -974,6 +994,11 @@
       "bytes": 1236
     },
     {
+      "path": "tools/green_checks.py",
+      "sha256": "04fe5839c64a41affb03ce6efe74b36563a6e6085ca6c70caf8a9974e9ded1a9",
+      "bytes": 8090
+    },
+    {
       "path": "tools/privacy_check.py",
       "sha256": "e81476664b75ca55fb202ff1c5075888d272b7d61943d8b965b01855c9a781ae",
       "bytes": 2957
@@ -1000,8 +1025,8 @@
     },
     {
       "path": "tools/test_release.py",
-      "sha256": "e58872e996dc90f354677675e4657243cd229a7a7708d43081a87ab73edbb05e",
-      "bytes": 4777
+      "sha256": "b4ace4f7ae983bf502580ad84652a19e7b72644828fd758d9ccccfce4aad3871",
+      "bytes": 4850
     }
   ]
 }

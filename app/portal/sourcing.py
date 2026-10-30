@@ -49,9 +49,10 @@ class SupplierForm(forms.ModelForm):
 
 class DetailsForm(forms.ModelForm):
     version=forms.IntegerField(min_value=0,widget=forms.HiddenInput,initial=0)
+    roast_levels=forms.MultipleChoiceField(choices=[(level,level) for level in ['Light','Light/Medium','Medium','Medium/Dark','Dark','French']],required=False,widget=forms.CheckboxSelectMultiple,label='Known suitable roast levels (optional)')
     class Meta:
         model=GreenBeanDetails
-        fields=['supplier','country','region','farmer','variety','crop','processing','supplier_score','source_url']
+        fields=['supplier','country','region','farmer','variety','crop','processing','supplier_score','source_url','roast_levels','flavor_tags','caffeine']
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)
         self.fields['supplier'].queryset=BeanSupplier.objects.filter(Q(active=True)|Q(pk=self.instance.supplier_id))
@@ -101,7 +102,7 @@ def save_details(post,actor,item):
         if prior:return
         GreenBeanItem.objects.select_for_update().get(pk=item.pk)
         obj=GreenBeanDetails.objects.filter(item=item).first() or GreenBeanDetails(item=item,updated_by=actor)
-        before=snapshot(obj,['supplier_id','country','region','farmer','variety','crop','processing','supplier_score','source_url','version']) if obj.pk else {}
+        before=snapshot(obj,['supplier_id','country','region','farmer','variety','crop','processing','supplier_score','source_url','roast_levels','flavor_tags','caffeine','version']) if obj.pk else {}
         version=obj.version;form=DetailsForm(post,instance=obj);values=validated(form)
         if values['version']!=version:raise ValidationError('These bean details changed. Reload before saving.')
         obj=form.save(commit=False);obj.updated_by=actor;obj.version=version+1;obj.save();event('bean',obj,actor,before,key,fingerprint)

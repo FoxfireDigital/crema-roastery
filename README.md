@@ -1,6 +1,6 @@
 # Crema
 
-Self-hosted coffee production planning, from received orders through roasting, bagging and labels. MIT licensed. One separate installation and database per roastery. 0.1.0-rc6 is a private review candidate. It must pass the staged upgrade and operational gates before a public beta.
+Self-hosted coffee production planning, from received orders through roasting, bagging and labels. MIT licensed. One separate installation and database per roastery. 0.1.0-rc7 is a private review candidate. It must pass the staged upgrade and operational gates before a public beta.
 
 ## What it includes
 

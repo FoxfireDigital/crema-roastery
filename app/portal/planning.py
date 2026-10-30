@@ -322,4 +322,6 @@ def planner(request):
     from .production import state_token
     context['active_batches']=list(context['active_batches'])
     for batch in context['active_batches']:batch.revision=state_token(batch)
+    from .green_review import review_context
+    context['green_review']=review_context(plan) if plan else None
     return render(request,'portal/planning.html',context,status=status)

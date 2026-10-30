@@ -54,6 +54,11 @@ def accepted_loads(items=None,maps=None):
         if batch and (batch.removed_at or batch.merged_into_id or committed(batch)):continue
         coffee=batch.coffee if batch else row.group.coffee
         parts=current_parts(coffee,batch.green_item_id if batch else None,maps,active)
+        if not (batch and batch.green_item_id) and coffee.pk==row.group.coffee_id:
+            from .green_review import parts_for_group
+            from django.core.exceptions import ValidationError
+            try:parts=parts_for_group(row.group)
+            except ValidationError:parts={}
         if not parts:
             gaps.append({'batch':batch.pk if batch else None,'row':row.pk,'plan':row.group.plan_id,'coffee':coffee.name,'oz':row.green_oz,'date':row.group.plan.date});continue
         amounts=split(row.green_oz,parts)
