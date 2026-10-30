@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.0-rc11 — private production-status candidate
+
+* Added a signed, staff-confirmed “still needs production” review for unchanged paid fulfilled orders already assigned to active plans. It preserves existing demand/results and the marketplace's true shipping status.
+* Retained confirmations across identical refreshes; invalidated them after source/payment/cancellation/assignment changes without resurrecting old approvals if source values later revert.
+* Applied the same hold decision to legacy Shopify, connected stores, CSV refreshes, plan acceptance and daily review. Already fulfilled unimported orders and partial deliveries remain held for separate review.
+* Added regression coverage for status-only fulfillment, retained actual weights, duplicate prevention, stale/forged/CSRF/staff guards and confirmation invalidation.
+
+No source-store writes, new production demand, fabricated roasting/stock usage or schema migration are introduced. Shipping labels should normally be created when production is ready; this review handles an early-label exception.
+
 ## 0.1.0-rc10 — private Artisan naming candidate
 
 * Named preparation ZIPs with First/Second, City/City+/Full City/Full City+/Vienna/French, the roaster and load number, so suggested extraction folders are readable.

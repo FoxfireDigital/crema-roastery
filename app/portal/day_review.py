@@ -54,7 +54,8 @@ def review_day(day):
             if not p or any(not getattr(p,field) for field,label in applicable_steps(line)):reasons.add('Bagging / labeling / sealing unfinished')
             if groups[line.group_id]['short']:reasons.add('Recorded coffee does not yet cover demand')
             if not plan.accepted_at:reasons.add('Plan needs acceptance / review')
-            if source and (source.source_flags or source.source_changed or source.cancelled or source.financial_status!='paid' or source.fulfillment_status!='unfulfilled'):reasons.add('Source order changed or needs status review')
+            from .production_orders import source_hold_reason
+            if source and source_hold_reason(source):reasons.add('Source order changed or needs status review')
             label_issue=label_issues.get(str(line.pk)) if not p or not p.labeled_at else ''
             if label_issue:reasons.add('Label artwork / packaging needs attention')
             order['lines'].append({'coffee':line.ordered_coffee.name,'label':line.ordered_label.name if line.ordered_label else 'Standard label','packaging':', '.join(packages) or 'Unconfirmed packaging','grind':line.get_grind_display(),'finished':line.finished_oz})

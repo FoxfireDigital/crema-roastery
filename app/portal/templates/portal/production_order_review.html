@@ -1,0 +1,14 @@
+{% extends 'portal/base.html' %}{% block content %}
+<h1>Confirm remaining production · {{ order.reference }}</h1>
+<section class="card"><p>Shop status: <strong>{{ order.fulfillment_status }}</strong> · Payment: {{ order.financial_status }} · Existing plan #{{ order.imported_plan_id }}</p>
+<p>A shipping label can mark an order fulfilled before coffee is ready. This confirmation retains the demand already on its plan. It does not add another order, change Shopify, mark coffee roasted or change recorded weights, stock use or packing.</p>
+<ul>{% for line in demand %}<li>{{ line.group.coffee }} · {{ line.group.roast_level }} · {{ line.finished_oz|floatformat:1 }} oz ordered</li>{% endfor %}</ul>
+{% if error %}<p class="danger" role="alert">{{ error }}</p>{% endif %}
+{% if confirmed %}<p>Remaining production has been confirmed for the current source information.</p>{% else %}
+<form method="post">{% csrf_token %}<input type="hidden" name="review_token" value="{{ review_token }}">
+<label for="reason">Reason</label><input id="reason" name="reason" maxlength="300" required value="Shipping label created before production was complete">
+<label><input type="checkbox" name="confirmed" required> This order still needs production or packing for the existing demand on this plan. Keep any work already recorded.</label>
+<button type="submit">Confirm still needs production</button></form>{% endif %}
+<a class="button secondary" href="/planning/?plan={{ order.imported_plan_id }}">Review existing plan</a></section>
+<p>Later item, quantity, payment or cancellation changes require another review. Partial deliveries and completed historical plans cannot be overridden here.</p>
+{% endblock %}

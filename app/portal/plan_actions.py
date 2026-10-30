@@ -32,7 +32,8 @@ def accept_plan(request,pk):
             groups=[g for g in plan.groups.all() if g.orders.exists()]
             if not groups:raise ValidationError('Add at least one order before accepting this plan.')
             imported=ImportOrder.objects.filter(imported_plan=plan,imported_at__isnull=False)
-            if imported.exclude(source_flags=[]).exists() or imported.filter(source_changed=True).exists() or imported.exclude(financial_status='paid',fulfillment_status='unfulfilled',cancelled=False).exists():raise ValidationError('Review the changed or held source orders before accepting this plan.')
+            from .production_orders import source_hold_reason
+            if any(source_hold_reason(order) for order in imported):raise ValidationError('Review the changed or held source orders before accepting this plan.')
             for group in groups:
                 data=summary(group,plan.estimated_loss_pct)
                 if data['expected']+Decimal('.05')<data['required_target']:raise ValidationError(f'{group.coffee}: reserve stock or size the drafts to cover '+('the customer’s ordered coffee before accepting.' if data['started_work'] else 'the coffee plus its spillage allowance before accepting.'))

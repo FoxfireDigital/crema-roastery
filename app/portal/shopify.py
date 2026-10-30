@@ -73,8 +73,10 @@ def stage_orders(rows):
             if order.instructions!=data['instructions']:order.instructions_confirmed=False
             order.instructions=data['instructions']
         order.save();count+=1
+        from .production_orders import invalidate_confirmation,source_hold_reason
+        invalidate_confirmation(order)
         plan=locked_plans.get(order.imported_plan_id)
-        if plan and plan.accepted_at and (order.source_changed or order.cancelled or order.financial_status!='paid' or order.fulfillment_status not in ('unfulfilled',)):
+        if plan and plan.accepted_at and source_hold_reason(order):
             if mark_revised(plan,plan.accepted_by or plan.created_by):
                 plan.version+=1;plan.save(update_fields=['version'])
                 PlanEvent.objects.create(plan=plan,actor=plan.created_by,action='shopify_changed',details={'order':order.pk,'reason':'Shopify source or status changed; recorded production retained.'})

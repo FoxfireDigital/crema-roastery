@@ -268,7 +268,8 @@ def planner(request):
                             from .models import ImportOrder
                             ids=[line.external_id.split(':')[0] for line in row.group.orders.filter(source__in=['shopify','store'])]
                             included=ImportOrder.objects.filter(external_id__in=ids)
-                            if included.filter(source_changed=True).exists() or included.exclude(financial_status='paid',fulfillment_status='unfulfilled',cancelled=False).exists():raise ValidationError('An included Shopify order changed after import. Review it in the order list before starting production.')
+                            from .production_orders import source_hold_reason
+                            if any(source_hold_reason(order) for order in included):raise ValidationError('An included Shopify order changed after import. Review it in the order list before starting production.')
                             # Save only after weighing; this never controls the machine.
                             b=Batch.objects.create(date=plan.date,operator=request.user,roaster=row.roaster,coffee=row.group.coffee,label_variant=row.group.label_variant,green_oz=row.green_oz,roast_level=row.group.roast_level,order=row.group.legacy_order,planned_group=row.group,measured_at=timezone.now(),note=f'Roast plan #{plan.pk}; '+(f'target {row.group.target_finish_temp_f} F' if row.group.target_finish_temp_f is not None else 'standard roast'))
                             row.batch=b

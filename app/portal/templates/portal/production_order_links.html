@@ -1,0 +1,3 @@
+{% for item in rows %}{% if item.production_review_url %}
+<p class="notice {% if not item.production_confirmed %}warning{% endif %}"><strong>{{ item.order.reference }}</strong> · Shipping marked fulfilled. {% if item.production_confirmed %}Remaining production confirmed. <a class="button secondary" href="{{ item.production_review_url }}">View production confirmation</a>{% else %}<a class="button secondary" href="{{ item.production_review_url }}">Confirm still needs production</a>{% endif %}</p>
+{% endif %}{% endfor %}

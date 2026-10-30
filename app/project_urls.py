@@ -45,7 +45,9 @@ from portal.cupping import cupping_page
 from portal.instance import setup_page
 from portal.stores import connections,refresh_store
 from portal.store_csv import csv_import,csv_example
+from portal.production_orders import review_production
 urlpatterns=[
+    path('imports/<int:pk>/production/',review_production,name='review_production'),
     path('plans/<int:pk>/green-review/',green_review_action,name='green_review_action'),
     path('stores/csv/',csv_import,name='store_csv'),
     path('stores/csv/example/',csv_example,name='store_csv_example'),

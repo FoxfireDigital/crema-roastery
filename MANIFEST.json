@@ -1,6 +1,6 @@
 {
   "name": "Crema",
-  "version": "0.1.0-rc10",
+  "version": "0.1.0-rc11",
   "license": "MIT",
   "files": [
     {
@@ -25,7 +25,7 @@
     },
     {
       "path": ".github/workflows/verify.yml",
-      "sha256": "115c3b4e9f73f96e7606ba13f48095fdbc2903cd30a178ffab71f6286f3b20fb",
+      "sha256": "55af819b9e023424e3499ce711e5ef05dda7a2a32fe92261b3130ce05da33132",
       "bytes": 3522
     },
     {
@@ -35,8 +35,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "737ee583aca7bba1c021702447e59ed6459a18ea39221790fe1b5c9f96ceb8c9",
-      "bytes": 5932
+      "sha256": "38c789621c98c45150b6f5635f707ca6106ab77a5f0187ec9e6bbe246c56a48c",
+      "bytes": 7006
     },
     {
       "path": "CONTRIBUTING.md",
@@ -55,12 +55,12 @@
     },
     {
       "path": "README.md",
-      "sha256": "6e4f094e33dd853d9cc20663e4ca27c3652845787bad33f360e4cf0cd92769d3",
+      "sha256": "f5b8e7499f9b385e17c409d3e3b03dc7f20a6e0d237a549d28d169c8d7f869cc",
       "bytes": 7240
     },
     {
       "path": "ROADMAP.md",
-      "sha256": "ff3b319011b07d4527dca558be9eab5c8c53ab001ffaad7365c76bdabe3d24f7",
+      "sha256": "23bed4aae1856efd824b80cb15e0da98218728a1bc36d284ed6593b02c5d523f",
       "bytes": 16831
     },
     {
@@ -215,8 +215,8 @@
     },
     {
       "path": "app/portal/day_review.py",
-      "sha256": "67130e75b803f343e604b223c57409db951368ccfea87ced1f27dd0c49c9e273",
-      "bytes": 6084
+      "sha256": "ad3a45b2c87fd0cb993726a91d8b2c433e3fdf9713e590d35633431b649d6143",
+      "bytes": 6027
     },
     {
       "path": "app/portal/finished_coverage.py",
@@ -360,8 +360,8 @@
     },
     {
       "path": "app/portal/order_import.py",
-      "sha256": "8bf4c10efbb1da20b0a95807ec64175cfaa7909ffa7ce114736cf59fe13065a9",
-      "bytes": 33909
+      "sha256": "46f444ed54d79e6c1a281406ba7dbdcc0fe9adcf80da3bb09be6f7b44bcf8c09",
+      "bytes": 35039
     },
     {
       "path": "app/portal/order_lookup.py",
@@ -385,8 +385,8 @@
     },
     {
       "path": "app/portal/plan_actions.py",
-      "sha256": "dbe5b6126a31efbd4c384686cb8da11a5bdcef10dd17bc58092680a16af39c2a",
-      "bytes": 9403
+      "sha256": "db939c9310e1b61e2aac0590288e35c05b54dd91009129b21aa5d276c4080dc4",
+      "bytes": 9323
     },
     {
       "path": "app/portal/plan_completion.py",
@@ -395,8 +395,8 @@
     },
     {
       "path": "app/portal/planning.py",
-      "sha256": "72b9d4e236dffdaba257cd1ab898facba6d2969820b680fe36df620890c500d2",
-      "bytes": 29777
+      "sha256": "d0d8db315f6194ef4c62440c96b176e37a54bb033d0d3173c24cb8fd2633405b",
+      "bytes": 29759
     },
     {
       "path": "app/portal/product_checks.py",
@@ -407,6 +407,11 @@
       "path": "app/portal/production.py",
       "sha256": "aa7392105162fd5e100e6923e242ab48b504ff4f184e40f4f4fc41c5592935be",
       "bytes": 8803
+    },
+    {
+      "path": "app/portal/production_orders.py",
+      "sha256": "d28924e4ff25f6310a7070d9b9ada57672f276e4fb838844f34a847afdfa94e4",
+      "bytes": 6382
     },
     {
       "path": "app/portal/recovery.py",
@@ -435,8 +440,8 @@
     },
     {
       "path": "app/portal/shopify.py",
-      "sha256": "0d9f9aaf8fe0a34c927e994f2bf48416c5ce16a8ceb7af69203fc2aafb9c374f",
-      "bytes": 14186
+      "sha256": "ef86afcccce8e78fc794bc43847a5f6afb0c64193f343e9b875ffcaee69eaf5e",
+      "bytes": 14205
     },
     {
       "path": "app/portal/shopify_automatic.py",
@@ -470,8 +475,8 @@
     },
     {
       "path": "app/portal/stores.py",
-      "sha256": "27e11bf213aa090f7b6a8bb6ffd5240418f59e8a208bb72084eb75afdc106f9a",
-      "bytes": 18770
+      "sha256": "ab468e76829282cbec40ecd6f57539da127dbcd7ab67a5fde273814dbc7df7cb",
+      "bytes": 18776
     },
     {
       "path": "app/portal/subscriptions.py",
@@ -720,8 +725,8 @@
     },
     {
       "path": "app/portal/templates/portal/order_import.html",
-      "sha256": "7088ff1fb991f22dad012bbb23e2177b047396364e19cd0c7fa8bb69381de251",
-      "bytes": 1814
+      "sha256": "7f53f816d2f4ce94fd4e7ff10a57d95aad39caf2aa32a810b062b694af94267c",
+      "bytes": 1865
     },
     {
       "path": "app/portal/templates/portal/order_lookup.html",
@@ -760,8 +765,8 @@
     },
     {
       "path": "app/portal/templates/portal/planning.html",
-      "sha256": "f7866a6d8a327e8a60818bcae74c2dc901b8f5b5fcdefd8f80a31cf19e0122c2",
-      "bytes": 30170
+      "sha256": "f2b9639d40aa9029481e33f237f3d8a70d2a8684d0c41dc3d2f6a0bd5bf14616",
+      "bytes": 30221
     },
     {
       "path": "app/portal/templates/portal/plans.html",
@@ -772,6 +777,16 @@
       "path": "app/portal/templates/portal/product_checks.html",
       "sha256": "85551962cc928c79d0fff68ef62c8646ab8b11074454250c140ee6b0cbef7c66",
       "bytes": 6666
+    },
+    {
+      "path": "app/portal/templates/portal/production_order_links.html",
+      "sha256": "977be352838ef37dc658fd60df4842d8c100526aa2b4815d0c481ca3b94305cf",
+      "bytes": 525
+    },
+    {
+      "path": "app/portal/templates/portal/production_order_review.html",
+      "sha256": "ff0cdff9366e1222c46b53d529ff0d335fb39a09d9861f6ca5d53f4c1c04579d",
+      "bytes": 1700
     },
     {
       "path": "app/portal/templates/portal/purchases.html",
@@ -920,8 +935,8 @@
     },
     {
       "path": "app/project_urls.py",
-      "sha256": "5c374750841b826591876c3c3c9bdbcb33b7dc37aece155f8e7453df2e212b63",
-      "bytes": 9863
+      "sha256": "125c7dd39c0e1c9a6ce5923ed9384aa7dd437607e5db28357d80eaef9bf6ffb2",
+      "bytes": 10003
     },
     {
       "path": "app/project_wsgi.py",
@@ -945,7 +960,7 @@
     },
     {
       "path": "compose.yaml",
-      "sha256": "d44413c08c992df14aa43535027a9d4628ec1f5640b279746511531432a80b25",
+      "sha256": "fb80596c21e67b914452f7360e8ee076a64129487849eaa29571ddc9f69d1c7f",
       "bytes": 2907
     },
     {
@@ -960,7 +975,7 @@
     },
     {
       "path": "docs/DEPLOYMENT-QA.md",
-      "sha256": "0b83a442b95a4020b6b54c2dcc8cd46e2d858a04eab69dbbcd6a09f7eccd0b20",
+      "sha256": "88e97ff21b1c1a7307a5a3eb24df95acea7338f2ae8f1dfb25504c73da4109b0",
       "bytes": 3809
     },
     {
@@ -980,7 +995,7 @@
     },
     {
       "path": "docs/IMAGE-REVIEW.md",
-      "sha256": "5cd1e11f37e924a25553a026b00c805acc87dd56b25dff3bfc54b1fb0b4f4e33",
+      "sha256": "488dc9a4d6d205d721127e3af15afdebf000ad5b9be15da647d211f0e20df057",
       "bytes": 5374
     },
     {
@@ -990,7 +1005,7 @@
     },
     {
       "path": "docs/RELEASE.md",
-      "sha256": "a091a6b3a22c14a36fe188e9dc417fa18990d7d1fcd014ca65a62350d459f0fa",
+      "sha256": "9212d0a2e45aaf3ab3558104eff8bf48c155925fcccb45bf4045958ebb03f03c",
       "bytes": 3826
     },
     {
@@ -1002,6 +1017,11 @@
       "path": "docs/SERVICE-MODEL.md",
       "sha256": "f9dd49771a6904abbd97020619434b9794923cee0e72ffda4c500a09ba3d20ec",
       "bytes": 1150
+    },
+    {
+      "path": "docs/SHIPPING-STATUS.md",
+      "sha256": "d875f38a35879a82d74b666e8bb489a001fad29f7590a5ab0b25a21ad7613ceb",
+      "bytes": 1643
     },
     {
       "path": "docs/SHOPIFY.md",
@@ -1044,6 +1064,11 @@
       "bytes": 7956
     },
     {
+      "path": "tools/production_order_checks.py",
+      "sha256": "86004749a44637afb2ec10d2b9ee1e7bcfd4e124b210f0a56ec2c1ec5560b38b",
+      "bytes": 5290
+    },
+    {
       "path": "tools/sourcing_checks.py",
       "sha256": "b37d4482feff4c3b4399644d1e1af95b4590c15f26a333350242035f9ac560cd",
       "bytes": 7300
@@ -1065,8 +1090,8 @@
     },
     {
       "path": "tools/test_release.py",
-      "sha256": "b4ace4f7ae983bf502580ad84652a19e7b72644828fd758d9ccccfce4aad3871",
-      "bytes": 4850
+      "sha256": "b0a4043d5c63cafc6cf111829caa65d70db5bacbac8c737af3f102b4af347f5d",
+      "bytes": 4956
     },
     {
       "path": "tools/verify_image.py",

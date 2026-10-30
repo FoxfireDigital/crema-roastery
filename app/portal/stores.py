@@ -67,7 +67,9 @@ def stage(store,rows):
             order.instructions=data['instructions']
         order.save()
         plan=plans.get(order.imported_plan_id)
-        if plan and not plan.closed_at and not plan.historical and plan.accepted_at and (order.source_changed or order.cancelled or order.financial_status!='paid' or order.fulfillment_status!='unfulfilled' or order.source_flags):
+        from .production_orders import invalidate_confirmation,source_hold_reason
+        invalidate_confirmation(order)
+        if plan and not plan.closed_at and not plan.historical and plan.accepted_at and source_hold_reason(order):
             if mark_revised(plan,store.updated_by):
                 plan.version+=1;plan.save(update_fields=['version'])
                 PlanEvent.objects.create(plan=plan,actor=store.updated_by,action='source_changed',details={'order':order.pk,'store':str(store.pk),'reason':'Source changed; actual roasting, packing and stock retained.'})

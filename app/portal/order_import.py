@@ -150,6 +150,8 @@ def stage_export(raw):
     if StoreConnection.objects.filter(platform='shopify').exists():raise ValidationError('Choose the owning Shopify store in the general CSV importer. This older export screen cannot distinguish several stores.')
     rows=parse_export(raw);count=0
     with transaction.atomic():
+        ids=list(ImportOrder.objects.filter(external_id__in=[data['external_id'] for data in rows],imported_plan__isnull=False).values_list('imported_plan_id',flat=True))
+        plans={plan.pk:plan for plan in RoastPlan.all_objects.select_for_update().filter(pk__in=ids).order_by('pk')}
         for data in rows:
             external=data.pop('external_id')
             order=ImportOrder.objects.select_for_update().filter(external_id=external).first()
@@ -161,6 +163,14 @@ def stage_export(raw):
                 if order.instructions!=data['instructions']:order.instructions_confirmed=False
                 order.instructions=data['instructions']
                 order.save()
+                from .production_orders import invalidate_confirmation
+                invalidate_confirmation(order)
+                from .production_orders import source_hold_reason
+                from .plan_actions import mark_revised
+                plan=plans.get(order.imported_plan_id)
+                if not plan:raise ValidationError('An order moved between plans during refresh. Retry the export.')
+                if not plan.closed_at and not plan.historical and plan.accepted_at and source_hold_reason(order):
+                    if mark_revised(plan,plan.created_by):plan.version+=1;plan.save(update_fields=['version'])
                 continue
             if order and order.source_signature and order.source_signature==data['source_signature']:
                 # Preserve this cycle's deliberate assortment on identical refreshes.
@@ -337,7 +347,10 @@ def import_rows(dismissed=False):
         closed=order.imported_plan_id and order.imported_plan.closed_at
         if closed:rows[-1]['reason']='In closed plan #'+str(order.imported_plan_id)
         if historical:rows[-1]['reason']='Associated with past roast date'
-        rows[-1]['alert']='Changed since import — check the plan before roasting' if not historical and order.imported_at and (order.source_changed or order.cancelled or order.financial_status!='paid' or order.fulfillment_status!='unfulfilled') else ''
+        from .production_orders import source_hold_reason,production_confirmed
+        rows[-1]['alert']=source_hold_reason(order) if not historical and order.imported_at else ''
+        rows[-1]['production_confirmed']=production_confirmed(order) if order.imported_at else False
+        rows[-1]['production_review_url']=f'/imports/{order.pk}/production/' if order.imported_at and order.fulfillment_status=='fulfilled' and not historical and not closed else ''
         if closed:rows[-1]['alert']='Source changed after closure — completed snapshot retained' if order.source_changed or order.cancelled or order.financial_status!='paid' else ''
     return rows
 
