@@ -1,6 +1,6 @@
 {
   "name": "Crema",
-  "version": "0.1.0-rc9",
+  "version": "0.1.0-rc10",
   "license": "MIT",
   "files": [
     {
@@ -25,8 +25,8 @@
     },
     {
       "path": ".github/workflows/verify.yml",
-      "sha256": "df28c40f12dd3386f3f7f72672b30580f83d5b8d62fd0283184a1d743b93dc5c",
-      "bytes": 3518
+      "sha256": "115c3b4e9f73f96e7606ba13f48095fdbc2903cd30a178ffab71f6286f3b20fb",
+      "bytes": 3522
     },
     {
       "path": ".gitignore",
@@ -35,8 +35,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "76a6cb533b16b00b531d4050d9c9720ec5a31e5b4b62ce776b5f4054962c87cf",
-      "bytes": 5193
+      "sha256": "737ee583aca7bba1c021702447e59ed6459a18ea39221790fe1b5c9f96ceb8c9",
+      "bytes": 5932
     },
     {
       "path": "CONTRIBUTING.md",
@@ -55,13 +55,13 @@
     },
     {
       "path": "README.md",
-      "sha256": "fbacce6b06b59afe200266c3a70dd51dd197d4fc2244ce663d715ebb6b4c1986",
-      "bytes": 7212
+      "sha256": "6e4f094e33dd853d9cc20663e4ca27c3652845787bad33f360e4cf0cd92769d3",
+      "bytes": 7240
     },
     {
       "path": "ROADMAP.md",
-      "sha256": "3c6933062bda7b3de882fcade46198052c6af3cb0706bdf166c11c041e2d1de6",
-      "bytes": 16852
+      "sha256": "ff3b319011b07d4527dca558be9eab5c8c53ab001ffaad7365c76bdabe3d24f7",
+      "bytes": 16831
     },
     {
       "path": "SECURITY.md",
@@ -160,8 +160,8 @@
     },
     {
       "path": "app/portal/artisan_profiles.py",
-      "sha256": "ea11b11f283ee0a2e3dc5b23af4616a8ebaf04b0a4254b29315528db54a0cffa",
-      "bytes": 25200
+      "sha256": "889b9a36e820797d42888ff377f1b25a1e5ccc22d96fd1d321c3293e80216346",
+      "bytes": 26453
     },
     {
       "path": "app/portal/artisan_uploads.py",
@@ -515,8 +515,8 @@
     },
     {
       "path": "app/portal/templates/portal/artisan_prepared.html",
-      "sha256": "d8e7ef7bd94b7204244cdac6ed9cfd0db6f4edad74f3416612453a7549eaad14",
-      "bytes": 3649
+      "sha256": "55a2ebd95a12b2ae044abc979ffe15e6c24aa6b1bb93b3f2d0187506c7a3ad24",
+      "bytes": 3755
     },
     {
       "path": "app/portal/templates/portal/artisan_profile.html",
@@ -945,13 +945,13 @@
     },
     {
       "path": "compose.yaml",
-      "sha256": "d74421eb11b6b402688723cf4034652893c066a037dab982c682b6203e35f461",
-      "bytes": 2906
+      "sha256": "d44413c08c992df14aa43535027a9d4628ec1f5640b279746511531432a80b25",
+      "bytes": 2907
     },
     {
       "path": "docs/ARTISAN.md",
-      "sha256": "8a8822d61fc4e93046fc3b6cb264dda0fc3071cb3697a8cd771e7158280c425b",
-      "bytes": 2056
+      "sha256": "1935ae64f18f606dba7210e2ea054db763b58ebcf9b238e6c81ba9034ef31f8a",
+      "bytes": 2688
     },
     {
       "path": "docs/BACKUPS.md",
@@ -990,8 +990,8 @@
     },
     {
       "path": "docs/RELEASE.md",
-      "sha256": "15dbf53e60f53a8c2bb9dfa3ec5022db74f023cac6fd000dd3ae80371c5f9111",
-      "bytes": 3847
+      "sha256": "a091a6b3a22c14a36fe188e9dc417fa18990d7d1fcd014ca65a62350d459f0fa",
+      "bytes": 3826
     },
     {
       "path": "docs/SECURITY-REVIEW.md",
@@ -1015,8 +1015,8 @@
     },
     {
       "path": "tools/artisan_checks.py",
-      "sha256": "996655cddb8b4a9c82d95a1635dd1cdde3ef6a57b6cf30e478c4d6c4b3dac631",
-      "bytes": 5565
+      "sha256": "588060b0c128cf858551de3ac42339e82349003dafa338ac616f49a56b15ddd5",
+      "bytes": 9766
     },
     {
       "path": "tools/audit_dependencies.py",

@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-rc10 — private Artisan naming candidate
+
+* Named preparation ZIPs with First/Second, City/City+/Full City/Full City+/Vienna/French, the roaster and load number, so suggested extraction folders are readable.
+* Displayed the package name before download and retained its full preparation ID/checksums in the manifest. Internal helper/reference/alarms filenames stay fixed.
+* Added safe Windows filename handling, real download/manifest/stale-preparation regressions and Windows helper validation from a folder containing spaces.
+
+Existing downloaded ZIPs are unchanged. Stale preparations still require a fresh selection; readable names do not bypass that protection. No production schema or hardware-control change is included.
+
 ## 0.1.0-rc9 — private recovery review candidate
 
 * Added a reusable Linux Compose trial with synthetic installation, HTTPS/CSRF, restart and PostgreSQL checks to CI.

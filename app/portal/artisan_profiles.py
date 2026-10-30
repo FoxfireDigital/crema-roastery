@@ -1,5 +1,5 @@
 """Versioned reference profiles; preparation never records production or controls a roaster."""
-import ast,base64,copy,hashlib,io,json,zipfile
+import ast,base64,copy,hashlib,io,json,re,unicodedata,zipfile
 from decimal import Decimal,InvalidOperation,ROUND_HALF_UP
 from functools import lru_cache
 from pathlib import Path
@@ -64,6 +64,22 @@ def alarms_for(configuration):
             'alarmactions':[16,13,15],'alarmbeep':[0,0,0],'alarmstrings':['Charge','Drop','Off']}
 
 ROAST_CODES={'Light':'C','Light/Medium':'C+','Medium':'FC','Medium/Dark':'FC+','Dark':'V','French':'F'}
+PACKAGE_ROAST_NAMES={'Light':'City','Light/Medium':'City+','Medium':'Full City','Medium/Dark':'Full City+','Dark':'Vienna','French':'French'}
+
+
+def preparation_name(description):
+    """Readable, bounded Windows extraction-folder name; IDs stay in the manifest."""
+    try:
+        session={'first':'First','second':'Second'}[description['mode']]
+        roast=PACKAGE_ROAST_NAMES[description['roast_level']]
+        row=description['planned_batch_id']
+        if isinstance(row,bool) or not str(row).isascii() or not str(row).isdecimal() or int(row)<=0:raise ValueError()
+    except (KeyError,TypeError,ValueError):raise ValidationError('Check the roast session, level and load before naming this package.')
+    # ASCII keeps Content-Disposition unambiguous; remove Windows/path syntax.
+    machine=unicodedata.normalize('NFKD',str(description.get('roaster',''))).encode('ascii','ignore').decode()
+    machine=re.sub(r'[<>:"/\\|?*\x00-\x1f\x7f]',' ',machine)
+    machine=' '.join(machine.split()).strip(' .')[:40].rstrip(' .') or 'Roaster'
+    return f'{session} {roast} - {machine} - Roast {int(row)}'
 
 def roast_title(description):
     name=description.get('coffee','')
@@ -251,7 +267,7 @@ def preparation_detail(request,preparation_id):
     stale=not preparation_current(prepared)
     from .roast_sheet import artisan_upload_url
     row=prepared.planned_batch
-    return render(request,'portal/artisan_prepared.html',{'prepared':prepared,'s':prepared.snapshot,'stale':stale,'roast_title':roast_title(prepared.snapshot),'upload_url':artisan_upload_url(row.batch if row.batch_id else None)})
+    return render(request,'portal/artisan_prepared.html',{'prepared':prepared,'s':prepared.snapshot,'stale':stale,'roast_title':roast_title(prepared.snapshot),'package_name':preparation_name(prepared.snapshot),'upload_url':artisan_upload_url(row.batch if row.batch_id else None)})
 
 def preparation_current(prepared):
     try:
@@ -267,6 +283,7 @@ def package_bytes(entry,configuration,description,prepared=None):
     if title is not None:payload['roast-title.txt']=(title+'\n').encode('utf-8')
     manifest={**description,'format':1,'profile_format':'artisan-python-literal','created_utc':timezone.now().isoformat(),'files':{name:hashlib.sha256(content).hexdigest() for name,content in payload.items()},'preparation_id':str(prepared.pk) if prepared else None}
     if title is not None:manifest['roast_title']=title
+    if prepared is not None:manifest['package_name']=preparation_name(description)
     payload['manifest.json']=json.dumps(manifest,indent=2).encode()
     payload['Prepare-Artisan.ps1']=(ROOT/'artisan_helper.ps1').read_bytes()
     payload['Prepare-Artisan.cmd']=b'@echo off\r\npowershell.exe -STA -NoProfile -ExecutionPolicy Bypass -File "%~dp0Prepare-Artisan.ps1"\r\n'
@@ -285,7 +302,7 @@ def preparation_download(request,preparation_id):
     prepared=get_object_or_404(ArtisanPreparation,pk=preparation_id)
     if not preparation_current(prepared):return HttpResponse('This load or profile changed. Prepare it again before downloading.',status=409)
     entry=entry_for(prepared.snapshot['profile_key'])
-    return attachment(package_bytes(entry,prepared.snapshot['configuration'],prepared.snapshot,prepared),'artisan-prepare-'+str(prepared.pk)+'.zip','application/zip')
+    return attachment(package_bytes(entry,prepared.snapshot['configuration'],prepared.snapshot,prepared),preparation_name(prepared.snapshot)+'.zip','application/zip')
 
 @login_required
 @require_GET
