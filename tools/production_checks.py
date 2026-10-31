@@ -68,7 +68,8 @@ def run_production_checks(root,client,user):
         row.refresh_from_db();assert row.batch.cooled_at and row.batch.bagged_at==now and row.batch.sealed_at==now
         assert GreenMovement.objects.filter(item=green).count()==green_before
         html=client.get('/').content.decode()
-        assert 'name="cooled_at"' in html and 'name="bagged_at"' not in html and 'name="sealed_at"' not in html
+        roasting_html=html.split('<section class="today-packing"')[0]
+        assert 'name="cooled_at"' in roasting_html and 'name="bagged_at"' not in roasting_html and 'name="sealed_at"' not in roasting_html
         assert f'/batches/{row.batch_id}/#artisan-logs' in html and 'Review roast / logs' in html
         assert html.index('class="nav-column"')<html.index('Coffee & artwork')<html.index('Connections & orders')<html.index('<section><h2>Other tools')
         result=response.json()

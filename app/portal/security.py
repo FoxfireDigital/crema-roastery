@@ -28,6 +28,26 @@ def csrf_failure(request,reason=''):
     return problem(request,403,'Your changes were not saved','The security check expired. Keep a note of unsaved entries. Sign in in another tab if needed, then reload before trying again.')
 
 
+class DemoBoundaryMiddleware(MiddlewareMixin):
+    """An additional boundary for a separate, fictional-data demonstration.
+
+    Applies even to a superuser, and to direct requests rather than just menus.
+    Network isolation and a database containing no real secrets are still required.
+    Does not create accounts or change permissions in an ordinary installation.
+    """
+    def process_view(self,request,view_func,view_args,view_kwargs):
+        from django.conf import settings
+        if not settings.PORTAL_DEMO_MODE:return None
+        match=request.resolver_match
+        blocked_modules={'portal.stores','portal.shopify','portal.shopify_automatic','portal.recovery','portal.order_lookup','portal.instance'}
+        blocked=view_func.__module__ in blocked_modules
+        if match and match.namespace=='admin':
+            allowed=match.url_name=='index' or (match.url_name=='app_list' and view_kwargs.get('app_label')=='portal') or any(match.url_name.startswith('portal_'+model+'_') for model in ['coffee','labelvariant','roaster'])
+            blocked=not allowed
+        if blocked:return problem(request,403,'Unavailable in the shared demo','This demonstration uses fictional data. Connections, recovery, account management and installation settings are disabled. Try the production and catalog tools instead.')
+        return None
+
+
 class PortalSecurityMiddleware:
     def __init__(self,get_response):self.get_response=get_response
     def __call__(self,request):

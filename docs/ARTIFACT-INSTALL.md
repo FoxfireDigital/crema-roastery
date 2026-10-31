@@ -3,7 +3,7 @@
 The candidate remains private. A public registry hostname/image is not advertised until its exact artifacts and visibility have been approved. The primary installation format is Compose YAML. Local source builds use all three images:
 
 ```sh
-export CREMA_VERSION=0.1.0-rc17
+export CREMA_VERSION=0.1.0-rc18
 export CREMA_REVISION=$(git rev-parse HEAD)
 docker compose -f compose.yaml -f compose.build.yaml build --pull web postgres proxy
 ```

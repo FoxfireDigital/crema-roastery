@@ -43,6 +43,8 @@ from store_checks import run_store_checks
 run_store_checks(Path(temp.name),client,owner)
 from production_checks import run_production_checks
 run_production_checks(Path(temp.name),client,owner)
+from today_packing_checks import run_today_packing_checks
+run_today_packing_checks(client,owner)
 from artisan_checks import run_artisan_checks
 run_artisan_checks(client,owner)
 from green_checks import run_green_checks

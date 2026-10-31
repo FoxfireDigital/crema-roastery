@@ -12,13 +12,14 @@ PORTAL_BASE_URL=os.environ.get('PORTAL_BASE_URL','https://localhost').rstrip('/'
 _url=urlsplit(PORTAL_BASE_URL)
 if _url.scheme not in ['https','http'] or not _url.hostname or _url.path or _url.query or _url.fragment or _url.username or _url.password:raise ValueError('PORTAL_BASE_URL must be an origin URL.')
 LOCAL_DEVELOPMENT=os.environ.get('PORTAL_LOCAL_DEVELOPMENT')=='1'
+PORTAL_DEMO_MODE=os.environ.get('PORTAL_DEMO_MODE')=='1'
 if _url.scheme!='https' and not LOCAL_DEVELOPMENT:raise ValueError('Production requires HTTPS.')
 ALLOWED_HOSTS=[_url.hostname,'localhost','127.0.0.1',*filter(None,os.environ.get('PORTAL_LAN_HOSTS','').split(','))]
 CSRF_TRUSTED_ORIGINS=[PORTAL_BASE_URL]
 COFFEE_BACKUP_ROOT='/var/lib/coffee-backups'
 if len(SECRET_KEY)<32:raise ValueError('Provide a unique DJANGO_SECRET_KEY of at least 32 characters.')
 INSTALLED_APPS=['django.contrib.admin','django.contrib.auth','django.contrib.contenttypes','django.contrib.sessions','django.contrib.messages','django.contrib.staticfiles','portal']
-MIDDLEWARE=['django.middleware.security.SecurityMiddleware','portal.security.PortalSecurityMiddleware','whitenoise.middleware.WhiteNoiseMiddleware','django.contrib.sessions.middleware.SessionMiddleware','django.middleware.common.CommonMiddleware','django.middleware.csrf.CsrfViewMiddleware','django.contrib.auth.middleware.AuthenticationMiddleware','portal.security.LoginThrottleMiddleware','portal.inventory_actor.InventoryActorMiddleware','django.contrib.messages.middleware.MessageMiddleware','django.middleware.clickjacking.XFrameOptionsMiddleware']
+MIDDLEWARE=['django.middleware.security.SecurityMiddleware','portal.security.PortalSecurityMiddleware','whitenoise.middleware.WhiteNoiseMiddleware','django.contrib.sessions.middleware.SessionMiddleware','django.middleware.common.CommonMiddleware','django.middleware.csrf.CsrfViewMiddleware','django.contrib.auth.middleware.AuthenticationMiddleware','portal.security.DemoBoundaryMiddleware','portal.security.LoginThrottleMiddleware','portal.inventory_actor.InventoryActorMiddleware','django.contrib.messages.middleware.MessageMiddleware','django.middleware.clickjacking.XFrameOptionsMiddleware']
 ROOT_URLCONF='project_urls'
 TEMPLATES=[{'BACKEND':'django.template.backends.django.DjangoTemplates','DIRS':[BASE_DIR/'portal'/'templates'],'APP_DIRS':True,'OPTIONS':{'context_processors':['django.template.context_processors.debug','django.template.context_processors.request','django.contrib.auth.context_processors.auth','django.contrib.messages.context_processors.messages','portal.appearance.appearance_context','portal.green_stock.inventory_context','portal.shopfloor.tools_context','portal.payroll.payroll_context','portal.instance.instance_context']}}]
 WSGI_APPLICATION='project_wsgi.application'

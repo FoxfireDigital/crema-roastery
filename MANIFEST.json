@@ -1,6 +1,6 @@
 {
   "name": "Crema",
-  "version": "0.1.0-rc17",
+  "version": "0.1.0-rc18",
   "license": "MIT",
   "files": [
     {
@@ -25,7 +25,7 @@
     },
     {
       "path": ".github/workflows/verify.yml",
-      "sha256": "56e952c1c88091e86eae2231389c949f1cfa072574e1b7450014400bcdab0cd9",
+      "sha256": "c157635f7097f84c416f5bc8a910fcb658336abffe53c7848f2f40f3560ac849",
       "bytes": 4279
     },
     {
@@ -35,8 +35,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "16745fa98b0e5c62df408126feb40c8aa58f8693fc8909724995de20bf010e84",
-      "bytes": 11251
+      "sha256": "e233a4f290f4371660e53e8109930ef6e0885274463fefc389d01de5abff51df",
+      "bytes": 11798
     },
     {
       "path": "CONTRIBUTING.md",
@@ -55,12 +55,12 @@
     },
     {
       "path": "README.md",
-      "sha256": "91e975823032e5c83720cd4dbf40939d2ccba11971545715e165003fbb932f30",
+      "sha256": "32fea9e3e7ed9b44e1c8f312985eb17142cdbc02a93796751d53a3059a3ac9de",
       "bytes": 7507
     },
     {
       "path": "ROADMAP.md",
-      "sha256": "e2d02a648aec88bc07fb0fbf7b5ec3a9c5e91a874b0abf28eaa3f54b1eb3e77a",
+      "sha256": "6886d734fe5c77be6088b9e82ac1a400d82dcde9f8a070afc152c945dae66c7f",
       "bytes": 16831
     },
     {
@@ -265,8 +265,8 @@
     },
     {
       "path": "app/portal/instance.py",
-      "sha256": "d41a935e2dffb40c6627cd75b1e4598d10e53c9ff0bab309a2825fb469721601",
-      "bytes": 1797
+      "sha256": "12c948208e7910ef28df8710302ac107eb0687b3af1f0e9e8d051d9feab372dd",
+      "bytes": 1842
     },
     {
       "path": "app/portal/inventory_actor.py",
@@ -375,8 +375,8 @@
     },
     {
       "path": "app/portal/packing.py",
-      "sha256": "7af9990564cf40354caba883511ad81689c1aa303b68101f9eae6ee46944fc92",
-      "bytes": 13369
+      "sha256": "aa057db01c0c3e955bead527e9bde0f8c8d6e3724c1a07210b111049c8719916",
+      "bytes": 13681
     },
     {
       "path": "app/portal/payments.py",
@@ -425,8 +425,8 @@
     },
     {
       "path": "app/portal/roast_sheet.py",
-      "sha256": "f4fe360f9310ebb19e7b3fc64bf0a8548c00fa6107330cb7859d3e12aba22a90",
-      "bytes": 9122
+      "sha256": "8bb416fa38c328850e0c38a44785886404ee5934f40c492c246632a829482030",
+      "bytes": 9275
     },
     {
       "path": "app/portal/roasted_stock.py",
@@ -435,8 +435,8 @@
     },
     {
       "path": "app/portal/security.py",
-      "sha256": "dd09fc509d6039afeb21eae1d0d454789c0281250a2edc23bb867587661df0c3",
-      "bytes": 5046
+      "sha256": "df210e8445933b88abd96334cf7ee324befdffbe712611261ce85532762b5d8d",
+      "bytes": 6395
     },
     {
       "path": "app/portal/shopfloor.py",
@@ -565,8 +565,8 @@
     },
     {
       "path": "app/portal/templates/portal/base.html",
-      "sha256": "e7b45460b772377df8b14fec81bc398468f9a7a652d690714edca34d49db015b",
-      "bytes": 14605
+      "sha256": "b19bf35f30c593bebfffb93819b03a83261734f62ad72eeb3e6705285c8e6d59",
+      "bytes": 14898
     },
     {
       "path": "app/portal/templates/portal/batch.html",
@@ -680,8 +680,8 @@
     },
     {
       "path": "app/portal/templates/portal/help.html",
-      "sha256": "e4e469430270dfee1b58c31afd9d9458c209f1455971eb5d8060727c366d0421",
-      "bytes": 11917
+      "sha256": "a2067bc4525756849b49191a99e5bb137e9f19cb4b7ad124b4a948c16e09343e",
+      "bytes": 12534
     },
     {
       "path": "app/portal/templates/portal/historical_roasts.html",
@@ -710,8 +710,8 @@
     },
     {
       "path": "app/portal/templates/portal/login.html",
-      "sha256": "d87e7a42aaf5e84893bbca508b816c413989f4cea7c471dcb457a95d79337eec",
-      "bytes": 377
+      "sha256": "b9768558d5874c21c73186fabb9844ebb3561903b965cfe86fa71f1d4bb49c6e",
+      "bytes": 546
     },
     {
       "path": "app/portal/templates/portal/maintenance.html",
@@ -755,8 +755,23 @@
     },
     {
       "path": "app/portal/templates/portal/packing.html",
-      "sha256": "bdc84fcffb5d7e94372ec797f80bca73341abf9b2f03bea2945b5c96b2ec64e1",
-      "bytes": 11649
+      "sha256": "4fee0051838355de9eb4d52f1d84f647ec3a45b3e0d2c91c14369ecc867fb2da",
+      "bytes": 3362
+    },
+    {
+      "path": "app/portal/templates/portal/packing_assets.html",
+      "sha256": "4e09e6e93671b7e717374609867e1daad4a92c981588f16bc7f3ff2ecd5b4cf9",
+      "bytes": 5913
+    },
+    {
+      "path": "app/portal/templates/portal/packing_item.html",
+      "sha256": "ed888a2e0fbb2ba09819f0fb09d3fe666294a1f1305257b8d5404ddf258131df",
+      "bytes": 3151
+    },
+    {
+      "path": "app/portal/templates/portal/packing_sections.html",
+      "sha256": "d4da2ad2413dd3aa1f9647217bdf90627e32894f57b281650c58e6c9f3a987a1",
+      "bytes": 253
     },
     {
       "path": "app/portal/templates/portal/past_plan.html",
@@ -825,8 +840,8 @@
     },
     {
       "path": "app/portal/templates/portal/roast_sheet.html",
-      "sha256": "2d2f668b08ef6470f25e69dc7b26973babc82d1253092431695be0c1a210cf3f",
-      "bytes": 15081
+      "sha256": "4b34849c5453cf320d387eb05111df1fe2b15dd0423ea5eeefb5b300e04c9b1d",
+      "bytes": 16524
     },
     {
       "path": "app/portal/templates/portal/roasted_stock.html",
@@ -940,8 +955,8 @@
     },
     {
       "path": "app/project_settings.py",
-      "sha256": "e356f3d15d1844cd701e1771e2e764800c3f1ed96ac81df573a91ff01c5a6d2e",
-      "bytes": 4507
+      "sha256": "2179d6af979161d595d08a08786b728c21d14aeb123118efccdf500ed5e79e91",
+      "bytes": 4605
     },
     {
       "path": "app/project_urls.py",
@@ -970,12 +985,12 @@
     },
     {
       "path": "compose.yaml",
-      "sha256": "663f9f8f20ab00f532f5c0a09d659179826086a220c3a5e396d14770674492e6",
+      "sha256": "28def920e06bebabc0d65d81faf7956fdfd2ef18f55beea4115e1ac31adc14ac",
       "bytes": 2944
     },
     {
       "path": "docs/ARTIFACT-INSTALL.md",
-      "sha256": "1f04abd1f0ffcbfe1c46ac8d0c22efbba7d9b13af0c0c55f8f0a29a288f8adb7",
+      "sha256": "33bf3b01e89b0e73cb40a3bf3781630775c847930e15bb5d2a7c6d7885ecabe8",
       "bytes": 4105
     },
     {
@@ -990,8 +1005,13 @@
     },
     {
       "path": "docs/BETA-FREEZE.md",
-      "sha256": "8babd020a11e8f98b429487c71a7dc8b626f1aed3e13e8eef03b2b64d221aff5",
+      "sha256": "b8a4049fb234675a0f8654b386a90937a79e86e4ea792df6f75174544fceab57",
       "bytes": 3603
+    },
+    {
+      "path": "docs/DEMONSTRATIONS.md",
+      "sha256": "a711958f242146952d9648d8c5e2122cd35aae47d97844ef3ceb49b3d4aa7a8c",
+      "bytes": 1968
     },
     {
       "path": "docs/DEPENDENCY-PACKET.md",
@@ -1000,7 +1020,7 @@
     },
     {
       "path": "docs/DEPLOYMENT-QA.md",
-      "sha256": "de199c8eb188330e8ec8ec5528910e5057e56f3403cd928c507e8d325a8b04f3",
+      "sha256": "15c38efae6eb3b0cae7c2fcca10b796265b35d77d1b1260976e4ae639268486a",
       "bytes": 3824
     },
     {
@@ -1020,7 +1040,7 @@
     },
     {
       "path": "docs/IMAGE-REVIEW.md",
-      "sha256": "3797fe7140543a1f44cac56ea03ec44dbcd8a00661ac36b9076292f322a7c483",
+      "sha256": "8f30ba380149324b3df324d89a81d589b3a4cc4696fdb7e2cb57cdb6d1db4dd9",
       "bytes": 7541
     },
     {
@@ -1030,7 +1050,7 @@
     },
     {
       "path": "docs/RELEASE.md",
-      "sha256": "11a6e30fa49574af330c4bf955a1bb52ac7ce984d4cbe1dc6e076685237283a2",
+      "sha256": "d3c288ff8cd3a3dcd926ccd196e7f153fd505d0853538a2fa9c36d3390ed3617",
       "bytes": 4278
     },
     {
@@ -1155,8 +1175,8 @@
     },
     {
       "path": "tools/production_checks.py",
-      "sha256": "d8994b8ae5efb1d0d019f8a42653a67462e590773a874018804c95522d33b596",
-      "bytes": 9832
+      "sha256": "4bff39e9149cd9a25ac62650e33fb91973f6f7bb1b2adee3ec88049212c62dc2",
+      "bytes": 9929
     },
     {
       "path": "tools/production_order_checks.py",
@@ -1200,8 +1220,13 @@
     },
     {
       "path": "tools/test_release.py",
-      "sha256": "8d355d5f8bee2e146a601e702967b5a7adb6b3fe93ff0e2074c5ba01f51dcab5",
-      "bytes": 5032
+      "sha256": "868e3467f1db556402ecd98210c133e97ddf15fb15de7765ed6892f86e6afd9c",
+      "bytes": 5129
+    },
+    {
+      "path": "tools/today_packing_checks.py",
+      "sha256": "aaca8a3b693d3313c8613f0005d1a98010247f15c9e5ce495f96cbe71e9c9e36",
+      "bytes": 5634
     },
     {
       "path": "tools/verify_image.py",

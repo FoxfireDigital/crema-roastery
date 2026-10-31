@@ -58,6 +58,12 @@ def packing_list(request):
     plan=get_object_or_404(RoastPlan.all_objects,pk=request.GET['plan']) if request.GET.get('plan') else (plans.first() if archived else RoastPlan.objects.filter(accepted_at__isnull=False).first() or RoastPlan.objects.first())
     if plan and plan.removed_at and not archived:archived=True;plans=RoastPlan.all_objects.filter(removed_at__isnull=False)[:100]
     if plan and plan.closed_at:archived=True;plans=[plan]+list(archive_plans.exclude(pk=plan.pk)[:99])
+    from .finished_coverage import plan_coverage
+    return render(request,'portal/packing.html',{**packing_context(plan,request.GET.get('group','order')),'coverage':plan_coverage(plan) if plan else None,'plans':plans,'archived':archived})
+
+
+def packing_context(plan,group_by='order'):
+    """One checklist model for Today and Bagging; no copied progress records."""
     lines=IncomingOrderLine.objects.filter(group__plan=plan).select_related('group__plan','group__coffee','group__label_variant','product_coffee','product_label') if plan else []
     rows=[];totals={};needs_review=0
     progresses={p.line_id:p for p in PackingProgress.objects.filter(line__group__plan=plan)} if plan else {}
@@ -85,7 +91,6 @@ def packing_list(request):
         bulk_sources=[{'coffee':a.stock.coffee.name,'amount':a.amount_oz,'status':a.status} for a in line.stock_allocations.filter(status__in=['reserved','used']).select_related('stock__coffee')]
         rows.append({'line':line,'bulk_sources':bulk_sources,'packages':packages,'confirmed':confirmed,'bags':bags_total,'steps':steps,'form':PackingForm(line=line,initial=initial),'progress':progress,'progress_revision':result['revision'],'undo_event':result['undo_event'],'progress_steps':[{'key':key,'label':label,'done':bool(progress and getattr(progress,key))} for key,label in applicable_steps(line)]})
     labels=[{'coffee':key[0],'label':key[1],'size':key[2],'grind':key[3],'layout':key[4],'bags':count,'sheets':math.ceil(count/key[4]) if key[4] else None} for key,count in sorted(totals.items(),key=lambda item:tuple(str(x) for x in item[0]))]
-    group_by=request.GET.get('group','order')
     if group_by not in ['order','coffee']:group_by='order'
     rows.sort(key=lambda item:((item['line'].ordered_coffee.name,item['line'].reference,item['line'].pk) if group_by=='coffee' else (item['line'].customer,item['line'].reference,item['line'].ordered_coffee.name,item['line'].pk)))
     sections=[]
@@ -93,8 +98,8 @@ def packing_list(request):
         name=item['line'].ordered_coffee.name if group_by=='coffee' else (item['line'].customer+' · ' if item['line'].customer else '')+(item['line'].reference or 'Stock / unnumbered')
         if not sections or sections[-1]['name']!=name:sections.append({'name':name,'rows':[]})
         sections[-1]['rows'].append(item)
-    from .finished_coverage import plan_coverage
-    return render(request,'portal/packing.html',{'plan':plan,'coverage':plan_coverage(plan) if plan else None,'plans':plans,'rows':rows,'sections':sections,'group_by':group_by,'labels':labels,'needs_review':needs_review,'archived':archived,'completed':sum(bool(row['progress'] and row['progress'].sealed_at) for row in rows)})
+    return {'plan':plan,'rows':rows,'sections':sections,'group_by':group_by,'labels':labels,'needs_review':needs_review,'completed':sum(bool(row['progress'] and row['progress'].sealed_at) for row in rows)}
+
 
 
 @login_required
@@ -145,6 +150,7 @@ def save_progress(request,pk):
 @staff_member_required
 @require_POST
 def save_packing(request,pk):
+    return_today=request.POST.get('return_to')=='today'
     initial=get_object_or_404(IncomingOrderLine.objects,pk=pk,group__plan__removed_at__isnull=True,group__plan__historical=False,group__plan__closed_at__isnull=True)
     with transaction.atomic():
         plan=RoastPlan.objects.select_for_update().get(pk=initial.group.plan_id)
@@ -160,9 +166,9 @@ def save_packing(request,pk):
             progress=PackingProgress.objects.filter(line=line).first()
             if progress and any(progress_state(progress).values()) and before!={'grind':line.grind,'packaging':line.packaging}:
                 messages.error(request,'Clear the packing checklist before changing its grind or bag sizes. The existing instructions were preserved.')
-                return redirect('/packing/?plan='+str(plan.pk))
+                return redirect('/#packing-plan-'+str(plan.pk) if return_today else '/packing/?plan='+str(plan.pk))
             line.save(update_fields=['grind','packaging'])
             after={'grind':line.grind,'packaging':line.packaging}
             if before!=after:PackingEvent.objects.create(line=line,actor=request.user,before=before,after=after)
             messages.success(request,'Bagging details saved. The roast amount and ordered flavor are unchanged.')
-    return redirect('/packing/?plan='+str(plan.pk))
+    return redirect('/#packing-plan-'+str(plan.pk) if return_today else '/packing/?plan='+str(plan.pk))

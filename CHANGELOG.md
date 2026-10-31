@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.0-rc18 — Today packing cards and isolated demo roles
+
+* Show collapsible customer/order packing cards and per-plan label-sheet buttons on Today. Reuse Bagging forms, progress records, audit events, CSRF and stale-edit checks; keep roast-row cooling separate.
+* Add an opt-in demonstration boundary that disables connections, recovery, installation settings and account administration even for a demo administrator. Ordinary installations keep their existing permissions. Requires a separate fictional-data database and isolated network.
+
 ## 0.1.0-rc17 — read-only proxy installation correction
 
 * Bake the reviewed default Caddyfile into the proxy image. This avoids Compose trying to create an inline configuration inside a read-only root filesystem. Verify the baked file against the source and use a read-only file override for local TLS testing.

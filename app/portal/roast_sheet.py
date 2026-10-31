@@ -57,12 +57,15 @@ def roast_sheet(request):
     from .views import clock_context
     boards=accepted_boards(include_completed=True)
     from .finished_coverage import plan_coverage
-    coverages=[plan_coverage(plan) for plan in RoastPlan.objects.filter(accepted_at__isnull=False).order_by('date','pk')]
+    plans=list(RoastPlan.objects.filter(accepted_at__isnull=False).order_by('date','pk'))
+    coverages=[plan_coverage(plan) for plan in plans]
+    from .packing import packing_context
+    packing_lists=[packing_context(plan) for plan in plans]
     for board in boards:
         for row in board['rows']:
             batch=row.batch if row.batch_id else None
             row.sheet_revision=row_token(row);row.undo_event=undo_event(row);row.sheet_photo_url=photo_url(batch);row.artisan_upload_url=artisan_upload_url(batch);row.artisan_logs_url=artisan_logs_url(batch)
-    return render(request,'portal/roast_sheet.html',{'accepted_boards':boards,'coverages':coverages,'roast_sheet':True,**clock_context(request.user)})
+    return render(request,'portal/roast_sheet.html',{'accepted_boards':boards,'coverages':coverages,'packing_lists':packing_lists,'roast_sheet':True,**clock_context(request.user)})
 
 
 class SheetResultForm(forms.Form):
