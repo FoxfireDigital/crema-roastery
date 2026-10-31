@@ -1,6 +1,6 @@
 {
   "name": "Crema",
-  "version": "0.1.0-rc14",
+  "version": "0.1.0-rc15",
   "license": "MIT",
   "files": [
     {
@@ -25,7 +25,7 @@
     },
     {
       "path": ".github/workflows/verify.yml",
-      "sha256": "bbcc3e2530dcd55693112f2a5236274d17fd469580f0ddb957fa0c01373fedb7",
+      "sha256": "2d049c2803a5a723c844fd6b21f2f201659fb8d54cd42eabac3dcc24bc21494c",
       "bytes": 4077
     },
     {
@@ -35,8 +35,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "deceeb98d3d18028679383dc4472faa00a92901e8a3de4978744a38752225231",
-      "bytes": 9328
+      "sha256": "916c84b3590cec0555e31481475d3e9e9b9ff34206b5d3d9bd83a470552e7a52",
+      "bytes": 9763
     },
     {
       "path": "CONTRIBUTING.md",
@@ -55,12 +55,12 @@
     },
     {
       "path": "README.md",
-      "sha256": "6310a3a612484d380bd1c02405068105e9c9433b277c217976b292a6fdf5fd5d",
+      "sha256": "e1458912559972a2a783058470161f3b079ae28fd01ee43a8b551e5ef6107067",
       "bytes": 7240
     },
     {
       "path": "ROADMAP.md",
-      "sha256": "5b170d3f2ee1a2c1d81cb402fbaebf75214b96cc36cdd846bf8405949850f2cb",
+      "sha256": "dd6954502478c15ead077107171953c7cf22e0e13e7339faee3cc16dd915fec7",
       "bytes": 16831
     },
     {
@@ -80,8 +80,8 @@
     },
     {
       "path": "app/Dockerfile",
-      "sha256": "ae2b995d73813fb7feaeefec188c7d8da14effc84b212d3db2f6a435aca08628",
-      "bytes": 3493
+      "sha256": "17bc555f7954c873f635376e948cf66ad3228fcf8c1bdc6b6716ce8b58ec8f92",
+      "bytes": 3561
     },
     {
       "path": "app/LICENSE",
@@ -970,7 +970,7 @@
     },
     {
       "path": "compose.yaml",
-      "sha256": "1d7c0b8020f0f154eef3742a51833f507f1c72aec756fb856bacadb35a16e2aa",
+      "sha256": "50914e37ba2f3f63b0270b6687a452f00647e0d7d50b7f11b3850c878d328f1d",
       "bytes": 3051
     },
     {
@@ -985,12 +985,12 @@
     },
     {
       "path": "docs/BETA-FREEZE.md",
-      "sha256": "7255854c7278abeb54c882a8277ae2972312d63fca990862c63dd21a1ba0e826",
+      "sha256": "b1c5d600be68d662fff30862bc00d19d7c50ff8dccae4209eb9f165f8422e137",
       "bytes": 3134
     },
     {
       "path": "docs/DEPLOYMENT-QA.md",
-      "sha256": "f7eaac20ed06661d3d8d78adad00e0c6e39e08d402781a6f7a3e17e64659878d",
+      "sha256": "13f6c23d1a4e62c81a91f092ef74f45fb68654077d4b125703cc720970f19277",
       "bytes": 3809
     },
     {
@@ -1010,7 +1010,7 @@
     },
     {
       "path": "docs/IMAGE-REVIEW.md",
-      "sha256": "2db21cce4febecc0f91d118421dd09d5121f1d94db0a23ec07273b9cf1de9945",
+      "sha256": "4bb776af5268cb339960828be3f923c058842ef3b76d4b751411cec5883ebb81",
       "bytes": 6971
     },
     {
@@ -1020,7 +1020,7 @@
     },
     {
       "path": "docs/RELEASE.md",
-      "sha256": "323adc75c372d96c3e8650616ba7508a77270f32385f3d951986eb00c6b2c943",
+      "sha256": "63af22593af36577f0ac51184871efc82196f4d1a4dbe59b820ebc539fd4561e",
       "bytes": 3826
     },
     {

@@ -24,7 +24,8 @@ COPY requirements.txt .
 COPY --from=driver-build /build/wheels/ /tmp/driver-wheels/
 COPY --from=driver-build /build/sources/ /usr/share/crema/sources/
 COPY --from=driver-build /build/driver-build.json /usr/share/crema/driver-build.json
-RUN apt-get update && apt-get install --yes --no-install-recommends libpq5=${LIBPQ_VERSION} tzdata=${TZDATA_VERSION} \
+RUN chmod 0444 /usr/share/crema/sources/psycopg_c-3.3.6.tar.gz \
+    && apt-get update && apt-get install --yes --no-install-recommends libpq5=${LIBPQ_VERSION} tzdata=${TZDATA_VERSION} \
     && rm -rf /var/lib/apt/lists/* \
     && python -m pip install --no-cache-dir --upgrade pip==26.2.2 \
     && python -m pip install --no-cache-dir --find-links=/tmp/driver-wheels --only-binary=psycopg-c -r requirements.txt \

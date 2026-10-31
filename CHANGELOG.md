@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.0-rc15 — retained-source access correction
+
+* Make the retained driver source archive readable by the non-root runtime user. Exact-image verification caught the upstream download’s restrictive default permissions in the unpromoted rc14 candidate.
+* Retain rc14’s system-linked C driver, source/build provenance and runtime cleanup. Fresh image, deployment and recovery checks are required for this replacement candidate.
+
 ## 0.1.0-rc14 — database-client distribution correction
 
 * Build Psycopg’s C extension from its checksum-verified source against the system PostgreSQL client; remove the bundled binary client wheel. Retain the extension source, build-tool versions and source/wheel hashes in the runtime image.

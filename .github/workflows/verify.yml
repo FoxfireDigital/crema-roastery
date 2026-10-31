@@ -94,8 +94,8 @@ jobs:
       - run: docker compose -f compose.yaml -f compose.build.yaml config --quiet
       - run: docker compose -f compose.yaml -f compose.build.yaml build --pull web
         env:
-          CREMA_VERSION: 0.1.0-rc14
+          CREMA_VERSION: 0.1.0-rc15
           CREMA_REVISION: ${{ github.sha }}
-      - run: python tools/verify_image.py --image crema:0.1.0-rc14 --version 0.1.0-rc14 --revision "$GITHUB_SHA" --output /tmp/crema-image-review --test-context
+      - run: python tools/verify_image.py --image crema:0.1.0-rc15 --version 0.1.0-rc15 --revision "$GITHUB_SHA" --output /tmp/crema-image-review --test-context
       - run: python tools/audit_dependencies.py /tmp/crema-image-review/components.json
-      - run: python tools/test_compose.py --image crema:0.1.0-rc14 --revision "$GITHUB_SHA" --output /tmp/crema-deployment-review
+      - run: python tools/test_compose.py --image crema:0.1.0-rc15 --revision "$GITHUB_SHA" --output /tmp/crema-deployment-review
