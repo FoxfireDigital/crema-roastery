@@ -1,6 +1,6 @@
 {
   "name": "Crema",
-  "version": "0.1.0-rc16",
+  "version": "0.1.0-rc17",
   "license": "MIT",
   "files": [
     {
@@ -25,7 +25,7 @@
     },
     {
       "path": ".github/workflows/verify.yml",
-      "sha256": "1dccbc9da930f191d39a8b29a5884bf30428535bbea93e8e0f7d210554d85f24",
+      "sha256": "56e952c1c88091e86eae2231389c949f1cfa072574e1b7450014400bcdab0cd9",
       "bytes": 4279
     },
     {
@@ -35,8 +35,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "02c6debe95c27553d5eba8e06f8fdb58b0e0d2c0717b3cf32d2ad06ee52db0a6",
-      "bytes": 10801
+      "sha256": "16745fa98b0e5c62df408126feb40c8aa58f8693fc8909724995de20bf010e84",
+      "bytes": 11251
     },
     {
       "path": "CONTRIBUTING.md",
@@ -55,12 +55,12 @@
     },
     {
       "path": "README.md",
-      "sha256": "913cdd0c86c3b72f1c5718a94a3d582223c89500ece2da0a23a5b6f8ad9295dc",
+      "sha256": "91e975823032e5c83720cd4dbf40939d2ccba11971545715e165003fbb932f30",
       "bytes": 7507
     },
     {
       "path": "ROADMAP.md",
-      "sha256": "9a357b1d9632a0d58d44b438dca0d6fb38e0187af7201b0a1937f88c0e8ed6f7",
+      "sha256": "e2d02a648aec88bc07fb0fbf7b5ec3a9c5e91a874b0abf28eaa3f54b1eb3e77a",
       "bytes": 16831
     },
     {
@@ -970,12 +970,12 @@
     },
     {
       "path": "compose.yaml",
-      "sha256": "a36da914fae1ff3873ea098c2321971e8c275b852fadfc4b15358d40e4f18a58",
-      "bytes": 3160
+      "sha256": "663f9f8f20ab00f532f5c0a09d659179826086a220c3a5e396d14770674492e6",
+      "bytes": 2944
     },
     {
       "path": "docs/ARTIFACT-INSTALL.md",
-      "sha256": "c48abefc706606e64efbaf29d0de2894130f482a3a18c34b4631cbd0b1e1e365",
+      "sha256": "1f04abd1f0ffcbfe1c46ac8d0c22efbba7d9b13af0c0c55f8f0a29a288f8adb7",
       "bytes": 4105
     },
     {
@@ -990,7 +990,7 @@
     },
     {
       "path": "docs/BETA-FREEZE.md",
-      "sha256": "cb2ba9f0eb1a137736adbf82b4ab29103ef69de3915b666b38cde5b18ea2ee31",
+      "sha256": "8babd020a11e8f98b429487c71a7dc8b626f1aed3e13e8eef03b2b64d221aff5",
       "bytes": 3603
     },
     {
@@ -1000,7 +1000,7 @@
     },
     {
       "path": "docs/DEPLOYMENT-QA.md",
-      "sha256": "fa6ef67bd28eafa8c2ef454cc75b790fde67b2295f12076646a18f793217739c",
+      "sha256": "de199c8eb188330e8ec8ec5528910e5057e56f3403cd928c507e8d325a8b04f3",
       "bytes": 3824
     },
     {
@@ -1020,7 +1020,7 @@
     },
     {
       "path": "docs/IMAGE-REVIEW.md",
-      "sha256": "19e9e5a4d047b75b47c18e09b5e92139ed851addd7ab22cfdac37fa6d7692fb1",
+      "sha256": "3797fe7140543a1f44cac56ea03ec44dbcd8a00661ac36b9076292f322a7c483",
       "bytes": 7541
     },
     {
@@ -1030,7 +1030,7 @@
     },
     {
       "path": "docs/RELEASE.md",
-      "sha256": "49258c5f3dbce11781ba24cc49dee20ad780a6c43c4448371153b28487a45743",
+      "sha256": "11a6e30fa49574af330c4bf955a1bb52ac7ce984d4cbe1dc6e076685237283a2",
       "bytes": 4278
     },
     {
@@ -1040,8 +1040,8 @@
     },
     {
       "path": "docs/SERVICE-IMAGES.md",
-      "sha256": "ff38fa94fbcf4aa527ebb9fb61f14477968ed65c9e5cf1971c7783cc7ca4b59a",
-      "bytes": 4336
+      "sha256": "85a19f76d69d0ec1a101b7ed28bf02980a1a81173ca705d9e43c0eb1a52e2f99",
+      "bytes": 4366
     },
     {
       "path": "docs/SERVICE-MODEL.md",
@@ -1070,8 +1070,8 @@
     },
     {
       "path": "services/.dockerignore",
-      "sha256": "7a4fb5fa2659c32c3eac17bfa813481db50b8bbd7f2786dedbf120d293ebbefb",
-      "bytes": 111
+      "sha256": "0a388deff8828d7ee5becfc06b888b90e35494aa383d3be1d992e2bea265dd41",
+      "bytes": 128
     },
     {
       "path": "services/LICENSE",
@@ -1100,8 +1100,13 @@
     },
     {
       "path": "services/proxy.Dockerfile",
-      "sha256": "3ee750b18c7ce76976182ccf5ba7140c942eaf828c1286df6e8cad4ddad3c82a",
-      "bytes": 2098
+      "sha256": "dcb1d7a9d404e427d71d7508a14864a8196cf8dbdca4c57021717d623690d684",
+      "bytes": 2140
+    },
+    {
+      "path": "services/proxy/Caddyfile",
+      "sha256": "c7f16f0b7005a82e06d210289933c7ea5030e50f3de38a6f08803d9cd6eb99a5",
+      "bytes": 66
     },
     {
       "path": "services/proxy/go.mod",
@@ -1180,8 +1185,8 @@
     },
     {
       "path": "tools/test_compose.py",
-      "sha256": "3e1f059133de33ac2013809bdf0950130d5f0eaf95067297d83e71a7cea8a342",
-      "bytes": 13683
+      "sha256": "c18b50a95a3328d20d1710fc451778c3bd621911ff7fb8a853182d477ec4c928",
+      "bytes": 13851
     },
     {
       "path": "tools/test_initializer.py",
@@ -1205,8 +1210,8 @@
     },
     {
       "path": "tools/verify_services.py",
-      "sha256": "14f034fd9d655882ffad5cfdeb4a9f25ef3f3d96c6de66a1ddee465995256e38",
-      "bytes": 5935
+      "sha256": "e09ef37032c41e52d0fe60405a2df9d04bf5c6d5f6c04f49a76522a5ad477752",
+      "bytes": 6166
     }
   ]
 }

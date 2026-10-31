@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.0-rc17 — read-only proxy installation correction
+
+* Bake the reviewed default Caddyfile into the proxy image. This avoids Compose trying to create an inline configuration inside a read-only root filesystem. Verify the baked file against the source and use a read-only file override for local TLS testing.
+* Retain the failed rc16 installation evidence; repeat the exact artifact, YAML and recovery rehearsal for this replacement candidate.
+
 ## 0.1.0-rc16 — service images and distribution rehearsal
 
 * Build the pinned Caddy release with patched Go dependencies in a minimal proxy image, using a traced CA trust bundle and compiled-module notices. Disable its administration API and restrict filesystem writes/capabilities.

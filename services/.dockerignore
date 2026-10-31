@@ -3,6 +3,7 @@
 !go_notices.go
 !proxy/
 !proxy/main.go
+!proxy/Caddyfile
 !proxy/go.mod
 !proxy/go.sum
 !gosu/

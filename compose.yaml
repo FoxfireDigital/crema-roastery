@@ -1,7 +1,7 @@
 # Primary install: Docker Compose 2.23.1+. Edit image, domain, origin and timezone.
 # Candidate image is a local build; no public registry image exists yet.
 name: crema
-x-portal-image: &portal-image crema:0.1.0-rc16
+x-portal-image: &portal-image crema:0.1.0-rc17
 x-domain: &domain coffee.example.org
 x-app-environment: &app-environment
   PORTAL_BASE_URL: https://coffee.example.org
@@ -22,7 +22,7 @@ services:
     security_opt: [no-new-privileges:true]
     restart: "no"
   postgres:
-    image: crema-database:0.1.0-rc16
+    image: crema-database:0.1.0-rc17
     pull_policy: never
     environment:
       POSTGRES_USER: coffee
@@ -73,14 +73,11 @@ services:
     security_opt: [no-new-privileges:true]
     restart: unless-stopped
   proxy:
-    image: crema-proxy:0.1.0-rc16
+    image: crema-proxy:0.1.0-rc17
     pull_policy: never
     ports: ["80:80", "443:443"]
     environment:
       PORTAL_DOMAIN: *domain
-    configs:
-      - source: caddyfile
-        target: /etc/caddy/Caddyfile
     volumes: [caddy_data:/data, caddy_config:/config]
     depends_on:
       web: {condition: service_healthy}
@@ -89,15 +86,6 @@ services:
     cap_add: [NET_BIND_SERVICE]
     security_opt: [no-new-privileges:true]
     restart: unless-stopped
-configs:
-  caddyfile:
-    content: |
-      {
-          admin off
-      }
-      {$$PORTAL_DOMAIN} {
-          reverse_proxy web:8000
-      }
 volumes:
   database:
   instance_keys:

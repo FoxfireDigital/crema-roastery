@@ -1,0 +1,6 @@
+{
+    admin off
+}
+{$PORTAL_DOMAIN} {
+    reverse_proxy web:8000
+}

@@ -7,6 +7,8 @@ import json
 import subprocess
 import tarfile
 
+ROOT = Path(__file__).resolve().parents[1]
+
 
 def run(args):
     result = subprocess.run(args, capture_output=True, check=False)
@@ -69,6 +71,8 @@ def verify(proxy_image, database_image, version, revision, output):
         trust = json.loads(read(archive, 'usr/share/crema-proxy/trust.json'))
         assert hashlib.sha256(read(archive, 'etc/ssl/certs/ca-certificates.crt')).hexdigest() == trust['bundleSHA256']
         read(archive, 'usr/share/crema-proxy/notices/ca-certificates/copyright')
+        caddyfile = read(archive, 'etc/caddy/Caddyfile')
+        assert caddyfile == (ROOT / 'services/proxy/Caddyfile').read_bytes(), 'Proxy defaults differ from reviewed configuration'
         # The package-level OpenPGP warning requires separate source-graph
         # evidence too. Absence of its path here is an additional binary check.
         assert b'golang.org/x/crypto/openpgp' not in read(archive, 'usr/bin/caddy')

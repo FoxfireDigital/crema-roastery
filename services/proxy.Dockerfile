@@ -24,6 +24,7 @@ COPY --from=trust /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certifica
 COPY --from=trust /usr/share/doc/ca-certificates/copyright /usr/share/crema-proxy/notices/ca-certificates/copyright
 COPY --from=trust /usr/share/common-licenses/ /usr/share/crema-proxy/notices/common-licenses/
 COPY --from=trust /trust.json /usr/share/crema-proxy/trust.json
+COPY proxy/Caddyfile /etc/caddy/Caddyfile
 COPY LICENSE /usr/share/crema-proxy/LICENSE
 # Retain the upstream proxy's UID for existing certificate-volume compatibility.
 # Compose restricts capabilities, writes and network exposure separately.

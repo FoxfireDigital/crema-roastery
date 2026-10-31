@@ -50,7 +50,9 @@ try:
         config['services'][service]['environment']['PORTAL_TIME_ZONE']='America/New_York'
     config['services']['proxy']['environment']['PORTAL_DOMAIN']='crema-qa.localhost'
     config['services']['proxy']['ports']=[{'target':443,'published':'0','host_ip':'127.0.0.1','protocol':'tcp'}]
-    config['configs']['caddyfile']['content']='{\n admin off\n auto_https disable_redirects\n}\nhttps://crema-qa.localhost {\n tls internal\n reverse_proxy web:8000\n}\n'
+    caddyfile=root/'Caddyfile.qa'
+    caddyfile.write_text('{\n admin off\n auto_https disable_redirects\n}\nhttps://crema-qa.localhost {\n tls internal\n reverse_proxy web:8000\n}\n')
+    config['services']['proxy'].setdefault('volumes',[]).append({'type':'bind','source':str(caddyfile),'target':'/etc/caddy/Caddyfile','read_only':True})
     config.setdefault('networks',{}).setdefault('default',{})['internal']=True
     # Only the proxy gets a routable bridge for loopback publishing. Backend stays isolated.
     config['networks']['front']={'internal':False}
