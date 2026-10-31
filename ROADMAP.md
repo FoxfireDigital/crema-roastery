@@ -1,6 +1,6 @@
 # Crema roadmap: review candidate to 1.x
 
-Planning baseline: October 30, 2026. Current source candidate: **0.1.0-rc13**, prepared for private review; operational deployments may remain on an earlier verified candidate. This is a proposed sequence with completion criteria, not a list of delivered features or promised release dates. The current front page remains the accepted roast sheet; a kanban redesign is outside this roadmap.
+Planning baseline: October 30, 2026. Current source candidate: **0.1.0-rc14**, prepared for private review; operational deployments may remain on an earlier verified candidate. This is a proposed sequence with completion criteria, not a list of delivered features or promised release dates. The current front page remains the accepted roast sheet; a kanban redesign is outside this roadmap.
 
 ## What 1.0 means
 

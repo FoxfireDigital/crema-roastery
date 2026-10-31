@@ -1,6 +1,6 @@
 Django==5.2.18
 gunicorn==26.0.0
-psycopg[binary]==3.3.6
+psycopg[c]==3.3.6
 whitenoise==6.12.0
 reportlab==4.5.1
 Pillow==13.0.0

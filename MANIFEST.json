@@ -1,6 +1,6 @@
 {
   "name": "Crema",
-  "version": "0.1.0-rc13",
+  "version": "0.1.0-rc14",
   "license": "MIT",
   "files": [
     {
@@ -25,8 +25,8 @@
     },
     {
       "path": ".github/workflows/verify.yml",
-      "sha256": "dce0f1bc4e842b67547fc167ee077b246b0f7a3c8b240228dcf1173d9339284d",
-      "bytes": 3594
+      "sha256": "bbcc3e2530dcd55693112f2a5236274d17fd469580f0ddb957fa0c01373fedb7",
+      "bytes": 4077
     },
     {
       "path": ".gitignore",
@@ -35,8 +35,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "f9486823be0181fabc1b80b76cf63733b3de04721fe0c4b9a7563827b3f0d781",
-      "bytes": 8694
+      "sha256": "deceeb98d3d18028679383dc4472faa00a92901e8a3de4978744a38752225231",
+      "bytes": 9328
     },
     {
       "path": "CONTRIBUTING.md",
@@ -55,12 +55,12 @@
     },
     {
       "path": "README.md",
-      "sha256": "3e0bf588b3d6f02405744284ead447fefeaf1cdb940779b6a31b9df3e47f06cc",
+      "sha256": "6310a3a612484d380bd1c02405068105e9c9433b277c217976b292a6fdf5fd5d",
       "bytes": 7240
     },
     {
       "path": "ROADMAP.md",
-      "sha256": "f42197df2a5fbb1e5e0b645f00e48db3c3086b2b648111bd03b0f8a40cf14619",
+      "sha256": "5b170d3f2ee1a2c1d81cb402fbaebf75214b96cc36cdd846bf8405949850f2cb",
       "bytes": 16831
     },
     {
@@ -80,8 +80,8 @@
     },
     {
       "path": "app/Dockerfile",
-      "sha256": "d19f4ff48bf1517544dd8325c1d9e77d2cd857284c6bd037c572a0ce25a49872",
-      "bytes": 1291
+      "sha256": "ae2b995d73813fb7feaeefec188c7d8da14effc84b212d3db2f6a435aca08628",
+      "bytes": 3493
     },
     {
       "path": "app/LICENSE",
@@ -955,8 +955,8 @@
     },
     {
       "path": "app/requirements.txt",
-      "sha256": "d9c03df5282a011b47431c87799a377e02d81cf1e81aa76f9d453a0aa9429dff",
-      "bytes": 127
+      "sha256": "6d371c60544de631309f57569177fb3564e0f8f8b66d624e9d14e91da6db8b9e",
+      "bytes": 122
     },
     {
       "path": "app/worker.py",
@@ -970,7 +970,7 @@
     },
     {
       "path": "compose.yaml",
-      "sha256": "c901a07233e20ca8359573cf45fc809d896ab55e720ef30d4367ca8d45a8e3a0",
+      "sha256": "1d7c0b8020f0f154eef3742a51833f507f1c72aec756fb856bacadb35a16e2aa",
       "bytes": 3051
     },
     {
@@ -985,12 +985,12 @@
     },
     {
       "path": "docs/BETA-FREEZE.md",
-      "sha256": "b9dcb4924e79a5eec0cd8c68659ba9f3ee89c6751e82640d3320f9a5bd093bf3",
-      "bytes": 2624
+      "sha256": "7255854c7278abeb54c882a8277ae2972312d63fca990862c63dd21a1ba0e826",
+      "bytes": 3134
     },
     {
       "path": "docs/DEPLOYMENT-QA.md",
-      "sha256": "d81f1f57e0eb13a38f24f6b4f7a75edbeb6bc48083d5f85620b618496cdee051",
+      "sha256": "f7eaac20ed06661d3d8d78adad00e0c6e39e08d402781a6f7a3e17e64659878d",
       "bytes": 3809
     },
     {
@@ -1000,8 +1000,8 @@
     },
     {
       "path": "docs/DISTRIBUTION-REVIEW.md",
-      "sha256": "34680ace892a5ee7772f4eac82154f87040247790f84fb45fe72228530e786c3",
-      "bytes": 4942
+      "sha256": "d29742035cf456e35098512d334e5a9df31ed906f56cc4576cf43289307fe04d",
+      "bytes": 5035
     },
     {
       "path": "docs/GREEN-STOCK.md",
@@ -1010,8 +1010,8 @@
     },
     {
       "path": "docs/IMAGE-REVIEW.md",
-      "sha256": "40043c36f2ed9efcd9a436ede32a169bf34653c09aa507e4eb8bc2e7ece36519",
-      "bytes": 5530
+      "sha256": "2db21cce4febecc0f91d118421dd09d5121f1d94db0a23ec07273b9cf1de9945",
+      "bytes": 6971
     },
     {
       "path": "docs/MARKETPLACES.md",
@@ -1020,7 +1020,7 @@
     },
     {
       "path": "docs/RELEASE.md",
-      "sha256": "6dca8e68ef9161edb08816f5fccea451ddbdb0ccf8fa975af31c39e4f005451c",
+      "sha256": "323adc75c372d96c3e8650616ba7508a77270f32385f3d951986eb00c6b2c943",
       "bytes": 3826
     },
     {
@@ -1120,8 +1120,8 @@
     },
     {
       "path": "tools/verify_image.py",
-      "sha256": "9d4717a4cf3cc0a6926b14d7cd0ee249deed3de548ae1237e7d03234f9bb19af",
-      "bytes": 7686
+      "sha256": "dbf0eb85768ca5dae665a494a9a7ce7476ad2fc9ea722355edf402b164c73774",
+      "bytes": 9153
     }
   ]
 }

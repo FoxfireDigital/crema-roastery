@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.0-rc14 — database-client distribution correction
+
+* Build Psycopg’s C extension from its checksum-verified source against the system PostgreSQL client; remove the bundled binary client wheel. Retain the extension source, build-tool versions and source/wheel hashes in the runtime image.
+* Keep compilers and headers in a separate build stage. Verify the C implementation, system-library linkage, source integrity and absence of bundled/build-only distributions.
+* Pin matching libpq headers/runtime and refresh tzdata. Source-based CI explicitly installs client headers. No application behavior or database schema change.
+
 ## 0.1.0-rc13 — frozen-beta review corrections
 
 * Escape formula-like employee names in the legacy timesheet CSV and label payroll clocks/exports with their configured timezone.

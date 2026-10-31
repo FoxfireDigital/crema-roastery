@@ -10,7 +10,7 @@ import tempfile
 
 ROOT = Path(__file__).resolve().parents[1]
 PROBE = r'''
-import os,json,hashlib,importlib.util
+import os,json,hashlib,importlib.util,subprocess
 from pathlib import Path
 def sha(path):
     with path.open('rb') as f:return hashlib.file_digest(f,'sha256').hexdigest()
@@ -32,7 +32,21 @@ assert json.loads(Path('/srv/label_artwork/catalog.json').read_text())==[]
 assert not any(Path('/var/lib/roastery-secrets').iterdir()),'Image contains instance keys'
 assert importlib.util.find_spec('pip') is None,'Build-only installer and its vendored libraries remain in the runtime image'
 assert not list(Path('/usr/local/lib/python3.12/ensurepip/_bundled').glob('*.whl')),'Bundled bootstrap installers remain in the runtime image'
-print(json.dumps({'uid':os.getuid(),'gid':os.getgid(),'files':files,'writableApplicationFiles':writable,'inventory':inventory,'noticeCount':len(notices)}))
+from psycopg import pq
+import psycopg_c.pq as c_pq
+assert pq.__impl__=='c','Runtime must use the compiled, system-linked database driver'
+assert importlib.util.find_spec('psycopg_binary') is None,'Bundled database-client wheel remains'
+linkage=subprocess.check_output(['ldd',c_pq.__file__],text=True)
+assert 'not found' not in linkage and 'libpq.so.5 => /' in linkage and '.libs/' not in linkage,'Database driver does not link the system client libraries'
+assert not {'gcc','gcc-12','libpq-dev'} & {p['name'] for p in inventory['debian']},'Build tools remain in runtime'
+assert not {'pip','setuptools','wheel','psycopg-binary'} & {p['name'].lower().replace('_','-') for p in inventory['python']},'Build-only or bundled-driver distribution remains'
+build=json.loads((root/'driver-build.json').read_text())
+source=root/'sources/psycopg_c-3.3.6.tar.gz'
+source_hash=sha(source)
+assert source_hash=='29c568426ad61c1b702c7d73505c43ca2c9fc5d97a8431d8d9049e731e319ff8'
+assert any(f['path']=='sources/'+source.name and f['sha256']==source_hash for f in build['files']),'Driver source provenance mismatch'
+driver={'implementation':pq.__impl__,'libpqVersion':pq.version(),'linkage':linkage,'sourceSHA256':source_hash,'build':build}
+print(json.dumps({'uid':os.getuid(),'gid':os.getgid(),'files':files,'writableApplicationFiles':writable,'inventory':inventory,'noticeCount':len(notices),'driver':driver}))
 '''
 
 
@@ -103,7 +117,9 @@ def main():
     assert data['inventory']['python'] and data['inventory']['debian'], 'Component inventory is incomplete.'
     args.output.mkdir(parents=True, exist_ok=True)
     (args.output / 'components.json').write_text(json.dumps(data['inventory'], indent=2) + '\n')
+    (args.output / 'database-driver.json').write_text(json.dumps(data['driver'], indent=2) + '\n')
     report = {'image': args.image, 'imageId': info['Id'], 'registryDigests': info.get('RepoDigests', []), 'version': args.version, 'revision': args.revision, 'platform': info['Os'] + '/' + info['Architecture'], 'applicationFiles': len(expected), 'uid': data['uid'], 'emptyPrivateCatalogs': True, 'emptyInstanceKeys': True, 'applicationWritable': False, 'noticeCount': data['noticeCount'], 'pythonPackages': len(data['inventory']['python']), 'debianPackages': len(data['inventory']['debian']), 'missingNoticeFiles': data['inventory']['missingNoticeFiles'], 'limitation': 'Offline application-image inspection; not an independent security audit, full license/source compliance review, registry-pull trial or proxy/database image review.'}
+    report['databaseDriver'] = {key: data['driver'][key] for key in ['implementation', 'libpqVersion', 'sourceSHA256']}
     (args.output / 'image-verification.json').write_text(json.dumps(report, indent=2) + '\n')
     print(json.dumps(report, indent=2))
     if args.test_context:
