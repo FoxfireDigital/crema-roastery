@@ -10,7 +10,7 @@ import tempfile
 
 ROOT = Path(__file__).resolve().parents[1]
 PROBE = r'''
-import os,json,hashlib
+import os,json,hashlib,importlib.util
 from pathlib import Path
 def sha(path):
     with path.open('rb') as f:return hashlib.file_digest(f,'sha256').hexdigest()
@@ -30,6 +30,8 @@ for item in [inventory['applicationNotice'],*[entry for group in ['python','debi
 assert json.loads(Path('/srv/portal/artisan_catalog.json').read_text())=={'profiles':[],'alarms':[]}
 assert json.loads(Path('/srv/label_artwork/catalog.json').read_text())==[]
 assert not any(Path('/var/lib/roastery-secrets').iterdir()),'Image contains instance keys'
+assert importlib.util.find_spec('pip') is None,'Build-only installer and its vendored libraries remain in the runtime image'
+assert not list(Path('/usr/local/lib/python3.12/ensurepip/_bundled').glob('*.whl')),'Bundled bootstrap installers remain in the runtime image'
 print(json.dumps({'uid':os.getuid(),'gid':os.getgid(),'files':files,'writableApplicationFiles':writable,'inventory':inventory,'noticeCount':len(notices)}))
 '''
 

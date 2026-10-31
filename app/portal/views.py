@@ -200,10 +200,13 @@ def order_detail(request,pk):
         if order.fulfilled_at or order.cancelled_at:
             return HttpResponseBadRequest('This order is closed.')
         if action=='add_batch':
-            try: weight=Decimal(request.POST.get('green_oz',''))
-            except (InvalidOperation,TypeError): weight=Decimal('0')
-            roaster=Roaster.objects.filter(pk=request.POST.get('roaster_id'),active=True).first()
-            if weight<=0 or weight>999999 or not roaster:
+            try:
+                weight=Decimal(request.POST.get('green_oz',''))
+                roaster_id=int(request.POST.get('roaster_id',''))
+            except (InvalidOperation,TypeError,ValueError):
+                weight=Decimal('0');roaster_id=0
+            roaster=Roaster.objects.filter(pk=roaster_id,active=True).first() if 0<roaster_id<=9223372036854775807 else None
+            if not weight.is_finite() or weight<=0 or weight>999999 or not roaster:
                 messages.error(request,'Choose an active roaster and positive measured green weight in ounces.')
             else:
                 batch=Batch(operator=request.user,order=order,coffee=order.coffee,label_variant=order.label_variant,roaster=roaster,green_oz=weight,roast_level=order.roast_level,measured_at=timezone.now(),date=timezone.localdate(),note=f'Custom order #{order.pk}; '+(f'requested {order.target_finish_temp_f}°F' if order.target_finish_temp_f is not None else f'standard {order.roast_level} roast'))
@@ -249,10 +252,11 @@ def timesheets(request):
 
 @staff_member_required
 def export_timesheets(request):
+    from .recovery import csv_cell
     response=HttpResponse(content_type='text/csv')
     response['Content-Disposition']='attachment; filename="coffee-timesheets.csv"'
     writer=csv.writer(response)
     writer.writerow(['Employee','Clock in (UTC)','Clock out (UTC)','Net hours','Status'])
     for s in Shift.objects.filter(removed_at__isnull=True).select_related('user').prefetch_related('breaks').order_by('started_at'):
-        writer.writerow([s.user.username,s.started_at.isoformat(),s.ended_at.isoformat() if s.ended_at else '',f'{seconds_worked(s)/3600:.2f}','Closed' if s.ended_at else 'Open'])
+        writer.writerow([csv_cell(s.user.username),s.started_at.isoformat(),s.ended_at.isoformat() if s.ended_at else '',f'{seconds_worked(s)/3600:.2f}','Closed' if s.ended_at else 'Open'])
     return response

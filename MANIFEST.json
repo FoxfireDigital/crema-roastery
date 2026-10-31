@@ -1,6 +1,6 @@
 {
   "name": "Crema",
-  "version": "0.1.0-rc12",
+  "version": "0.1.0-rc13",
   "license": "MIT",
   "files": [
     {
@@ -25,8 +25,8 @@
     },
     {
       "path": ".github/workflows/verify.yml",
-      "sha256": "ecebf9db561116623708c37477234c8bccfb7853645432d5a3fb7508b6a78464",
-      "bytes": 3522
+      "sha256": "dce0f1bc4e842b67547fc167ee077b246b0f7a3c8b240228dcf1173d9339284d",
+      "bytes": 3594
     },
     {
       "path": ".gitignore",
@@ -35,8 +35,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "3e63e894aedd101b7de3e6291dc23a07020b1ca0f30c2f1f5328a5c3e2eef8e3",
-      "bytes": 7757
+      "sha256": "f9486823be0181fabc1b80b76cf63733b3de04721fe0c4b9a7563827b3f0d781",
+      "bytes": 8694
     },
     {
       "path": "CONTRIBUTING.md",
@@ -55,12 +55,12 @@
     },
     {
       "path": "README.md",
-      "sha256": "4b1dd561a127effcb23433ca2ee42d3e9dd0a0c43a2af62b444a59d52691baf9",
+      "sha256": "3e0bf588b3d6f02405744284ead447fefeaf1cdb940779b6a31b9df3e47f06cc",
       "bytes": 7240
     },
     {
       "path": "ROADMAP.md",
-      "sha256": "cd8105edd72942ab088162db7fb41cb021be71dd04fdca916a91cc7b39ba7ff0",
+      "sha256": "f42197df2a5fbb1e5e0b645f00e48db3c3086b2b648111bd03b0f8a40cf14619",
       "bytes": 16831
     },
     {
@@ -80,8 +80,8 @@
     },
     {
       "path": "app/Dockerfile",
-      "sha256": "199c5ac56d6009711f4bdb4a9c006bb8e08a878ad8a7870e2352133480ba77fe",
-      "bytes": 1016
+      "sha256": "d19f4ff48bf1517544dd8325c1d9e77d2cd857284c6bd037c572a0ce25a49872",
+      "bytes": 1291
     },
     {
       "path": "app/LICENSE",
@@ -385,8 +385,8 @@
     },
     {
       "path": "app/portal/payroll.py",
-      "sha256": "678ea5f5b3378ca2a4142a1fe2dc6db71feaa82616782bcc1f2dc844e161aafc",
-      "bytes": 8952
+      "sha256": "7afd0a65fe91ca0ce05815fa8d275d9d2282da1af11f785b89a477e4567d3c87",
+      "bytes": 9052
     },
     {
       "path": "app/portal/plan_actions.py",
@@ -770,8 +770,8 @@
     },
     {
       "path": "app/portal/templates/portal/payroll.html",
-      "sha256": "04d76b1339f5768185767be657e7b3c7a15aa25776fe2a48dab7cd2a50d16bf8",
-      "bytes": 3597
+      "sha256": "6a3e6440a11369a6f8c85165d47d2dce4c1080694891daa5f09eff6a50478aa1",
+      "bytes": 3610
     },
     {
       "path": "app/portal/templates/portal/planning.html",
@@ -920,8 +920,8 @@
     },
     {
       "path": "app/portal/views.py",
-      "sha256": "81aeece81054496f5d456f21aa16579f32db761c5342d03a72d9b7e647c9eb4d",
-      "bytes": 14756
+      "sha256": "507e2e915cdc08848734e2e3d5e95e341296b9d36b277e68b17e34ed5d66a666",
+      "bytes": 14976
     },
     {
       "path": "app/portal/wholesale.py",
@@ -970,8 +970,8 @@
     },
     {
       "path": "compose.yaml",
-      "sha256": "ecd6c0a88da3afca6d2986ca17a45346438b92e0f365858b45918159f45db174",
-      "bytes": 2907
+      "sha256": "c901a07233e20ca8359573cf45fc809d896ab55e720ef30d4367ca8d45a8e3a0",
+      "bytes": 3051
     },
     {
       "path": "docs/ARTISAN.md",
@@ -984,8 +984,13 @@
       "bytes": 3141
     },
     {
+      "path": "docs/BETA-FREEZE.md",
+      "sha256": "b9dcb4924e79a5eec0cd8c68659ba9f3ee89c6751e82640d3320f9a5bd093bf3",
+      "bytes": 2624
+    },
+    {
       "path": "docs/DEPLOYMENT-QA.md",
-      "sha256": "a71df9f92229e6eddee49597d1dd442ae9712a6ef5af98990782105337234ca4",
+      "sha256": "d81f1f57e0eb13a38f24f6b4f7a75edbeb6bc48083d5f85620b618496cdee051",
       "bytes": 3809
     },
     {
@@ -1005,8 +1010,8 @@
     },
     {
       "path": "docs/IMAGE-REVIEW.md",
-      "sha256": "a093d77644149db49e511ea41594e022132fb4afeb96ae28326fabfb75dc1da6",
-      "bytes": 5374
+      "sha256": "40043c36f2ed9efcd9a436ede32a169bf34653c09aa507e4eb8bc2e7ece36519",
+      "bytes": 5530
     },
     {
       "path": "docs/MARKETPLACES.md",
@@ -1015,7 +1020,7 @@
     },
     {
       "path": "docs/RELEASE.md",
-      "sha256": "0ce031142513750ffc4be5ab80740da1bc606549ad2a10a2411418e1f4edc239",
+      "sha256": "6dca8e68ef9161edb08816f5fccea451ddbdb0ccf8fa975af31c39e4f005451c",
       "bytes": 3826
     },
     {
@@ -1084,6 +1089,11 @@
       "bytes": 5290
     },
     {
+      "path": "tools/review_checks.py",
+      "sha256": "de9788dbedbdd11dd5341a56b30aff4880c5bf89a39b2522d2ab175c2849653e",
+      "bytes": 2729
+    },
+    {
       "path": "tools/sourcing_checks.py",
       "sha256": "b37d4482feff4c3b4399644d1e1af95b4590c15f26a333350242035f9ac560cd",
       "bytes": 7300
@@ -1105,13 +1115,13 @@
     },
     {
       "path": "tools/test_release.py",
-      "sha256": "b0a4043d5c63cafc6cf111829caa65d70db5bacbac8c737af3f102b4af347f5d",
-      "bytes": 4956
+      "sha256": "8d355d5f8bee2e146a601e702967b5a7adb6b3fe93ff0e2074c5ba01f51dcab5",
+      "bytes": 5032
     },
     {
       "path": "tools/verify_image.py",
-      "sha256": "0a5bd14d682d94eb65672af67d9fd8743911a1040a3032e6646527f416fd32dd",
-      "bytes": 7403
+      "sha256": "9d4717a4cf3cc0a6926b14d7cd0ee249deed3de548ae1237e7d03234f9bb19af",
+      "bytes": 7686
     }
   ]
 }

@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-rc13 — frozen-beta review corrections
+
+* Escape formula-like employee names in the legacy timesheet CSV and label payroll clocks/exports with their configured timezone.
+* Reject non-finite custom-order green weights and malformed/out-of-range machine identifiers without creating production or returning an unhandled error.
+* Remove the package installer and bootstrap wheel from the runtime filesystem, including installer-vendored dependencies. Keep the reviewed build-tool pin for installation only and capture notices after runtime cleanup.
+* Pin the reviewed base, proxy and database references by digest. Digest identity makes the candidate repeatable; outstanding upstream advisory and distribution review remain explicit release gates.
+* Add focused export/input regressions, image checks for installer removal and the beta scope/review boundary. No feature expansion, schema migration or production data correction.
+
 ## 0.1.0-rc12 — roasting and log review
 
 * Today now records Measured, Roasted and an explicit Cooled step. Bagging/sealing controls stay on the separate packing checklist; Today corrections preserve existing packing timestamps. Existing batches receive no invented cooling timestamps.

@@ -7,7 +7,7 @@ The distribution candidate includes a restricted build context, source/version l
 Run from a clean, reviewed source checkout on a Docker host:
 
 ```sh
-export CREMA_VERSION=0.1.0-rc12
+export CREMA_VERSION=0.1.0-rc13
 export CREMA_REVISION=$(git rev-parse HEAD)
 docker compose -f compose.yaml -f compose.build.yaml build --pull web
 python tools/verify_image.py --image "crema:$CREMA_VERSION" \
@@ -39,7 +39,7 @@ The inspection writes `image-verification.json` and a copy of `components.json` 
 
 CI also submits the installed Python package versions from `components.json` to the advisory check, including image-provided Python tooling. This supplements the resolver-report check. Debian/native-library advisories and complete license obligations still require separate review; a Python-only advisory result is not an image-wide security assessment.
 
-The image explicitly updates its package installer to pinned pip 26.2.2 before installing requirements; do not inherit an old installer from a cached base image unnoticed. Builds should refresh the base image and review its identity. The upstream release is documented on [PyPI](https://pypi.org/project/pip/26.2.2/). A successful advisory lookup means no known findings were returned for those versions at that time, not a guarantee against vulnerabilities.
+The build explicitly uses pinned pip26.2.2 to install requirements, then removes the installer and the bootstrap wheel from the runtime filesystem. This removes unnecessary installer-vendored dependencies; it does not clear operating-system or other native-library advisories. The image verifier rejects a remaining pip module or bootstrap wheel. Build/base/service references are pinned by digest for this review; refresh them through a deliberate tested candidate update. A successful advisory lookup means no known findings were returned for those versions at that time, not a guarantee against vulnerabilities.
 
 This is a custom component inventory, not a claim of CycloneDX/SPDX conformance, complete source delivery or license compatibility. Review missing notice files, transitive and vendored native libraries, exact versions, distribution obligations and corresponding source requirements. Python metadata alone does not settle those questions. The proxy and PostgreSQL images need their own review. Do not describe every image component as MIT.
 

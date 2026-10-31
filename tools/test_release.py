@@ -49,6 +49,8 @@ from green_checks import run_green_checks
 run_green_checks(client,owner)
 from production_order_checks import run_production_order_checks
 run_production_order_checks(client,owner)
+from review_checks import run_review_checks
+run_review_checks(client,owner)
 for path in ['/setup/','/','/planning/','/packing/','/stock/','/green-beans/','/wholesale/','/products/','/information/','/help/','/artisan/']:
     response=client.get(path);assert response.status_code==200,(path,response.status_code)
 assert not Batch.objects.exists() and not ImportOrder.objects.exists() and not Shift.objects.exists()

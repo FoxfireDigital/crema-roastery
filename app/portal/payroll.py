@@ -96,7 +96,7 @@ def payroll_page(request):
     rows=work_rows(employee);due=estimate(employee)
     current=HourlyRate.objects.filter(user=employee,effective_on__lte=timezone.localdate()).first()
     employees=[{'person':u,'due':estimate(u)} for u in get_user_model().objects.filter(is_active=True).exclude(username='admin')] if can_manage else []
-    return render(request,'portal/payroll.html',{'employee':employee,'can_manage':can_manage,'employees':employees,'form':form,'due':due,'current_rate':current,'rates':HourlyRate.objects.filter(user=employee).select_related('created_by')[:50],'rows':rows[-200:],'balance':hours_balance(employee),'today':timezone.localdate()},status=status)
+    return render(request,'portal/payroll.html',{'employee':employee,'can_manage':can_manage,'employees':employees,'form':form,'due':due,'current_rate':current,'rates':HourlyRate.objects.filter(user=employee).select_related('created_by')[:50],'rows':rows[-200:],'balance':hours_balance(employee),'today':timezone.localdate(),'clock_timezone':timezone.get_current_timezone_name()},status=status)
 
 @login_required
 @require_http_methods(['GET'])
@@ -114,7 +114,8 @@ def export_payroll(request):
     rows=work_rows(employee,lo,hi)
     response=HttpResponse(content_type='text/csv; charset=utf-8');response['Content-Disposition']='attachment; filename="coffee-timeclock-'+str(employee.pk)+'.csv"';response.write('\ufeff')
     writer=csv.writer(response)
-    writer.writerow(['Employee','Work date (Eastern)','Clock segment start (Eastern)','Clock segment end (Eastern)','Net seconds (breaks excluded)','Net hours','Hourly rate USD','Gross estimate USD','Status'])
+    zone=timezone.get_current_timezone_name()
+    writer.writerow(['Employee',f'Work date ({zone})',f'Clock segment start ({zone})',f'Clock segment end ({zone})','Net seconds (breaks excluded)','Net hours','Hourly rate USD','Gross estimate USD','Status'])
     from .recovery import csv_cell
     for row in rows:writer.writerow([csv_cell(employee.username),row['date'],row['start'].isoformat(),row['end'].isoformat(),row['seconds'],f"{row['hours']:.4f}",row['rate'] if row['rate'] is not None else 'Rate needed',row['gross'] if row['gross'] is not None else '', 'Open — estimate' if row['open'] else 'Closed'])
     writer.writerow(['TOTAL','','','','',f"{sum((r['hours'] for r in rows),Decimal(0)):.4f}",'',sum((r['gross'] for r in rows),Decimal(0)) if all(r['gross'] is not None for r in rows) else 'Incomplete — rate needed','Straight-time estimate before deductions'])
