@@ -6,3 +6,17 @@ services:
       args:
         CREMA_VERSION: ${CREMA_VERSION:-development}
         CREMA_REVISION: ${CREMA_REVISION:-unknown}
+  postgres:
+    build:
+      context: ./services
+      dockerfile: database.Dockerfile
+      args:
+        CREMA_VERSION: ${CREMA_VERSION:-development}
+        CREMA_REVISION: ${CREMA_REVISION:-unknown}
+  proxy:
+    build:
+      context: ./services
+      dockerfile: proxy.Dockerfile
+      args:
+        CREMA_VERSION: ${CREMA_VERSION:-development}
+        CREMA_REVISION: ${CREMA_REVISION:-unknown}

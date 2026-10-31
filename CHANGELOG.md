@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.0-rc16 — service images and distribution rehearsal
+
+* Build the pinned Caddy release with patched Go dependencies in a minimal proxy image, using a traced CA trust bundle and compiled-module notices. Disable its administration API and restrict filesystem writes/capabilities.
+* Rebuild the upstream database privilege-drop helper with the patched Go toolchain/dependencies, preserving PostgreSQL 16 and the original entrypoint/data layout; refresh timezone data.
+* Build Pillow and CFFI against system libraries from verified sources. Preserve the portal’s PNG/JPEG/WebP support while excluding unused optional image/font codecs and their separate bundled libraries. Capture asset/browser/font notices alongside package metadata.
+* Add exact service-image verification, checked offline image loading and an anonymous local-registry rehearsal that downloads complete blobs, verifies layer/config hashes, renders digest-pinned YAML, and exercises installation plus recovery. Public publication remains a separate approval gate.
+
 ## 0.1.0-rc15 — retained-source access correction
 
 * Make the retained driver source archive readable by the non-root runtime user. Exact-image verification caught the upstream download’s restrictive default permissions in the unpromoted rc14 candidate.

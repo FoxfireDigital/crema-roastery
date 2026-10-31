@@ -5,6 +5,9 @@ ROOT=Path(__file__).resolve().parents[1]
 parser=argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--image',required=True,help='Already built generic image; never a customer image')
 parser.add_argument('--revision',required=True)
+parser.add_argument('--proxy-image',help='Already built generic proxy; defaults to the primary YAML reference')
+parser.add_argument('--database-image',help='Already built generic database; defaults to the primary YAML reference')
+parser.add_argument('--compose-yaml',type=Path,help='Test a rendered registry YAML instead of the source-build YAML')
 parser.add_argument('--output',required=True,type=Path)
 args=parser.parse_args()
 if os.name!='posix' or not Path('/tmp').is_dir():parser.error('This QA tool currently supports Linux Docker hosts only.')
@@ -31,11 +34,14 @@ def wait_health(service):
 def web_python(code):return run(cp+['exec','-T','web','python','-'],input=code)
 try:
     shutil.copytree(ROOT,root,dirs_exist_ok=True,ignore=shutil.ignore_patterns('.git','__pycache__','*.pyc','image-review','deployment-review'))
+    if args.compose_yaml:shutil.copyfile(args.compose_yaml.resolve(),root/'compose.yaml')
     cp=['docker','compose','-p',project,'-f',str(root/'compose.yaml')]
     engine=run(['docker','compose','version','--short'])
     run(cp+['config','--quiet'])
     # Keep the supplied YAML immutable; render a local-only variant for this host.
     config=json.loads(run(cp+['config','--format','json']))
+    if args.proxy_image:config['services']['proxy']['image']=args.proxy_image
+    if args.database_image:config['services']['postgres']['image']=args.database_image
     for service in ['initialize','web','worker']:config['services'][service]['image']=image
     for service,limit in [('initialize','256m'),('postgres','512m'),('web','768m'),('worker','256m'),('proxy','256m')]:
         config['services'][service].update(mem_limit=limit,cpus=1)
@@ -58,7 +64,9 @@ try:
     cp=['docker','compose','-p',project,'-f',str(local)]
     rendered=json.loads(run(cp+['config','--format','json']))
     assert all(p['host_ip']=='127.0.0.1' for service in rendered['services'].values() for p in service.get('ports',[]))
-    version=re.search(r'x-portal-image: &portal-image crema:([a-z0-9.-]+)',(root/'compose.yaml').read_text()).group(1)
+    version=json.loads((ROOT/'MANIFEST.json').read_text())['version']
+    from verify_services import verify as verify_services
+    service_review=verify_services(config['services']['proxy']['image'],config['services']['postgres']['image'],version,SOURCE_COMMIT,root/'service-review')
     run(['docker','tag',args.image,image])
     image_review={};components=None
     if (root/'tools/verify_image.py').exists():
@@ -98,8 +106,8 @@ try:
     assert port['HostIp']=='127.0.0.1'
     ca=root/'trial-ca.crt'
     for _ in range(20):
-        certificate=subprocess.run(['docker','exec',proxy,'cat','/data/caddy/pki/authorities/local/root.crt'],capture_output=True,text=True)
-        if certificate.returncode==0:ca.write_text(certificate.stdout);break
+        certificate=subprocess.run(['docker','cp',proxy+':/data/caddy/pki/authorities/local/root.crt',str(ca)],capture_output=True,text=True)
+        if certificate.returncode==0 and 'BEGIN CERTIFICATE' in ca.read_text():break
         time.sleep(1)
     else:raise RuntimeError('Trial TLS authority did not initialize.')
     origin='https://crema-qa.localhost'
@@ -134,6 +142,7 @@ try:
     recovery=rehearse(cp,root,config,password)
     report={'result':'passed','sourceCommit':SOURCE_COMMIT,'composeVersion':engine,'executionHost':'Linux Docker engine','primaryYAMLValidated':True,'localVariantChanges':['unique project/image/volume names','loopback-only dynamic HTTPS port','local TLS authority explicitly trusted by test client','internal network and resource limits','trial origin/timezone'],'emptyInstall':json.loads(fresh),'nonRootApp':True,'postgresRegression':True,'proxyTLSVerified':True,'loginAndCSRFSave':True,'invalidCSRFRejected':True,'marketplaceChoiceSaved':True,'restartRetainsKeysAndData':True,'productionProjectChanged':False,'yaml':local.read_text(),'loopbackPort':port['HostPort']}
     report['backupRestore']=recovery
+    report['serviceImages']={name:{key:value[key] for key in ['image','id']} for name,value in service_review.items() if name in ['proxy','database']}
     if image_review:report['imageReview']=image_review
     print('PASS: local HTTPS proxy, real login, CSRF-protected marketplace save, restart persistence.',flush=True)
 finally:

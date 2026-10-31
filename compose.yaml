@@ -1,7 +1,7 @@
 # Primary install: Docker Compose 2.23.1+. Edit image, domain, origin and timezone.
 # Candidate image is a local build; no public registry image exists yet.
 name: crema
-x-portal-image: &portal-image crema:0.1.0-rc15
+x-portal-image: &portal-image crema:0.1.0-rc16
 x-domain: &domain coffee.example.org
 x-app-environment: &app-environment
   PORTAL_BASE_URL: https://coffee.example.org
@@ -22,7 +22,8 @@ services:
     security_opt: [no-new-privileges:true]
     restart: "no"
   postgres:
-    image: postgres:16-bookworm@sha256:e8a07d2c7579b038938cdba6c539e580e5001caf9ea203d397b5cc83e76bd938
+    image: crema-database:0.1.0-rc16
+    pull_policy: never
     environment:
       POSTGRES_USER: coffee
       POSTGRES_DB: coffee
@@ -32,6 +33,7 @@ services:
       - instance_keys:/run/roastery-secrets:ro
     depends_on:
       initialize: {condition: service_completed_successfully}
+    security_opt: [no-new-privileges:true]
     healthcheck:
       # The entrypoint's temporary initialization server accepts Unix sockets.
       # TCP readiness waits for the final server used by the application.
@@ -71,7 +73,8 @@ services:
     security_opt: [no-new-privileges:true]
     restart: unless-stopped
   proxy:
-    image: caddy:2-alpine@sha256:e70b164da81ef698b3ad19af799ea6086ce6d9e48ed4079eb9fe26f6fbf14ee5
+    image: crema-proxy:0.1.0-rc16
+    pull_policy: never
     ports: ["80:80", "443:443"]
     environment:
       PORTAL_DOMAIN: *domain
@@ -81,10 +84,17 @@ services:
     volumes: [caddy_data:/data, caddy_config:/config]
     depends_on:
       web: {condition: service_healthy}
+    read_only: true
+    cap_drop: [ALL]
+    cap_add: [NET_BIND_SERVICE]
+    security_opt: [no-new-privileges:true]
     restart: unless-stopped
 configs:
   caddyfile:
     content: |
+      {
+          admin off
+      }
       {$$PORTAL_DOMAIN} {
           reverse_proxy web:8000
       }

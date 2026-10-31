@@ -9,6 +9,10 @@ binary_suffixes={'.sqlite3','.db','.dump','.png','.jpg','.jpeg','.webp','.zip','
 # Reviewed transformation of existing platform choices only; no catalog/customer seeds.
 # Exact bytes are allowlisted so changing this migration requires a fresh privacy review.
 reviewed_migrations={'app/portal/migrations/0005_marketplace_selection.py':'8b9ec808c90c8dbc5dc33d8dc3bbbcaa8172c6fad026748ebfdc051d10a79df5'}
+# This exact public Go checksum file includes a linter author's name that
+# coincides with a private catalog marker. Its module/version/hash rows were
+# reviewed against the public module graph; any update requires fresh review.
+reviewed_go_sum='a76010285c4b41d025781f00becd0fd757cd313b2d4d68d117760409cbef7167'
 def check_items(items):
     checked=0;fail=[]
     for name,raw in items:
@@ -18,6 +22,8 @@ def check_items(items):
         try:text=raw.decode('utf-8-sig')
         except UnicodeDecodeError:fail.append(name+': unexpected binary data');continue
         low=text.casefold()
+        if (name=='services/proxy/go.sum' or name.endswith('/services/proxy/go.sum')) and hashlib.sha256(raw.replace(b'\r\n',b'\n')).hexdigest()==reviewed_go_sum:
+            low=low.replace('poly'+'fl'+'oyd/go-errorlint','reviewed-public-linter/go-errorlint')
         if any(marker.casefold() in low for marker in markers):fail.append(name+': private installation marker')
         if re.search(r'(?<![A-Za-z0-9])(?:gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|shpat_[a-f0-9]{20,}|-----BEGIN (?:RSA |OPENSSH |EC )?PRIVATE KEY-----)',text):fail.append(name+': credential pattern')
         if re.search(r'\b(?:10\.\d+\.\d+\.\d+|192\.168\.\d+\.\d+)\b',text):fail.append(name+': private LAN address')

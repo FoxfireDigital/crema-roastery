@@ -1,6 +1,8 @@
 # Crema
 
-Self-hosted coffee production planning, from received orders through roasting, bagging and labels. MIT licensed. One separate installation and database per roastery. 0.1.0-rc15 is a private review candidate with readable Artisan package names. It must pass the staged upgrade and operational gates before a public beta.
+Installation remains YAML based. The review candidate builds its application, proxy and database images together; [checked artifacts and digest-pinned registry YAML](docs/ARTIFACT-INSTALL.md) are also prepared and tested privately before publication.
+
+Self-hosted coffee production planning, from received orders through roasting, bagging and labels. MIT licensed. One separate installation and database per roastery. 0.1.0-rc16 is a private review candidate with readable Artisan package names. It must pass the staged upgrade and operational gates before a public beta.
 
 ## What it includes
 
@@ -23,7 +25,7 @@ The YAML starts a one-time initializer, PostgreSQL, the web app, the background 
 The application image has **not been published**. Build it from the included clean source, then deploy the YAML:
 
 ```sh
-docker compose -f compose.yaml -f compose.build.yaml build web
+docker compose -f compose.yaml -f compose.build.yaml build web postgres proxy
 docker compose config --quiet
 docker compose up -d
 docker compose exec web python manage.py createsuperuser

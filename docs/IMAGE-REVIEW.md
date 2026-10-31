@@ -1,5 +1,7 @@
 # Generic application image review
 
+The rc16 image also builds Pillow and CFFI from verified sources against system libraries. Its native build record includes all three locally built wheels and source hashes. Required JPEG/PNG/WebP roundtrips, disabled unused codecs and system-libffi linkage are verified; source archives remain readable by the restricted user. Notices beside fonts/browser assets are captured along with dist-info notices. See [service-image boundaries](SERVICE-IMAGES.md), [the dependency packet](DEPENDENCY-PACKET.md) and [artifact installation](ARTIFACT-INSTALL.md).
+
 The distribution candidate includes a restricted build context, source/version labels, Crema's MIT notice and a captured component inventory. These checks prepare an image for review. They do not authorize publication or certify legal/security compliance.
 
 ## Build and inspect
@@ -7,9 +9,9 @@ The distribution candidate includes a restricted build context, source/version l
 Run from a clean, reviewed source checkout on a Docker host:
 
 ```sh
-export CREMA_VERSION=0.1.0-rc15
+export CREMA_VERSION=0.1.0-rc16
 export CREMA_REVISION=$(git rev-parse HEAD)
-docker compose -f compose.yaml -f compose.build.yaml build --pull web
+docker compose -f compose.yaml -f compose.build.yaml build --pull web postgres proxy
 python tools/verify_image.py --image "crema:$CREMA_VERSION" \
   --version "$CREMA_VERSION" --revision "$CREMA_REVISION" \
   --output ./image-review --test-context

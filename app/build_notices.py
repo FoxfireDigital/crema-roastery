@@ -50,6 +50,11 @@ def collect():
                 wanted = relative.parts and (relative.parts[0].lower() == 'licenses' or relative.name.lower().startswith(('license', 'copying', 'notice')))
                 if wanted and '..' not in relative.parts:
                     notices.append(notice(located, Path('python') / safe / relative))
+            elif '..' not in parts and any(word in located.name.lower() for word in ['license', 'copying', 'copyright', 'notice', 'fontlog']):
+                # Packages can carry additional terms beside assets (for
+                # example bundled fonts and browser libraries), outside their
+                # dist-info directory. Preserve these exact files too.
+                notices.append(notice(located, Path('python') / safe / 'package-files' / Path(*parts)))
             if located.suffix == '.so' or '.so.' in located.name:
                 native.append({'path': str(entry), 'sha256': digest(located), 'bytes': located.stat().st_size})
         declared = dist.metadata.get('License-Expression') or dist.metadata.get('License')

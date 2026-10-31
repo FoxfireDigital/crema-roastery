@@ -38,15 +38,29 @@ assert pq.__impl__=='c','Runtime must use the compiled, system-linked database d
 assert importlib.util.find_spec('psycopg_binary') is None,'Bundled database-client wheel remains'
 linkage=subprocess.check_output(['ldd',c_pq.__file__],text=True)
 assert 'not found' not in linkage and 'libpq.so.5 => /' in linkage and '.libs/' not in linkage,'Database driver does not link the system client libraries'
-assert not {'gcc','gcc-12','libpq-dev'} & {p['name'] for p in inventory['debian']},'Build tools remain in runtime'
-assert not {'pip','setuptools','wheel','psycopg-binary'} & {p['name'].lower().replace('_','-') for p in inventory['python']},'Build-only or bundled-driver distribution remains'
+assert not {'gcc','gcc-12','g++','g++-12','pkg-config','libpq-dev','libffi-dev','zlib1g-dev','libjpeg62-turbo-dev','libwebp-dev'} & {p['name'] for p in inventory['debian']},'Build tools remain in runtime'
+assert not {'pip','setuptools','wheel','pybind11','psycopg-binary'} & {p['name'].lower().replace('_','-') for p in inventory['python']},'Build-only or bundled-driver distribution remains'
 build=json.loads((root/'driver-build.json').read_text())
 source=root/'sources/psycopg_c-3.3.6.tar.gz'
 source_hash=sha(source)
 assert source_hash=='29c568426ad61c1b702c7d73505c43ca2c9fc5d97a8431d8d9049e731e319ff8'
 assert any(f['path']=='sources/'+source.name and f['sha256']==source_hash for f in build['files']),'Driver source provenance mismatch'
 driver={'implementation':pq.__impl__,'libpqVersion':pq.version(),'linkage':linkage,'sourceSHA256':source_hash,'build':build}
-print(json.dumps({'uid':os.getuid(),'gid':os.getgid(),'files':files,'writableApplicationFiles':writable,'inventory':inventory,'noticeCount':len(notices),'driver':driver}))
+import io,PIL,_cffi_backend
+from PIL import Image,features
+assert not (Path(PIL.__file__).parent.parent/'pillow.libs').exists(),'Bundled Pillow libraries remain'
+for name in ['jpg','zlib','webp']:assert features.check(name),'Required image codec unavailable: '+name
+for name in ['freetype2','littlecms2','libtiff','jpg_2000','avif','libimagequant','xcb']:assert not features.check(name),'Unneeded native image feature enabled: '+name
+for fmt in ['PNG','JPEG','WEBP']:
+    buf=io.BytesIO();Image.new('RGB',(32,32),(10,20,30)).save(buf,fmt)
+    buf.seek(0)
+    with Image.open(buf) as decoded:decoded.load();assert decoded.size==(32,32) and decoded.format==fmt
+cffi_linkage=subprocess.check_output(['ldd',_cffi_backend.__file__],text=True)
+assert 'libffi.so.8 => /' in cffi_linkage and '.libs/' not in cffi_linkage,'FFI is not system linked'
+for filename,expected_hash in {'pillow-13.0.0.tar.gz':'cdcd1ba258178f7356d74170c9a81ba4eab6a5d55748bc402a5a2a6fe6be3510','cffi-2.1.1.tar.gz':'dd31f52ea1086513bb9df30f8fcee9b8918323ae067a3d5b78bc826a000712be'}.items():
+    assert sha(root/'sources'/filename)==expected_hash,'Native source checksum mismatch'
+native={'pillowVersion':PIL.__version__,'requiredCodecs':['PNG','JPEG','WEBP'],'pillowBundledLibraries':False,'cffiLinkage':cffi_linkage}
+print(json.dumps({'uid':os.getuid(),'gid':os.getgid(),'files':files,'writableApplicationFiles':writable,'inventory':inventory,'noticeCount':len(notices),'driver':driver,'native':native}))
 '''
 
 
@@ -118,6 +132,7 @@ def main():
     args.output.mkdir(parents=True, exist_ok=True)
     (args.output / 'components.json').write_text(json.dumps(data['inventory'], indent=2) + '\n')
     (args.output / 'database-driver.json').write_text(json.dumps(data['driver'], indent=2) + '\n')
+    (args.output / 'native-codecs.json').write_text(json.dumps(data['native'], indent=2) + '\n')
     report = {'image': args.image, 'imageId': info['Id'], 'registryDigests': info.get('RepoDigests', []), 'version': args.version, 'revision': args.revision, 'platform': info['Os'] + '/' + info['Architecture'], 'applicationFiles': len(expected), 'uid': data['uid'], 'emptyPrivateCatalogs': True, 'emptyInstanceKeys': True, 'applicationWritable': False, 'noticeCount': data['noticeCount'], 'pythonPackages': len(data['inventory']['python']), 'debianPackages': len(data['inventory']['debian']), 'missingNoticeFiles': data['inventory']['missingNoticeFiles'], 'limitation': 'Offline application-image inspection; not an independent security audit, full license/source compliance review, registry-pull trial or proxy/database image review.'}
     report['databaseDriver'] = {key: data['driver'][key] for key in ['implementation', 'libpqVersion', 'sourceSHA256']}
     (args.output / 'image-verification.json').write_text(json.dumps(report, indent=2) + '\n')
