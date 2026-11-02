@@ -425,8 +425,8 @@
     },
     {
       "path": "app/portal/roast_pooling.py",
-      "sha256": "5859b0cd982a4357fe6e679adfd81a9d7e07e0a4c0faf61dd020002e2ae81b65",
-      "bytes": 2909
+      "sha256": "36b07f3c164f9c372bb4fd5ecd3b96e76644da75d582c15c51214ccd7056e1b6",
+      "bytes": 3247
     },
     {
       "path": "app/portal/roast_sheet.py",
@@ -1200,8 +1200,8 @@
     },
     {
       "path": "tools/roast_pooling_checks.py",
-      "sha256": "936208fed6759165d8a05d77a28542a9852db6c037c569366828e401d25f51bc",
-      "bytes": 5412
+      "sha256": "e5efb2dffc0bf7385a53697001065e894dbb2385f15835741822fe39a1bc937d",
+      "bytes": 5882
     },
     {
       "path": "tools/sourcing_checks.py",

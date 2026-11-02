@@ -4,7 +4,7 @@ def run_roast_pooling_checks(client,user):
     from decimal import Decimal as D
     from django.db import transaction
     from django.utils import timezone
-    from portal.models import Coffee,LabelVariant,Roaster,RoastPlan,RoastGroup,IncomingOrderLine,PlannedBatch,Batch
+    from portal.models import Coffee,LabelVariant,Roaster,RoastPlan,RoastGroup,IncomingOrderLine,PlannedBatch,Batch,PlanEvent
     from portal.planning import group_for,profile_key
     from portal.autobatches import sync_plan
     from portal.roast_pooling import consolidate_labels
@@ -62,6 +62,12 @@ def run_roast_pooling_checks(client,user):
         physical=Batch.objects.create(date=protected.date,operator=user,roaster=large,coffee=coffee,roast_level='Medium',green_oz=20,measured_at=timezone.now())
         PlannedBatch.objects.create(group=a,roaster=large,green_oz=20,batch=physical)
         assert not consolidate_labels(protected,user)
+        assert a.orders.count()==1 and b.orders.count()==1
+        green=plan()
+        a=RoastGroup.objects.create(plan=green,key=old_key,coffee=coffee,roast_level='Medium',label_variant=label)
+        b=group_for(green,{**data,'label_variant':None});order(a,D(16),label);order(b,D(16))
+        PlanEvent.objects.create(plan=green,actor=user,action='green_approve',details={'group':a.pk,'parts':{'1':'100'}})
+        assert not consolidate_labels(green,user)
         assert a.orders.count()==1 and b.orders.count()==1
         transaction.set_rollback(True)
     print('PASS: packaging labels share compatible loads; legacy allocation labels, grind/pack sizes, history, capacity, custom profiles and started/manual guards preserved.')

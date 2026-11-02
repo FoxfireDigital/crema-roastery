@@ -19,7 +19,11 @@ def consolidate_labels(plan,actor=None,group_ids=None):
         if group.orders.exists():
             profiles[(group.coffee_id,group.roast_level,group.target_finish_temp_f,group.loss_override)].append(group)
     changed=False
+    # Green-origin decisions refer to a specific group. Keep that reviewed
+    # recipe/request scope intact rather than transferring it implicitly.
+    green_groups=set(plan.events.filter(action__in=['green_request','green_approve']).values_list('details__group',flat=True))
     for groups in profiles.values():
+        if any(g.pk in green_groups for g in groups):continue
         if any(not g.auto_batches or g.planned_batches.filter(batch__isnull=False).exists() or used_for(g) for g in groups):continue
         first=groups[0]
         key=profile_key(first.coffee_id,first.roast_level,first.target_finish_temp_f,None)
