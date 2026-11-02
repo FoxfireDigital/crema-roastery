@@ -1,6 +1,6 @@
 {
   "name": "Crema",
-  "version": "0.1.0-rc19",
+  "version": "0.1.0-rc20",
   "license": "MIT",
   "files": [
     {
@@ -25,7 +25,7 @@
     },
     {
       "path": ".github/workflows/verify.yml",
-      "sha256": "f2076c082b156355285a72574a9c1c71651a98136fefcc79a50154233b4020a2",
+      "sha256": "7a290564cb7387640b30f8fc510fc71209a36e257ae6ec768aac788f8fc13efc",
       "bytes": 4279
     },
     {
@@ -35,8 +35,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "10d82bdd477a5b2cbc0abcc9968c1288b20fd5cf80298f8944953b67006aa0e5",
-      "bytes": 12256
+      "sha256": "d864bce72ae92809039e7c039eb1e641a28dcee2907c7dbf37802fa66213af2c",
+      "bytes": 12797
     },
     {
       "path": "CONTRIBUTING.md",
@@ -55,12 +55,12 @@
     },
     {
       "path": "README.md",
-      "sha256": "e185cb4db30a52079da31ace8dd9e05343cff157d5bdea6d46344519918d6852",
+      "sha256": "f1d406044a0b9596c8187e193afc4a50d93c86ee558ef233e633ee7a9bf38f2a",
       "bytes": 7507
     },
     {
       "path": "ROADMAP.md",
-      "sha256": "77f62626a7997521beb5a5bfa74f535d1015138888dc6b215a7d66716e4d8484",
+      "sha256": "8aee018ba9d835682ef40d8a513f21b9d14235a10ae2382da7b7a17e44be0132",
       "bytes": 16831
     },
     {
@@ -187,6 +187,11 @@
       "path": "app/portal/autobatches.py",
       "sha256": "f6c0988eba04f02fb54ca6f59bf8177ebae7aeca25db8420e8fac1a8f19c1be5",
       "bytes": 3122
+    },
+    {
+      "path": "app/portal/batch_combine.py",
+      "sha256": "7b5591455fff3a8a2de310610b1dfd9dbe202ffe0cedf3e55ddf871cee2756a4",
+      "bytes": 12034
     },
     {
       "path": "app/portal/batch_photos.py",
@@ -624,6 +629,11 @@
       "bytes": 4540
     },
     {
+      "path": "app/portal/templates/portal/combine_batches.html",
+      "sha256": "1b8b1fcca3baec6ac176fc6f166381fcbf5d19fe6d45ca084caad0c26988f6d6",
+      "bytes": 5532
+    },
+    {
       "path": "app/portal/templates/portal/completed_plan.html",
       "sha256": "11e435133b9f301b90e3a8b5471cfed2165aed6fe013ea133dd74e598ad35e81",
       "bytes": 3061
@@ -685,8 +695,8 @@
     },
     {
       "path": "app/portal/templates/portal/help.html",
-      "sha256": "a2067bc4525756849b49191a99e5bb137e9f19cb4b7ad124b4a948c16e09343e",
-      "bytes": 12534
+      "sha256": "e5acd5beb2af01c178a8618863039633a56e5a387959e2054d3c698da900426f",
+      "bytes": 13589
     },
     {
       "path": "app/portal/templates/portal/historical_roasts.html",
@@ -795,8 +805,8 @@
     },
     {
       "path": "app/portal/templates/portal/planning.html",
-      "sha256": "f2b9639d40aa9029481e33f237f3d8a70d2a8684d0c41dc3d2f6a0bd5bf14616",
-      "bytes": 30221
+      "sha256": "d637cda208b265dcd1b4894493edde17cd944f208364dcc88aefc9b6714ef673",
+      "bytes": 30316
     },
     {
       "path": "app/portal/templates/portal/plans.html",
@@ -965,8 +975,8 @@
     },
     {
       "path": "app/project_urls.py",
-      "sha256": "125c7dd39c0e1c9a6ce5923ed9384aa7dd437607e5db28357d80eaef9bf6ffb2",
-      "bytes": 10003
+      "sha256": "150ae40d4f3463c9df104ca6a060096b237a0dd2e7df8b81b086d22b1a4724af",
+      "bytes": 10128
     },
     {
       "path": "app/project_wsgi.py",
@@ -990,12 +1000,12 @@
     },
     {
       "path": "compose.yaml",
-      "sha256": "17b764a5e3aca6a04593c16382e90a98e4eacf8fe5887f0929eb85efe25d3b3f",
+      "sha256": "c9a29b2fe715ccf08bc7819c6ee9d7f326d4b682ec233f0e144c0e06de3484f3",
       "bytes": 2944
     },
     {
       "path": "docs/ARTIFACT-INSTALL.md",
-      "sha256": "5e8fb6c64e060af1bb39974213f5eef7c187c538d8d031022224dd11e0736c6b",
+      "sha256": "37b4e04513d5855d49e35df8cd80a05b4b886e2bcbc509296c23986666503288",
       "bytes": 4105
     },
     {
@@ -1010,8 +1020,8 @@
     },
     {
       "path": "docs/BETA-FREEZE.md",
-      "sha256": "4878b1480343fb8b46669b66715c60b03da8a9c11f54dab3a3768530e09dccc0",
-      "bytes": 3819
+      "sha256": "f7996938301d40c8d8997e74f782cbea1c91fc37f0aaee0b2339c4584502f3e5",
+      "bytes": 3984
     },
     {
       "path": "docs/DEMONSTRATIONS.md",
@@ -1025,7 +1035,7 @@
     },
     {
       "path": "docs/DEPLOYMENT-QA.md",
-      "sha256": "a6cace69ce78bc6c3603d061594ef7bbc3c4eeafe256207e5b7d3e3bdd23064b",
+      "sha256": "182e0fc45802fa5dd3c4e3a2c0e0cefeae29f45527f28cb761a570f9c6aca3c8",
       "bytes": 3824
     },
     {
@@ -1045,7 +1055,7 @@
     },
     {
       "path": "docs/IMAGE-REVIEW.md",
-      "sha256": "eb246860e9f79c4fe7161e14fb2530e6ddc9fb3663d0cb61b0e8b7e93ef43f99",
+      "sha256": "34073115e0575d751fbc17441466648271bbc3caa558e48c139f033f10d812ca",
       "bytes": 7541
     },
     {
@@ -1055,7 +1065,7 @@
     },
     {
       "path": "docs/RELEASE.md",
-      "sha256": "de57229517941f4333981ab666a81aeca227b6394845eea9b52e38c2937b0f41",
+      "sha256": "c172eb23f57ec8a1d987d8dd973ca2c5fbc75cdcc7e9c7ad7ec6a88aafe8d3d0",
       "bytes": 4278
     },
     {
@@ -1164,6 +1174,11 @@
       "bytes": 11073
     },
     {
+      "path": "tools/batch_combine_checks.py",
+      "sha256": "7c62335f54220d84e8884261bedbc4412411163d0c8dc5af7dd2bf193bd1359b",
+      "bytes": 9754
+    },
+    {
       "path": "tools/green_checks.py",
       "sha256": "04fe5839c64a41affb03ce6efe74b36563a6e6085ca6c70caf8a9974e9ded1a9",
       "bytes": 8090
@@ -1230,8 +1245,8 @@
     },
     {
       "path": "tools/test_release.py",
-      "sha256": "b32326a75886c3633d232d04f35c2703df982714fea72cef73a6184809ad5dec",
-      "bytes": 5226
+      "sha256": "79aee157349d17bb75c428ec50b58ca34f7ba29d30a4634564716e405febcc1e",
+      "bytes": 5323
     },
     {
       "path": "tools/today_packing_checks.py",

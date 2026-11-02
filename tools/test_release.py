@@ -45,6 +45,8 @@ from production_checks import run_production_checks
 run_production_checks(Path(temp.name),client,owner)
 from roast_pooling_checks import run_roast_pooling_checks
 run_roast_pooling_checks(client,owner)
+from batch_combine_checks import run_batch_combine_checks
+run_batch_combine_checks(client,owner)
 from today_packing_checks import run_today_packing_checks
 run_today_packing_checks(client,owner)
 from artisan_checks import run_artisan_checks

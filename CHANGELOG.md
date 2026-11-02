@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.0-rc20 — previewed manual draft combining
+
+* Add Combine / rebalance drafts on Plans. Select matching unstarted loads, choose a roaster and preview balanced replacements that preserve the selected green total.
+* Preserve unselected load weights and per-order labels/grind/bags, retain original drafts and audit history, and require reviewing/reaccepting an edited plan.
+* Protect physical production, used stock, packing, green-origin decisions and legacy workflows; reject stale, expired, replayed or cross-account confirmations.
+
 ## 0.1.0-rc19 — shared roast loads across packaging labels
 
 * Pool matching coffee, roast level and finish-temperature requirements across retail and wholesale labels. Keep each order's label, grind and bag sizes on its packing allocation.
