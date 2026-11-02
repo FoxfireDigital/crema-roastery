@@ -45,14 +45,16 @@ def run_batch_combine_checks(client,user):
         recipe=GreenRecipe.objects.create(coffee=coffee,components=[],updated_by=user);denied(confirmation);recipe.delete()
         progress=PackingProgress.objects.create(line=retail);denied(confirmation);progress.delete()
         other=get_user_model().objects.create_user('combine-other-staff',password='Synthetic-only-168!',is_staff=True)
-        other_client=Client(HTTP_HOST='localhost');other_client.force_login(other)
+        other_client=Client(**client.defaults);other_client.force_login(other)
         before=snapshot();assert other_client.post(url,confirmation).status_code==400 and snapshot()==before
-        public=Client(HTTP_HOST='localhost');assert public.get(url).status_code==302
+        public=Client(**client.defaults);assert public.get(url).status_code==302
         plain=get_user_model().objects.create_user('combine-nonstaff',password='Synthetic-only-426!')
         public.force_login(plain);assert public.post(url,post).status_code==302
-        csrf=Client(HTTP_HOST='localhost',enforce_csrf_checks=True);csrf.force_login(user);assert csrf.post(url,post).status_code==403
+        csrf=Client(enforce_csrf_checks=True,**client.defaults);csrf.force_login(user);assert csrf.post(url,post).status_code==403
         csrf.get(url)
-        assert csrf.post(url,{**post,'csrfmiddlewaretoken':csrf.cookies['csrftoken'].value}).status_code==200
+        scheme='https' if client.defaults.get('HTTP_X_FORWARDED_PROTO')=='https' else 'http'
+        origin=scheme+'://'+client.defaults.get('HTTP_HOST','testserver')
+        assert csrf.post(url,{**post,'csrfmiddlewaretoken':csrf.cookies['csrftoken'].value},HTTP_ORIGIN=origin).status_code==200
         outside=RoastPlan.objects.create(created_by=user)
         outside_group=RoastGroup.objects.create(plan=outside,key='outside-plan',coffee=coffee,roast_level='Medium')
         outside_row=PlannedBatch.objects.create(group=outside_group,roaster=small,green_oz=20)

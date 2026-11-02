@@ -1175,8 +1175,8 @@
     },
     {
       "path": "tools/batch_combine_checks.py",
-      "sha256": "7c62335f54220d84e8884261bedbc4412411163d0c8dc5af7dd2bf193bd1359b",
-      "bytes": 9754
+      "sha256": "c4ed967cf498a4e8210fb6322c571920e1feec0a8faef01d8ea83d1ff42bd124",
+      "bytes": 9928
     },
     {
       "path": "tools/green_checks.py",
