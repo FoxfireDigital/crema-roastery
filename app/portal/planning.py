@@ -28,7 +28,9 @@ def split_weights(total,capacity):
     return [Decimal(low+(i<extra))/10 for i in range(count)]
 
 def profile_key(coffee,roast,temp,label,legacy=None):
-    return hashlib.sha256(json.dumps([coffee,roast,str(temp.normalize()) if temp is not None else None,label,legacy]).encode()).hexdigest()
+    # Packaging belongs to order lines, not to the physical roast. Preserve
+    # the separate legacy custom-order workflow and its historical identities.
+    return hashlib.sha256(json.dumps([coffee,roast,str(temp.normalize()) if temp is not None else None,label if legacy is not None else None,legacy]).encode()).hexdigest()
 
 def summary(group,loss,spillage=None):
     loss=number(group.loss_override if group.loss_override is not None else loss)
@@ -88,7 +90,7 @@ def group_for(plan,data,legacy=None):
     from .flavoring import production_profile
     coffee,label=production_profile(plan,data,legacy)
     key=profile_key(coffee.pk,data['roast_level'],data.get('target_finish_temp_f'),label.pk if label else None,legacy.pk if legacy else None)
-    group,_=RoastGroup.objects.get_or_create(plan=plan,key=key,defaults={'coffee':coffee,'roast_level':data['roast_level'],'target_finish_temp_f':data.get('target_finish_temp_f'),'label_variant':label,'legacy_order':legacy})
+    group,_=RoastGroup.objects.get_or_create(plan=plan,key=key,defaults={'coffee':coffee,'roast_level':data['roast_level'],'target_finish_temp_f':data.get('target_finish_temp_f'),'label_variant':label if legacy is not None else None,'legacy_order':legacy})
     return group
 
 @staff_member_required

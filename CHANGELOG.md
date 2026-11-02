@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.0-rc19 — shared roast loads across packaging labels
+
+* Pool matching coffee, roast level and finish-temperature requirements across retail and wholesale labels. Keep each order's label, grind and bag sizes on its packing allocation.
+* Consolidate only unstarted automatic groups with matching loss settings. Retain superseded draft rows and an audit event; leave measured/started work, manual sizing, used stock and historical/legacy plans intact.
+
 ## 0.1.0-rc18 — Today packing cards and isolated demo roles
 
 * Show collapsible customer/order packing cards and per-plan label-sheet buttons on Today. Reuse Bagging forms, progress records, audit events, CSRF and stale-edit checks; keep roast-row cooling separate.

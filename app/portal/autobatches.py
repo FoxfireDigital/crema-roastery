@@ -42,8 +42,10 @@ def sync_group(group,plan,actor=None):
 
 def sync_plan(plan,actor=None):
     if plan.removed_at is not None or plan.closed_at is not None:return False
+    from .roast_pooling import consolidate_labels
+    changed=consolidate_labels(plan,actor)
     from .flavoring import route_flavors
-    changed=route_flavors(plan)
+    changed=route_flavors(plan) or changed
     from .roasted_stock import sync_plan as reserve_stock
     changed=reserve_stock(plan,actor) or changed
     for group in plan.groups.filter(auto_batches=True):changed=sync_group(group,plan,actor) or changed

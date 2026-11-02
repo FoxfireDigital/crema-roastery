@@ -1,6 +1,6 @@
 {
   "name": "Crema",
-  "version": "0.1.0-rc18",
+  "version": "0.1.0-rc19",
   "license": "MIT",
   "files": [
     {
@@ -35,8 +35,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "e233a4f290f4371660e53e8109930ef6e0885274463fefc389d01de5abff51df",
-      "bytes": 11798
+      "sha256": "10d82bdd477a5b2cbc0abcc9968c1288b20fd5cf80298f8944953b67006aa0e5",
+      "bytes": 12256
     },
     {
       "path": "CONTRIBUTING.md",
@@ -55,12 +55,12 @@
     },
     {
       "path": "README.md",
-      "sha256": "32fea9e3e7ed9b44e1c8f312985eb17142cdbc02a93796751d53a3059a3ac9de",
+      "sha256": "e185cb4db30a52079da31ace8dd9e05343cff157d5bdea6d46344519918d6852",
       "bytes": 7507
     },
     {
       "path": "ROADMAP.md",
-      "sha256": "6886d734fe5c77be6088b9e82ac1a400d82dcde9f8a070afc152c945dae66c7f",
+      "sha256": "77f62626a7997521beb5a5bfa74f535d1015138888dc6b215a7d66716e4d8484",
       "bytes": 16831
     },
     {
@@ -185,8 +185,8 @@
     },
     {
       "path": "app/portal/autobatches.py",
-      "sha256": "64b90d4f73aeb8fabceb878f455fa535365c16ddaa8cf016914e49b97060b8cc",
-      "bytes": 3018
+      "sha256": "f6c0988eba04f02fb54ca6f59bf8177ebae7aeca25db8420e8fac1a8f19c1be5",
+      "bytes": 3122
     },
     {
       "path": "app/portal/batch_photos.py",
@@ -400,8 +400,8 @@
     },
     {
       "path": "app/portal/planning.py",
-      "sha256": "d0d8db315f6194ef4c62440c96b176e37a54bb033d0d3173c24cb8fd2633405b",
-      "bytes": 29759
+      "sha256": "4acbe644669fdf8e2aac399027828186b46c9d2b8db579c5e7a4f929146e54b4",
+      "bytes": 29978
     },
     {
       "path": "app/portal/product_checks.py",
@@ -422,6 +422,11 @@
       "path": "app/portal/recovery.py",
       "sha256": "fc067ef85924f977308c4a19d67b85038dd136a8d9821b3af3f77d4a0494c155",
       "bytes": 6408
+    },
+    {
+      "path": "app/portal/roast_pooling.py",
+      "sha256": "5d24ca82876e6840bde2c320e3e7f83718f363442cdde056f431527c6c8a9253",
+      "bytes": 2800
     },
     {
       "path": "app/portal/roast_sheet.py",
@@ -985,12 +990,12 @@
     },
     {
       "path": "compose.yaml",
-      "sha256": "28def920e06bebabc0d65d81faf7956fdfd2ef18f55beea4115e1ac31adc14ac",
+      "sha256": "17b764a5e3aca6a04593c16382e90a98e4eacf8fe5887f0929eb85efe25d3b3f",
       "bytes": 2944
     },
     {
       "path": "docs/ARTIFACT-INSTALL.md",
-      "sha256": "33bf3b01e89b0e73cb40a3bf3781630775c847930e15bb5d2a7c6d7885ecabe8",
+      "sha256": "5e8fb6c64e060af1bb39974213f5eef7c187c538d8d031022224dd11e0736c6b",
       "bytes": 4105
     },
     {
@@ -1005,8 +1010,8 @@
     },
     {
       "path": "docs/BETA-FREEZE.md",
-      "sha256": "b8a4049fb234675a0f8654b386a90937a79e86e4ea792df6f75174544fceab57",
-      "bytes": 3603
+      "sha256": "4878b1480343fb8b46669b66715c60b03da8a9c11f54dab3a3768530e09dccc0",
+      "bytes": 3819
     },
     {
       "path": "docs/DEMONSTRATIONS.md",
@@ -1020,7 +1025,7 @@
     },
     {
       "path": "docs/DEPLOYMENT-QA.md",
-      "sha256": "15c38efae6eb3b0cae7c2fcca10b796265b35d77d1b1260976e4ae639268486a",
+      "sha256": "a6cace69ce78bc6c3603d061594ef7bbc3c4eeafe256207e5b7d3e3bdd23064b",
       "bytes": 3824
     },
     {
@@ -1040,7 +1045,7 @@
     },
     {
       "path": "docs/IMAGE-REVIEW.md",
-      "sha256": "8f30ba380149324b3df324d89a81d589b3a4cc4696fdb7e2cb57cdb6d1db4dd9",
+      "sha256": "eb246860e9f79c4fe7161e14fb2530e6ddc9fb3663d0cb61b0e8b7e93ef43f99",
       "bytes": 7541
     },
     {
@@ -1050,7 +1055,7 @@
     },
     {
       "path": "docs/RELEASE.md",
-      "sha256": "d3c288ff8cd3a3dcd926ccd196e7f153fd505d0853538a2fa9c36d3390ed3617",
+      "sha256": "de57229517941f4333981ab666a81aeca227b6394845eea9b52e38c2937b0f41",
       "bytes": 4278
     },
     {
@@ -1194,6 +1199,11 @@
       "bytes": 2729
     },
     {
+      "path": "tools/roast_pooling_checks.py",
+      "sha256": "b673e3dc6c94a212a4ea24f2338a39c5104b258aa1b9bea5dc24a8a9a7b7fedb",
+      "bytes": 5351
+    },
+    {
       "path": "tools/sourcing_checks.py",
       "sha256": "b37d4482feff4c3b4399644d1e1af95b4590c15f26a333350242035f9ac560cd",
       "bytes": 7300
@@ -1220,8 +1230,8 @@
     },
     {
       "path": "tools/test_release.py",
-      "sha256": "868e3467f1db556402ecd98210c133e97ddf15fb15de7765ed6892f86e6afd9c",
-      "bytes": 5129
+      "sha256": "b32326a75886c3633d232d04f35c2703df982714fea72cef73a6184809ad5dec",
+      "bytes": 5226
     },
     {
       "path": "tools/today_packing_checks.py",
