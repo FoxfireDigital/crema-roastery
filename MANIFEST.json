@@ -190,8 +190,8 @@
     },
     {
       "path": "app/portal/batch_combine.py",
-      "sha256": "7b5591455fff3a8a2de310610b1dfd9dbe202ffe0cedf3e55ddf871cee2756a4",
-      "bytes": 12034
+      "sha256": "4fd466f6b4efad207bd16aca441775985b3564c55a6fd697b71c0578578c0f97",
+      "bytes": 12192
     },
     {
       "path": "app/portal/batch_photos.py",

@@ -60,7 +60,9 @@ def preview(plan,row_ids,machine,*,lock=False):
     if any(r.batch_id for r in rows):raise ValidationError('A selected draft has started. Recorded production cannot be combined here.')
     ids=sorted({r.group_id for r in rows})
     query=RoastGroup.objects.filter(plan=plan,pk__in=ids).order_by('pk')
-    if lock:query=query.select_for_update()
+    # Only lock groups here: label_variant is nullable, so PostgreSQL cannot
+    # lock its outer-joined side. Coffee is explicitly locked below.
+    if lock:query=query.select_for_update(of=('self',))
     groups=list(query.select_related('coffee','label_variant'))
     for group in groups:
         reason=group_block(group)
