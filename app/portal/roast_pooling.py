@@ -8,12 +8,14 @@ from django.utils import timezone
 from .models import RoastGroup,PlanEvent
 
 
-def consolidate_labels(plan,actor=None):
+def consolidate_labels(plan,actor=None,group_ids=None):
     if plan.removed_at or plan.closed_at or plan.historical:return False
     from .planning import profile_key
     from .roasted_stock import used_for
     profiles=defaultdict(list)
-    for group in plan.groups.filter(legacy_order__isnull=True).order_by('pk'):
+    eligible=plan.groups.filter(legacy_order__isnull=True)
+    if group_ids is not None:eligible=eligible.filter(pk__in=group_ids)
+    for group in eligible.order_by('pk'):
         if group.orders.exists():
             profiles[(group.coffee_id,group.roast_level,group.target_finish_temp_f,group.loss_override)].append(group)
     changed=False

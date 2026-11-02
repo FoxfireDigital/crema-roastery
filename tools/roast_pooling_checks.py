@@ -38,6 +38,7 @@ def run_roast_pooling_checks(client,user):
         original={line.pk:(line.finished_oz,line.grind,line.packaging,line.ordered_label.pk if line.ordered_label else None) for line in (x,y)}
         old_rows=[PlannedBatch.objects.create(group=a,roaster=large,green_oz=D('112.5')) for _ in range(2)]
         old_rows.append(PlannedBatch.objects.create(group=b,roaster=large,green_oz=D('23.3')))
+        assert not consolidate_labels(old,user,group_ids=[])
         sync_plan(old,user);old.refresh_from_db()
         assert old.accepted_at is None and old.events.filter(action='label_groups_pooled').count()==1
         assert list(PlannedBatch.objects.filter(group__plan=old).values_list('roaster_id','green_oz'))==[(large.pk,D('124.2')),(large.pk,D('124.1'))]
