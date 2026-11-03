@@ -18,12 +18,17 @@ def number(value):
     if not result.is_finite():raise ValidationError('Enter a finite quantity.')
     return result
 
-def split_weights(total,capacity):
+def split_weights(total,capacity,minimum=TENTH,*,allow_extra=False):
     total=number(total).quantize(TENTH,rounding=ROUND_CEILING);capacity=number(capacity).quantize(TENTH,rounding=ROUND_FLOOR)
+    minimum=max(TENTH,number(minimum).quantize(TENTH,rounding=ROUND_CEILING))
     if total<=0:return []
     if capacity<TENTH:raise ValidationError('Configure a roaster capacity of at least 0.1 oz.')
+    if minimum>capacity:raise ValidationError('The roaster minimum exceeds its capacity.')
     count=int((total/capacity).to_integral_value(rounding=ROUND_CEILING))
     if count>1000:raise ValidationError('This plan exceeds 1,000 batches; reduce the planning quantity.')
+    if total<count*minimum:
+        if not allow_extra:raise ValidationError(f'This total needs {count} load(s) of at least {minimum:g} oz on this machine. Choose a smaller roaster or adjust the drafts deliberately.')
+        total=count*minimum
     units=int(total*10);low,extra=divmod(units,count)
     return [Decimal(low+(i<extra))/10 for i in range(count)]
 
@@ -51,7 +56,7 @@ def summary(group,loss,spillage=None):
     required_target=target if started_work else production_target
     need=(max(Decimal(0),required_target-covered)/yield_factor).quantize(TENTH,rounding=ROUND_CEILING)
     expected=covered+sum((r.green_oz*(1-r.display_loss/100) for r in rows if r not in actual_rows),Decimal(0))
-    return {'group':group,'loss':loss,'target':target,'production_target':production_target,'required_target':required_target,'started_work':started_work,'customer_shortfall':max(Decimal(0),target-expected),'reserve_shortfall':max(Decimal(0),production_target-max(target,expected)),'reserve':production_target-target,'target_lb':target/16,'started':started,'stock':stock,'covered':covered,'green_needed':need,'rows':rows,'draft_green':drafted,'expected':expected,'difference':expected-production_target}
+    return {'group':group,'loss':loss,'target':target,'production_target':production_target,'required_target':required_target,'started_work':started_work,'customer_shortfall':max(Decimal(0),target-expected),'reserve_shortfall':max(Decimal(0),production_target-max(target,expected)),'reserve':production_target-target,'target_lb':target/16,'started':started,'stock':stock,'covered':covered,'green_needed':need,'rows':rows,'minimum_sizing':drafted>need and any(not r.batch_id and r.roaster.min_green_oz and r.green_oz==r.roaster.minimum for r in rows),'minimum_extra_green':max(Decimal(0),drafted-need),'draft_green':drafted,'expected':expected,'difference':expected-production_target}
 
 class IncomingForm(forms.Form):
     reference=forms.CharField(max_length=100,required=False,label='Order / stock reference')
@@ -241,14 +246,14 @@ def planner(request):
                     else:roaster=get_object_or_404(Roaster,pk=request.POST.get('roaster'),active=True)
                     if not roaster.capacity:raise ValidationError('Configure this roaster’s capacity first.')
                     g.auto_batches=action=='suggest_auto';g.save(update_fields=['auto_batches'])
-                    weights=split_weights(summary(g,plan.estimated_loss_pct)['green_needed'],roaster.capacity)
+                    weights=split_weights(summary(g,plan.estimated_loss_pct)['green_needed'],roaster.capacity,roaster.minimum,allow_extra=True)
                     g.planned_batches.filter(batch__isnull=True).update(removed_at=timezone.now())
                     for weight in weights:PlannedBatch.objects.create(group=g,roaster=roaster,green_oz=weight)
                 elif action=='add_batch':
                     g=get_object_or_404(RoastGroup,pk=request.POST.get('group'),plan=plan)
                     g.auto_batches=False;g.save(update_fields=['auto_batches'])
                     roaster=get_object_or_404(Roaster,pk=request.POST.get('roaster'),active=True)
-                    PlannedBatch.objects.create(group=g,roaster=roaster,green_oz=min((roaster.capacity or Decimal(0)).quantize(TENTH,rounding=ROUND_FLOOR),max(TENTH,summary(g,plan.estimated_loss_pct)['green_needed'])))
+                    PlannedBatch.objects.create(group=g,roaster=roaster,green_oz=min((roaster.capacity or Decimal(0)).quantize(TENTH,rounding=ROUND_FLOOR),max(roaster.minimum,summary(g,plan.estimated_loss_pct)['green_needed'])))
                 elif action in ('save_batch','split_batch','remove_batch','start_batch'):
                     row=get_object_or_404(PlannedBatch.objects.select_related('group__coffee','group__label_variant'),pk=request.POST.get('row'),group__plan=plan)
                     if row.batch_id:raise ValidationError('This batch has already started; its production record is preserved.')
@@ -261,7 +266,7 @@ def planner(request):
                         row.green_oz=weight.quantize(TENTH)
                         row.full_clean()
                         if action=='split_batch':
-                            if row.green_oz<Decimal('.2'):raise ValidationError('At least 0.2 oz is needed to split this row.')
+                            if row.green_oz<2*row.roaster.minimum:raise ValidationError(f'Two loads on {row.roaster.name} need at least {2*row.roaster.minimum:g} oz green total. Choose a smaller roaster or adjust the weight.')
                             second=(row.green_oz/2).quantize(TENTH,rounding=ROUND_FLOOR)
                             row.green_oz-=second
                             PlannedBatch.objects.create(group=row.group,roaster=row.roaster,green_oz=second)

@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.0-rc21 — configured minimum green loads
+
+- Roasters have configurable minimum and maximum green input. Automatic suggestions meet the minimum and show extra green/finished coffee; zero demand creates no roast. Manual sizing, splits, exact-total combining, acceptance, yield adjustments and Artisan preparations enforce the same bounds.
+- Machine-policy changes invalidate stale roast-sheet and preparation tokens. Recorded physical and historical roasts retain their original inputs.
+- Occasional standard-roast single-origin leftovers can be recorded as measured bulk whole beans without changing the regular quick-count list. Measurement replay retains one stock entry; estimates and roast checkboxes never credit stock automatically.
+
+
 ## 0.1.0-rc20 — previewed manual draft combining
 
 * Add Combine / rebalance drafts on Plans. Select matching unstarted loads, choose a roaster and preview balanced replacements that preserve the selected green total.

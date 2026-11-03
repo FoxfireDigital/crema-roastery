@@ -19,7 +19,7 @@ class LabelVariantAdmin(admin.ModelAdmin):
     search_fields=['name','coffee__name']
 @admin.register(Roaster)
 class RoasterAdmin(admin.ModelAdmin):
-    list_display=['name','max_green_oz','active']
+    list_display=['name','min_green_oz','max_green_oz','active']
 @admin.register(Batch)
 class BatchAdmin(admin.ModelAdmin):
     list_display=['date','coffee','roaster','operator','green_oz','roasted_oz','roast_level','status']

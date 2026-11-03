@@ -50,4 +50,4 @@ def suggestion(group,roaster=None,green_oz=None,current_loss=None):
     recommended=(expected/(1-loss/100)).quantize(Decimal('.1'),rounding=ROUND_CEILING)
     return {'loss':loss,'samples':len(samples),'from':min(row['date'] for row in samples),'to':max(row['date'] for row in samples),'roaster':roaster.pk,'machine':roaster.name,
             'band':cohort['key'],'lower':cohort['lower'],'upper':cohort['upper'],'revision':fingerprint,'records':[row['id'] for row in samples],
-            'recommended_green':recommended,'fits':recommended<=roaster.capacity,'same_band':(band(roaster,recommended) or {}).get('key')==cohort['key']}
+            'recommended_green':recommended,'fits':roaster.minimum<=recommended<=roaster.capacity,'same_band':(band(roaster,recommended) or {}).get('key')==cohort['key']}

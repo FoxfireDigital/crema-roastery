@@ -9,7 +9,7 @@ The distribution candidate includes a restricted build context, source/version l
 Run from a clean, reviewed source checkout on a Docker host:
 
 ```sh
-export CREMA_VERSION=0.1.0-rc20
+export CREMA_VERSION=0.1.0-rc21
 export CREMA_REVISION=$(git rev-parse HEAD)
 docker compose -f compose.yaml -f compose.build.yaml build --pull web postgres proxy
 python tools/verify_image.py --image "crema:$CREMA_VERSION" \

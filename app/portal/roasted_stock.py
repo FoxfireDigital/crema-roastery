@@ -18,6 +18,12 @@ def stock_coffees():
     return Coffee.objects.filter(active=True,experimental=False,bulk_stock_enabled=True).exclude(kind='flavored').order_by('name')
 
 
+def entry_coffees():
+    # Occasional minimum-load leftovers can be recorded without adding a
+    # single origin to the operator's regular quick-count list.
+    return Coffee.objects.filter(active=True,experimental=False).exclude(kind='flavored').order_by('name')
+
+
 def totals(stock):
     reserved=stock.allocations.filter(status='reserved').aggregate(total=Sum('amount_oz'))['total'] or Decimal(0)
     return reserved,Decimal(0) if stock.needs_recount else max(Decimal(0),stock.remaining_oz-reserved)
@@ -197,7 +203,7 @@ class StockForm(forms.Form):
     roasted_on=forms.DateField(required=False,widget=forms.DateInput(attrs={'type':'date'}),label='Roasted on (optional)')
     note=forms.CharField(max_length=300,required=False,label='Container / batch reference or note')
     def __init__(self,*args,**kwargs):
-        super().__init__(*args,**kwargs);self.fields['coffee'].queryset=stock_coffees()
+        super().__init__(*args,**kwargs);self.fields['coffee'].queryset=entry_coffees()
     def clean(self):
         data=super().clean();coffee=data.get('coffee')
         if coffee and (data.get('roast_level')!=coffee.standard_roast or data.get('target_finish_temp_f') is not None):raise forms.ValidationError('Bulk stock uses this coffee’s standard roast and no custom temperature.')
@@ -304,4 +310,4 @@ def stock_page(request):
     plans=list(RoastPlan.objects.all()[:50]);plan=next((plan for plan in plans if str(plan.pk)==request.GET.get('plan')),None) or (plans[0] if plans else None)
     allocations=RoastedStockAllocation.objects.filter(line__group__plan=plan,status__in=['reserved','used']).select_related('stock__coffee','line__group__coffee','line__product_coffee') if plan else []
     from .finished_coverage import plan_coverage
-    return render(request,'portal/roasted_stock.html',{'coverage':plan_coverage(plan) if plan else None,'form':form,'editing':editing,'lots':lots,'quick_rows':quick_rows,'quick_revision':quick_revision(),'plans':plans,'plan':plan,'allocations':allocations,'coffees_json':{str(c.pk):{'roast':c.standard_roast,'locked':True} for c in stock_coffees()},'events':RoastedStockEvent.objects.select_related('stock__coffee','actor')[:40]})
+    return render(request,'portal/roasted_stock.html',{'coverage':plan_coverage(plan) if plan else None,'form':form,'editing':editing,'lots':lots,'quick_rows':quick_rows,'quick_revision':quick_revision(),'plans':plans,'plan':plan,'allocations':allocations,'coffees_json':{str(c.pk):{'roast':c.standard_roast,'locked':True} for c in entry_coffees()},'events':RoastedStockEvent.objects.select_related('stock__coffee','actor')[:40]})

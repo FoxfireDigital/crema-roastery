@@ -1,6 +1,6 @@
 {
   "name": "Crema",
-  "version": "0.1.0-rc20",
+  "version": "0.1.0-rc21",
   "license": "MIT",
   "files": [
     {
@@ -25,7 +25,7 @@
     },
     {
       "path": ".github/workflows/verify.yml",
-      "sha256": "7a290564cb7387640b30f8fc510fc71209a36e257ae6ec768aac788f8fc13efc",
+      "sha256": "12487d533b7be2a9d22b3fabe9249bebf36b0919ccade4d734cb175de81fe0ab",
       "bytes": 4279
     },
     {
@@ -35,8 +35,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "d864bce72ae92809039e7c039eb1e641a28dcee2907c7dbf37802fa66213af2c",
-      "bytes": 12797
+      "sha256": "1bbbb89578ef3262c7fd3dc58b6cf373f8de63f0ae9e92df946f026a0643f694",
+      "bytes": 13545
     },
     {
       "path": "CONTRIBUTING.md",
@@ -55,12 +55,12 @@
     },
     {
       "path": "README.md",
-      "sha256": "f1d406044a0b9596c8187e193afc4a50d93c86ee558ef233e633ee7a9bf38f2a",
+      "sha256": "9a4f0fadd3787e6b1ba1cc22802d1017eb11c1ec7b51880962fb790ee8abf103",
       "bytes": 7507
     },
     {
       "path": "ROADMAP.md",
-      "sha256": "8aee018ba9d835682ef40d8a513f21b9d14235a10ae2382da7b7a17e44be0132",
+      "sha256": "115a4a6dbb5664383517fad5a30c826b10093bd753bed1937c5b489755c9c4da",
       "bytes": 16831
     },
     {
@@ -125,8 +125,8 @@
     },
     {
       "path": "app/portal/admin.py",
-      "sha256": "8de50b8c772aa93e1e5b60589c46416004aed16609c57916fbca8c708f77e04f",
-      "bytes": 7994
+      "sha256": "f56b700625e2203c2639f516765c55ee10f7113d519e7ccbe5d80b17fe4ed6fd",
+      "bytes": 8009
     },
     {
       "path": "app/portal/allocations.py",
@@ -160,8 +160,8 @@
     },
     {
       "path": "app/portal/artisan_profiles.py",
-      "sha256": "889b9a36e820797d42888ff377f1b25a1e5ccc22d96fd1d321c3293e80216346",
-      "bytes": 26453
+      "sha256": "7ee9aa70c23bb4aa8abb061dce2a797fbd86511cb45e2980d7fed18f9ef4d579",
+      "bytes": 26572
     },
     {
       "path": "app/portal/artisan_uploads.py",
@@ -185,13 +185,13 @@
     },
     {
       "path": "app/portal/autobatches.py",
-      "sha256": "f6c0988eba04f02fb54ca6f59bf8177ebae7aeca25db8420e8fac1a8f19c1be5",
-      "bytes": 3122
+      "sha256": "e281f8422e29fe14869a3e5897d73aca639421b75afab4e5ebb7dd85e39a4e2d",
+      "bytes": 3155
     },
     {
       "path": "app/portal/batch_combine.py",
-      "sha256": "4fd466f6b4efad207bd16aca441775985b3564c55a6fd697b71c0578578c0f97",
-      "bytes": 12192
+      "sha256": "290f9ddb6f8635a2cefa5847fb9d93db90cf9b648a99191b44d8d6bc4f7abf0a",
+      "bytes": 12240
     },
     {
       "path": "app/portal/batch_photos.py",
@@ -354,14 +354,19 @@
       "bytes": 268
     },
     {
+      "path": "app/portal/migrations/0008_roaster_min_green_oz.py",
+      "sha256": "ea26258d56b109c5df7717e2a2bbef059eca34766a4988cd180583c645f744aa",
+      "bytes": 363
+    },
+    {
       "path": "app/portal/migrations/__init__.py",
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "bytes": 0
     },
     {
       "path": "app/portal/models.py",
-      "sha256": "2cf92f0378ccf1800f4eaa4fefeba264873e18873a62cd4d9378c6dd8c3ed43a",
-      "bytes": 67021
+      "sha256": "88903c64b57b75a0a82ab059e3fdd3bf064c87d63a0ecfb0997751c530dec99d",
+      "bytes": 68279
     },
     {
       "path": "app/portal/neutral_print.py",
@@ -405,8 +410,8 @@
     },
     {
       "path": "app/portal/planning.py",
-      "sha256": "4acbe644669fdf8e2aac399027828186b46c9d2b8db579c5e7a4f929146e54b4",
-      "bytes": 29978
+      "sha256": "10aa0af764cdb6f354589bb707a65a39444b975c44f1a47c891b862fed7eded0",
+      "bytes": 30749
     },
     {
       "path": "app/portal/product_checks.py",
@@ -435,13 +440,13 @@
     },
     {
       "path": "app/portal/roast_sheet.py",
-      "sha256": "8bb416fa38c328850e0c38a44785886404ee5934f40c492c246632a829482030",
-      "bytes": 9275
+      "sha256": "4cf8d7155f95edcb08385bde05996875129a470aac39eff7fbee736c5d095484",
+      "bytes": 9326
     },
     {
       "path": "app/portal/roasted_stock.py",
-      "sha256": "8b15c9260d76447357ddcb482988df2b9911053b9a7f253eaa2f1c72a733105c",
-      "bytes": 24753
+      "sha256": "9552263b13d1270829211c99dff09dc086be5abc33a11b615b1382f3cfa49e0d",
+      "bytes": 25020
     },
     {
       "path": "app/portal/security.py",
@@ -630,8 +635,8 @@
     },
     {
       "path": "app/portal/templates/portal/combine_batches.html",
-      "sha256": "1b8b1fcca3baec6ac176fc6f166381fcbf5d19fe6d45ca084caad0c26988f6d6",
-      "bytes": 5532
+      "sha256": "5714de83149e5bdc9acc1865a4e5b1d532ce878d9718a27ebd34ba969822b636",
+      "bytes": 5575
     },
     {
       "path": "app/portal/templates/portal/completed_plan.html",
@@ -695,8 +700,8 @@
     },
     {
       "path": "app/portal/templates/portal/help.html",
-      "sha256": "e5acd5beb2af01c178a8618863039633a56e5a387959e2054d3c698da900426f",
-      "bytes": 13589
+      "sha256": "9ba7340795c38733280f834535855fdb0cd9242457f2ca81577696fdbad139c0",
+      "bytes": 14777
     },
     {
       "path": "app/portal/templates/portal/historical_roasts.html",
@@ -805,8 +810,8 @@
     },
     {
       "path": "app/portal/templates/portal/planning.html",
-      "sha256": "d637cda208b265dcd1b4894493edde17cd944f208364dcc88aefc9b6714ef673",
-      "bytes": 30316
+      "sha256": "a17cfc309f206e20cd469821cf8f49914ec391586c232a5a7e254aec27e12096",
+      "bytes": 30988
     },
     {
       "path": "app/portal/templates/portal/plans.html",
@@ -860,8 +865,8 @@
     },
     {
       "path": "app/portal/templates/portal/roasted_stock.html",
-      "sha256": "b115479169488f65c94b4c540eb58cc5970a9ed6b72d40407aa07bcfd6fd6182",
-      "bytes": 10086
+      "sha256": "abf1a928cd33d14cfef17846647d7e821bc6277c20b337f53a974e393cff4f89",
+      "bytes": 10200
     },
     {
       "path": "app/portal/templates/portal/save_state_assets.html",
@@ -950,8 +955,8 @@
     },
     {
       "path": "app/portal/views.py",
-      "sha256": "507e2e915cdc08848734e2e3d5e95e341296b9d36b277e68b17e34ed5d66a666",
-      "bytes": 14976
+      "sha256": "c88f06f5c8dd1cd43f34d9c2569494e4b3a324c19305e74f382a6618bc9545c9",
+      "bytes": 15252
     },
     {
       "path": "app/portal/wholesale.py",
@@ -965,8 +970,8 @@
     },
     {
       "path": "app/portal/yield_learning.py",
-      "sha256": "df937343278a00c28a25465b70430df87a15ac22d446db8571ac00083ec6692d",
-      "bytes": 4113
+      "sha256": "09592104b6f1fd4c9be3d2af65991637d4e7e4a914e6241f7154f96744cdcfd9",
+      "bytes": 4130
     },
     {
       "path": "app/project_settings.py",
@@ -1000,12 +1005,12 @@
     },
     {
       "path": "compose.yaml",
-      "sha256": "c9a29b2fe715ccf08bc7819c6ee9d7f326d4b682ec233f0e144c0e06de3484f3",
+      "sha256": "44dfe617f296c19932827a29e5b7c06b3b938a459bbf9af5c86a2de2a9193ab3",
       "bytes": 2944
     },
     {
       "path": "docs/ARTIFACT-INSTALL.md",
-      "sha256": "37b4e04513d5855d49e35df8cd80a05b4b886e2bcbc509296c23986666503288",
+      "sha256": "9a657d16978ff95683f427e28378be785a9bbbc34d8e9daa9227915507f75e5a",
       "bytes": 4105
     },
     {
@@ -1020,8 +1025,8 @@
     },
     {
       "path": "docs/BETA-FREEZE.md",
-      "sha256": "f7996938301d40c8d8997e74f782cbea1c91fc37f0aaee0b2339c4584502f3e5",
-      "bytes": 3984
+      "sha256": "cdc22d481ac55e43c31aada2b0f1947926168070150f17b16dd9dadbd53d7eec",
+      "bytes": 4210
     },
     {
       "path": "docs/DEMONSTRATIONS.md",
@@ -1035,7 +1040,7 @@
     },
     {
       "path": "docs/DEPLOYMENT-QA.md",
-      "sha256": "182e0fc45802fa5dd3c4e3a2c0e0cefeae29f45527f28cb761a570f9c6aca3c8",
+      "sha256": "a87ce79cf1c7b58ffbf412a110c21389fc9baaa1b9e0d1d865f8a9cdd765bc81",
       "bytes": 3824
     },
     {
@@ -1055,7 +1060,7 @@
     },
     {
       "path": "docs/IMAGE-REVIEW.md",
-      "sha256": "34073115e0575d751fbc17441466648271bbc3caa558e48c139f033f10d812ca",
+      "sha256": "099436c2873a2912ec2554183071043237d41d7bf1768c9b62f7a6511dcd0d9a",
       "bytes": 7541
     },
     {
@@ -1065,7 +1070,7 @@
     },
     {
       "path": "docs/RELEASE.md",
-      "sha256": "c172eb23f57ec8a1d987d8dd973ca2c5fbc75cdcc7e9c7ad7ec6a88aafe8d3d0",
+      "sha256": "81b9ffbed4b14e018ae45d289e69aba5769f916e726d1ffcfa9b001918bbd328",
       "bytes": 4278
     },
     {
@@ -1189,6 +1194,11 @@
       "bytes": 3988
     },
     {
+      "path": "tools/minimum_load_checks.py",
+      "sha256": "9439a5a29486b08dd2f921ae48a51dac518f2bce17c0918c13602fa7b652a866",
+      "bytes": 8671
+    },
+    {
       "path": "tools/privacy_check.py",
       "sha256": "9560010fa1ffd17e86474d28f5c655310d15594981e471c4553bc8b9a407eabb",
       "bytes": 3530
@@ -1245,8 +1255,8 @@
     },
     {
       "path": "tools/test_release.py",
-      "sha256": "79aee157349d17bb75c428ec50b58ca34f7ba29d30a4634564716e405febcc1e",
-      "bytes": 5323
+      "sha256": "2d778f5c17cb4cddee1c9665b31202aa66b9efa2cc5a5e5c9286627242959b6e",
+      "bytes": 5417
     },
     {
       "path": "tools/today_packing_checks.py",

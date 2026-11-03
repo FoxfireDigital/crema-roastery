@@ -20,7 +20,7 @@ def sheet_state(batch):
 
 
 def row_token(row):
-    data=[row.pk,row.group.plan.version,str(row.green_oz),row.roaster_id,row.batch_id,sheet_state(row.batch) if row.batch_id else None]
+    data=[row.pk,row.group.plan.version,str(row.green_oz),row.roaster_id,str(row.roaster.minimum),str(row.roaster.capacity),row.batch_id,sheet_state(row.batch) if row.batch_id else None]
     return hashlib.sha256(json.dumps(data,sort_keys=True).encode()).hexdigest()
 
 

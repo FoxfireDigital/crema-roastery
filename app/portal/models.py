@@ -54,12 +54,18 @@ class Roaster(models.Model):
     name=models.CharField(max_length=40,unique=True)
     active=models.BooleanField(default=True)
     max_green_oz=models.DecimalField(max_digits=7,decimal_places=2,null=True,blank=True,help_text='Maximum safe green input in ounces for this machine. Set before planning.')
+    min_green_oz=models.DecimalField(max_digits=7,decimal_places=2,default=0,help_text='Minimum green input in ounces. Use tenths; 0 leaves the minimum unset.')
     @property
     def capacity(self):
         return self.max_green_oz
+    @property
+    def minimum(self):
+        return self.min_green_oz or Decimal('.1')
     def clean(self):
         super().clean()
         if self.active and (self.max_green_oz is None or not self.max_green_oz.is_finite() or self.max_green_oz<Decimal('.1')):raise ValidationError({'max_green_oz':'Set a positive safe green input capacity before activating this machine.'})
+        if self.min_green_oz is None or not self.min_green_oz.is_finite() or self.min_green_oz<0 or self.min_green_oz!=self.min_green_oz.quantize(Decimal('.1')):raise ValidationError({'min_green_oz':'Enter a nonnegative minimum in tenths of an ounce.'})
+        if self.max_green_oz is not None and self.max_green_oz.is_finite() and self.minimum>self.max_green_oz:raise ValidationError({'min_green_oz':'The minimum cannot exceed this machine’s maximum green input.'})
     def save(self,*args,**kwargs):
         self.full_clean();return super().save(*args,**kwargs)
     def __str__(self): return self.name
@@ -117,6 +123,8 @@ class Batch(models.Model):
                     errors['roaster']='Set the green input capacity for this roaster first.'
                 elif self.green_oz>cap:
                     errors['green_oz']=f'{self.roaster.name} holds at most {cap:g} oz of green coffee.'
+                elif self.green_oz<self.roaster.minimum and (self._state.adding or Batch.all_objects.filter(pk=self.pk).exclude(green_oz=self.green_oz,roaster_id=self.roaster_id).exists()):
+                    errors['green_oz']=f'{self.roaster.name} needs at least {self.roaster.minimum:g} oz of green coffee.'
         if self.coffee_id:
             if self.coffee.experimental and not (self.experimental_origin or '').strip():errors['experimental_origin']='Record the origin or lot for this experimental batch.'
             if self._state.adding and self.coffee.roast_base_id:
@@ -413,6 +421,8 @@ class PlannedBatch(models.Model):
             cap=self.roaster.capacity
             if cap is None or cap<=0 or self.green_oz>cap:
                 raise ValidationError({'green_oz':f'{self.roaster.name} allows at most {cap or 0:g} oz green input.'})
+            if not self.batch_id and not self.removed_at and self.green_oz<self.roaster.minimum:
+                raise ValidationError({'green_oz':f'{self.roaster.name} needs at least {self.roaster.minimum:g} oz green input.'})
     def save(self,*args,**kwargs):
         self.full_clean()
         return super().save(*args,**kwargs)
