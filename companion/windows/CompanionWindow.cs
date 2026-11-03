@@ -45,7 +45,7 @@ internal sealed class CompanionWindow : Form
         status.Margin=new Padding(0,14,0,8);status.Font=new Font(Font.FontFamily,10,FontStyle.Bold);Add(layout,status);
         Add(layout,Label("A sent request is not a verified load. Check Charge / Drop / Off in Config → Alarms before roasting. Off stops Artisan monitoring; it does not guarantee a heater shutdown.",9));
         Add(layout,Label("No monitoring, recording or roast is started. Packing, stock and production records are unchanged.",9));
-        open.Click+=(_,_)=>{if(!string.IsNullOrWhiteSpace(zipPath.Text)){Read(zipPath.Text.Trim().Trim('"'));return;}using var dialog=new OpenFileDialog{Title="Open fresh Crema preparation",Filter="Crema preparation (*.zip;*.crema)|*.zip;*.crema",CheckFileExists=true};if(dialog.ShowDialog(this)==DialogResult.OK)Read(dialog.FileName);};
+        open.Click+=(_,_)=>{using var dialog=new OpenFileDialog{Title="Open fresh Crema preparation",Filter="Crema preparation (*.zip;*.crema)|*.zip;*.crema",CheckFileExists=true};if(dialog.ShowDialog(this)==DialogResult.OK)Read(dialog.FileName);};
         zipPath.KeyDown+=(_,e)=>{if(e.KeyCode==Keys.Enter && !busy){e.SuppressKeyPress=true;Read(zipPath.Text.Trim().Trim('"'));}};
         choose.Click+=(_,_)=>ChooseArtisan();load.Click+=async (_,_)=>await LoadPreparation();
         ready.CheckedChanged+=(_,_)=>UpdateControls();curve.CheckedChanged+=(_,_)=>UpdateControls();
