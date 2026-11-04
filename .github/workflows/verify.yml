@@ -93,10 +93,21 @@ jobs:
         with:
           persist-credentials: false
       - run: docker compose -f compose.yaml -f compose.build.yaml config --quiet
+      - name: Read deployment version from the primary YAML
+        run: |
+          python - <<'PY'
+          import json, os, subprocess
+          config=json.loads(subprocess.check_output(['docker','compose','-f','compose.yaml','-f','compose.build.yaml','config','--format','json'],text=True))
+          image=config['services']['web']['image']
+          version=image.removeprefix('crema:')
+          assert image=='crema:'+version and version.startswith('0.1.0-rc')
+          assert config['services']['proxy']['image']=='crema-proxy:'+version
+          assert config['services']['postgres']['image']=='crema-database:'+version
+          with open(os.environ['GITHUB_ENV'],'a') as output:output.write('CREMA_VERSION='+version+'\n')
+          PY
       - run: docker compose -f compose.yaml -f compose.build.yaml build --pull web postgres proxy
         env:
-          CREMA_VERSION: 0.1.0-rc23
           CREMA_REVISION: ${{ github.sha }}
-      - run: python tools/verify_image.py --image crema:0.1.0-rc23 --version 0.1.0-rc23 --revision "$GITHUB_SHA" --output /tmp/crema-image-review --test-context
+      - run: python tools/verify_image.py --image "crema:$CREMA_VERSION" --version "$CREMA_VERSION" --revision "$GITHUB_SHA" --output /tmp/crema-image-review --test-context
       - run: python tools/audit_dependencies.py /tmp/crema-image-review/components.json
-      - run: python tools/test_registry_install.py --image crema:0.1.0-rc23 --proxy-image crema-proxy:0.1.0-rc23 --database-image crema-database:0.1.0-rc23 --registry-image registry:3@sha256:d4032d4cc323c1731c707931ecada07a53076eac38e3b61ae57533f170f2c6c3 --revision "$GITHUB_SHA" --output /tmp/crema-registry-review
+      - run: python tools/test_registry_install.py --image "crema:$CREMA_VERSION" --proxy-image "crema-proxy:$CREMA_VERSION" --database-image "crema-database:$CREMA_VERSION" --registry-image registry:3@sha256:d4032d4cc323c1731c707931ecada07a53076eac38e3b61ae57533f170f2c6c3 --revision "$GITHUB_SHA" --output /tmp/crema-registry-review
