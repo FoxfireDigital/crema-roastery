@@ -1,0 +1,7 @@
+# Optional download distribution. Place a reviewed release.json and its artifacts
+# in ./companion-release, then use both compose.yaml and this override.
+# These packages are built separately; this folder contains no portal secrets.
+services:
+  web:
+    volumes:
+      - ./companion-release:/var/lib/crema-companion:ro

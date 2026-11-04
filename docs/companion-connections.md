@@ -12,6 +12,8 @@ Sign in as an active staff account. Open **More → Companion computers** to rev
 
 ## First connection
 
+Open **More → Install Companion** on the Artisan computer to download the server's reviewed Windows installer or portable ZIP. The page shows the exact version and SHA-256 checksums. Exit the running application through its tray menu before updating. Installation is a normal Windows action; there is no browser-triggered installation, remote desktop control or silent automatic update.
+
 1. Install/open Companion, choose **Choose roast / connection**, and enter the portal's HTTPS address.
 2. Choose **Connect to Crema**. The usual browser opens the portal's connection page.
 3. Sign in normally. Enter the code displayed in Companion, review the named computer and approve only the connection you initiated.
@@ -49,3 +51,15 @@ Deploy first to an isolated fictional demo with a verified backup, inspect conne
 ## Compact view and tray
 
 The main preparation window has one roast card. The chooser holds accepted loads and connection settings. Quick view gives a compact summary and preparation details. X and Hide to tray keep the application running; the coffee tray menu offers Quick view, Open Companion and Exit Companion. Reopening the desktop shortcut restores that same process. Use Exit Companion before updating or uninstalling. No hide, restore or view action loads anything into Artisan.
+
+## Publishing a reviewed desktop package on your portal
+
+Desktop binaries are built and reviewed separately from the server source. They are not committed into this repository. Stage immutable files and `release.json` in an administrator-controlled directory, readable by the web container. Mount it read-only at `/var/lib/crema-companion` using the optional `compose.companion.yaml` override. An alternative absolute location can be set through `PORTAL_COMPANION_DOWNLOAD_ROOT`. Never mount a folder containing credentials, customer records or unrelated downloads. Keep older releases in separate directories for recovery, and switch the mount only after verifying every artifact against its build receipt.
+
+The manifest has format `crema-companion-release-v1`, a `version` string, a truthful `signed` boolean and an `artifacts` object. Required keys are `installer` and `portable`; `source` is optional. Each entry contains `filename`, `bytes` and lowercase hexadecimal `sha256`. Filenames must begin `CremaCompanion-` and end in `.exe` for the installer or `.zip` for the archives. Example metadata (replace the zero digest and size with the reviewed file's actual values):
+
+```json
+{"format":"crema-companion-release-v1","version":"0.2.0-preview.2","signed":false,"artifacts":{"installer":{"filename":"CremaCompanion-Setup-0.2.0-preview2-win-x64.exe","bytes":1,"sha256":"0000000000000000000000000000000000000000000000000000000000000000"},"portable":{"filename":"CremaCompanion-Pilot-0.2.0-preview2-win-x64.zip","bytes":1,"sha256":"0000000000000000000000000000000000000000000000000000000000000000"}}}
+```
+
+Downloads require a staff session and enabled Companion access. The server checks file size and the complete SHA-256 digest on the same open file it streams; missing, corrupt, oversized, symlinked or unlisted files are refused. Packages are attachments with private/no-store caching. A missing release produces a helpful installation page without affecting existing pairing or offline preparation. The checksum establishes consistency with the administrator's release receipt; it is not a code-signing certificate. Do not describe an unsigned pilot as signed or verified by Microsoft.

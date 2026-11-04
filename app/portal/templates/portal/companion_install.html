@@ -1,0 +1,18 @@
+{% extends 'portal/base.html' %}{% block content %}
+<h1>Install Crema Companion</h1>
+<p>Prepare Artisan from your roasting computer, using the current loads and colors from this portal.</p>
+<section class="card">
+{% if release %}
+<h2>Windows 64-bit · {{ release.version }}</h2>
+<p>Download on the computer that runs Artisan. Before updating, choose <strong>Exit Companion</strong> from its coffee tray icon; closing its window only hides it.</p>
+{% if not release.signed %}<p>This is an unsigned pilot. Check the publisher and checksum before installation; keep Windows protections enabled.</p>{% endif %}
+{% for item in release.artifacts %}<div style="margin-bottom:18px"><a class="button{% if item.kind != 'installer' %} secondary{% endif %}" href="{% url 'companion_download' item.kind %}">Download {{ item.label }}</a> <small>{{ item.mb }} MB</small><details><summary>File &amp; SHA-256</summary><p>{{ item.filename }}</p><code>{{ item.sha256 }}</code></details></div>{% endfor %}
+{% else %}<h2>Download not available yet</h2><p>Your administrator needs to install a verified Companion release on this server. Your existing Companion and preparation ZIPs can still be used.</p>{% endif %}
+</section>
+<section class="card"><h2>Connect this computer</h2><ol>
+<li>Run the installer for your normal Windows account, then open the desktop shortcut. No administrator account or Windows service is required.</li>
+<li>Open <strong>Roasts / connection</strong> and enter <code>{{ portal_origin }}</code>.</li>
+<li>Choose <strong>Connect to Crema</strong>, sign in in your browser and review the code shown by Companion.</li>
+<li>Choose a current load, First or Second and its profile. Save previous Artisan work and keep monitoring off before preparing the background and alarms. Verify both in Artisan.</li>
+</ol><p>Photos and completed .alog uploads stay on the batch in Crema. This page downloads the application; it does not remotely install it, start Artisan or operate a roaster.</p><a class="button secondary" href="{% url 'companion_devices' %}">Manage connected computers</a></section>
+{% endblock %}

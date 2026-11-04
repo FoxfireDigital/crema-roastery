@@ -1,5 +1,6 @@
 {% extends 'portal/base.html' %}{% block content %}
 <h1>Connect Crema Companion</h1>
+<p><a class="button secondary" href="{% url 'companion_install' %}">Install / update Companion</a></p>
 <section class="card"><p>Use the code displayed by your Companion. Only approve a connection you started on your own roasting computer.</p>
 {% if note %}<p role="status">{{ note }}</p>{% endif %}
 {% if pending %}<h2>{{ pending.name }}</h2><p>Code: <strong>{{ code }}</strong></p><p>This computer may read active roast loads, your appearance settings and profile choices, and create preparation files. It cannot change orders, stock, hours, photos, logs or production status.</p>

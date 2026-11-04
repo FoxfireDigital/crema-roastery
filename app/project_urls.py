@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.generic import TemplateView
 from portal import views
 from portal import companion
+from portal import companion_downloads
 from portal.planning import planner
 from portal.load_override import override_load
 from portal.subscription_planning import review_upcoming,reconcile_renewal
@@ -53,6 +54,8 @@ from portal.production_orders import review_production
 from portal.batch_combine import combine_batches
 urlpatterns=[
     path('companion/',companion.devices,name='companion_devices'),
+    path('companion/install/',companion_downloads.install,name='companion_install'),
+    path('companion/download/<str:kind>/',companion_downloads.download,name='companion_download'),
     path('api/companion/v1/start/',companion.start),
     path('api/companion/v1/token/',companion.token),
     path('api/companion/v1/me/',companion.me),

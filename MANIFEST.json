@@ -35,13 +35,13 @@
     },
     {
       "path": ".gitignore",
-      "sha256": "9c3a40bf9f838150eeb2226fcb3ef90527beb15c8643278a4654872d1cde8708",
-      "bytes": 107
+      "sha256": "cfde5b865a2b16a1d1b5ddfd1d6769805fcb998af84ecad09c7877f841f0b61a",
+      "bytes": 126
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "b95bcd9ba966f59cf3b942ae2c49095db05017b43ede427010160a2545c9da17",
-      "bytes": 16752
+      "sha256": "803366700080deaa35f61be33f4cf20bbbd1f50281b5e972628833963c47e782",
+      "bytes": 16944
     },
     {
       "path": "CONTRIBUTING.md",
@@ -217,6 +217,11 @@
       "path": "app/portal/companion.py",
       "sha256": "27210ced9405c7842ae26516bfe3e5b034466816f23d77154e28fd6933419305",
       "bytes": 14215
+    },
+    {
+      "path": "app/portal/companion_downloads.py",
+      "sha256": "37c228f2c1315938c17ebb7919e1165906fa8de94a076b4277846a2fa2fda22d",
+      "bytes": 4723
     },
     {
       "path": "app/portal/cupping.py",
@@ -615,8 +620,8 @@
     },
     {
       "path": "app/portal/templates/portal/base.html",
-      "sha256": "c3639b82b986b908551e4d99170adc6d0a74ece20d02d4b31a7a01620ee63332",
-      "bytes": 14998
+      "sha256": "b1314f50a1fa4d44215b4627c1fb22a0781577324e3347bd5021a68471e5051f",
+      "bytes": 15049
     },
     {
       "path": "app/portal/templates/portal/batch.html",
@@ -680,8 +685,13 @@
     },
     {
       "path": "app/portal/templates/portal/companion_devices.html",
-      "sha256": "9392b52c48e3cbe403bc12b55766f7ad16fe69b0cc6ee89cf4888578c65b9548",
-      "bytes": 1563
+      "sha256": "6abd7ee0cd81926deb3851656f7fe120b31380cc5e4622daea09f60a01d2d89d",
+      "bytes": 1666
+    },
+    {
+      "path": "app/portal/templates/portal/companion_install.html",
+      "sha256": "ee59416d5fd67d38be6118639f1be880be9980c5911a0eb60f260e255cc4768a",
+      "bytes": 2106
     },
     {
       "path": "app/portal/templates/portal/completed_plan.html",
@@ -1050,8 +1060,8 @@
     },
     {
       "path": "app/project_urls.py",
-      "sha256": "cfd430bf24abf004e197303d86140668137af9fd2f65fa84e41f8889622496bf",
-      "bytes": 11275
+      "sha256": "93c589abc274551527a007ce7c01a3f849c340df9d2f803d56642b83ee091942",
+      "bytes": 11498
     },
     {
       "path": "app/project_wsgi.py",
@@ -1199,6 +1209,11 @@
       "bytes": 641
     },
     {
+      "path": "compose.companion.yaml",
+      "sha256": "ec80cf1f337dff04623fc367f31071d7b7af8432741dd3c621141a62a814ae40",
+      "bytes": 319
+    },
+    {
       "path": "compose.yaml",
       "sha256": "883d3455e7ced45baa5f4975221179467ce3ed91ff4ac72c6712c8fd939b4902",
       "bytes": 3036
@@ -1305,8 +1320,8 @@
     },
     {
       "path": "docs/companion-connections.md",
-      "sha256": "04e1bafc135752f4f57899c041e87efce03ff205af36bef226199d4799a118fe",
-      "bytes": 6756
+      "sha256": "f5fb975e557b460dc51f7826a43fb5d56b5eae391251308d0fb0410a19f1d1eb",
+      "bytes": 9341
     },
     {
       "path": "docs/roast-day-corrections.md",
@@ -1390,8 +1405,8 @@
     },
     {
       "path": "tools/companion_checks.py",
-      "sha256": "93f38b132fdaaa74c5eef039a441e2522920a4899f3726ee2d3351fb6f9699e6",
-      "bytes": 9874
+      "sha256": "c9a0f83db0a3fd9ee1382f7d57e39c404cff5f6c1105505f6110563f919d8d3e",
+      "bytes": 13059
     },
     {
       "path": "tools/evidence_actions_checks.py",

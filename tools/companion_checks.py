@@ -1,5 +1,7 @@
 """First-party device protocol regression; fictional in-memory database only."""
 import os,sys,io,json,base64,hashlib,zipfile
+import tempfile
+from unittest.mock import patch
 from pathlib import Path
 from datetime import timedelta
 ROOT=Path(__file__).resolve().parents[1]
@@ -90,6 +92,40 @@ check('expired-device-cannot-connect',post('token/',{'device_code':expired['devi
 ordinary=get_user_model().objects.create_user('ordinary',password='synthetic-normal-password-199')
 ordinary_browser=Client(HTTP_HOST='localhost');ordinary_browser.force_login(ordinary)
 check('nonstaff-cannot-approve',ordinary_browser.post('/companion/',{'code':code,'decision':'approve'}).status_code==403)
+with tempfile.TemporaryDirectory() as directory,patch.dict(os.environ,{'PORTAL_COMPANION_DOWNLOAD_ROOT':directory}):
+    root=Path(directory);data=b'Fictional download fixture only; not an executable.'
+    names={'installer':'CremaCompanion-Setup-fictional.exe','portable':'CremaCompanion-Pilot-fictional.zip'}
+    release={'format':'crema-companion-release-v1','version':'0.2.0-preview.2','signed':False,'artifacts':{}}
+    for kind,name in names.items():
+        (root/name).write_bytes(data)
+        release['artifacts'][kind]={'filename':name,'bytes':len(data),'sha256':hashlib.sha256(data).hexdigest()}
+    def publish(): (root/'release.json').write_text(json.dumps(release),encoding='utf-8')
+    publish()
+    check('download-login-required',api.get('/companion/download/installer/').status_code==302)
+    check('download-nonstaff-denied',ordinary_browser.get('/companion/install/').status_code==403 and ordinary_browser.get('/companion/download/installer/').status_code==403)
+    page=browser.get('/companion/install/')
+    check('install-page-version-origin-and-links',page.status_code==200 and b'0.2.0-preview.2' in page.content and b'http://localhost' in page.content and b'/companion/download/installer/' in page.content)
+    for kind in names:
+        response=browser.get('/companion/download/'+kind+'/')
+        check('verified-'+kind+'-attachment',response.status_code==200 and b''.join(response.streaming_content)==data and 'attachment;' in response['Content-Disposition'] and 'no-store' in response['Cache-Control'] and response['X-Checksum-SHA256']==hashlib.sha256(data).hexdigest())
+        response.close()
+    check('download-post-refused',browser.post('/companion/download/installer/').status_code==405)
+    check('download-unknown-kind-refused',browser.get('/companion/download/not-a-package/').status_code==404)
+    with override_settings(COMPANION_ENABLED=False):check('download-feature-off-denied',browser.get('/companion/install/').status_code==403 and browser.get('/companion/download/installer/').status_code==403)
+    (root/names['installer']).write_bytes(b'X'*len(data))
+    check('download-corruption-blocked',browser.get('/companion/download/installer/').status_code==404)
+    (root/names['installer']).write_bytes(data)
+    release['artifacts']['installer']['filename']='../outside.exe';publish()
+    check('download-path-escape-blocked',browser.get('/companion/download/installer/').status_code==404)
+    release['artifacts']['installer']['filename']=names['installer'];publish()
+    (root/'release.json').write_text('[]',encoding='utf-8')
+    check('download-invalid-manifest-safe',browser.get('/companion/install/').status_code==200 and browser.get('/companion/download/installer/').status_code==404)
+    (root/'release.json').write_bytes(b'X'*8193)
+    check('download-oversized-manifest-safe',browser.get('/companion/download/installer/').status_code==404)
+    publish()
+    if os.name=='posix':
+        target=root/names['installer'];target.unlink();target.symlink_to(root/names['portable'])
+        check('download-symlink-blocked',browser.get('/companion/download/installer/').status_code==404)
 LoginAttemptWindow.objects.all().delete()
 for _ in range(12):assert post('start/',{}).status_code==200
 check('start-rate-limited',post('start/',{}).status_code==429)
