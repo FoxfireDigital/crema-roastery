@@ -23,14 +23,14 @@ try{
     $shell=New-Object -ComObject WScript.Shell
     try{Check ($shell.CreateShortcut($desktop).TargetPath -eq $installed) 'desktop-shortcut-target'}finally{[void][Runtime.InteropServices.Marshal]::ReleaseComObject($shell)}
     $registration=Get-ItemProperty -LiteralPath $registry
-    Check ($registration.DisplayVersion -eq '0.2.0-preview.1' -and $registration.InstallLocation -eq $trial) 'current-user-uninstall-registration'
+    Check ($registration.DisplayVersion -eq '0.2.0-preview.2' -and $registration.InstallLocation -eq $trial) 'current-user-uninstall-registration'
     Check ($registration.UninstallString -eq ('"'+(Join-Path $trial 'Uninstall.exe')+'"')) 'quoted-windows-uninstall-command'
     $sentinel=Join-Path $trial 'keep-me.txt';if(Test-Path -LiteralPath $sentinel){if([IO.File]::ReadAllText($sentinel) -ne 'unrelated-file-must-survive'){throw 'Unexpected trial sentinel'}}else{[IO.File]::WriteAllText($sentinel,'unrelated-file-must-survive')}
     Check ((Run $Installer @('/S',('/D='+$trial))) -eq 0 -and [IO.File]::ReadAllText($sentinel) -eq 'unrelated-file-must-survive') 'upgrade-preserves-unrelated-file'
     $installedReport=Join-Path ([IO.Path]::GetDirectoryName([IO.Path]::GetFullPath($ReportPath))) 'installed-companion-checks.json'
     Check ((Run $installed @('--self-test',('"'+$installedReport+'"'))) -eq 0) 'installed-runtime-self-test-exits-successfully'
     $result=Get-Content -LiteralPath $installedReport -Raw|ConvertFrom-Json
-    Check ($result.result -eq 'passed' -and $result.count -ge 64 -and -not $result.realArtisanTouched -and -not $result.serverChanged) 'installed-preparation-connection-and-credential-checks'
+    Check ($result.result -eq 'passed' -and $result.count -ge 72 -and -not $result.realArtisanTouched -and -not $result.serverChanged) 'installed-preparation-connection-and-credential-checks'
     Check ((Run (Join-Path $trial 'Uninstall.exe') @('/S')) -eq 0) 'silent-uninstall'
     Check (-not (Test-Path -LiteralPath $installed) -and -not (Test-Path -LiteralPath $registry) -and -not (Test-Path -LiteralPath $desktop) -and -not (Test-Path -LiteralPath $menu)) 'program-registration-and-shortcuts-removed'
     Check ([IO.File]::ReadAllText($sentinel) -eq 'unrelated-file-must-survive') 'uninstall-preserves-unrelated-file'

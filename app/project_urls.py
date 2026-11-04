@@ -6,6 +6,9 @@ from django.views.generic import TemplateView
 from portal import views
 from portal import companion
 from portal.planning import planner
+from portal.load_override import override_load
+from portal.subscription_planning import review_upcoming,reconcile_renewal
+from portal.wholesale_accounts import accounts as wholesale_accounts
 from portal.order_import import order_import,review_import,order_visibility,dismiss_selected
 from portal.subscriptions import subscriptions
 from portal.hours import edit_hours,remove_hours
@@ -127,6 +130,11 @@ urlpatterns=[
     path('plans/<int:pk>/restore/',delete_plan,{'restore':True},name='restore_plan'),
     path('imports/',order_import,name='order_import'),
     path('imports/find/',lookup_order,name='lookup_order'),
+    path('planned-loads/<int:pk>/override/',override_load,name='override_load'),
+    path('wholesale/accounts/',wholesale_accounts,name='wholesale_accounts'),
+    path('wholesale/accounts/<int:pk>/',wholesale_accounts,name='wholesale_account'),
+    path('plans/<int:pk>/subscriptions/',review_upcoming,name='plan_subscriptions'),
+    path('subscriptions/renewals/<int:pk>/',reconcile_renewal,name='subscription_renewal'),
     path('plans/<int:pk>/close/',close_plan,name='close_plan'),
     path('plans/<int:pk>/reopen/',close_plan,{'reopen':True},name='reopen_plan'),
     path('plans/<int:pk>/completed/',completed_plan,name='completed_plan'),

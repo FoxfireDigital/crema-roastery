@@ -1,6 +1,6 @@
 {
   "name": "Crema",
-  "version": "0.1.0-rc23",
+  "version": "0.1.0-rc24",
   "license": "MIT",
   "files": [
     {
@@ -25,7 +25,7 @@
     },
     {
       "path": ".github/workflows/companion.yml",
-      "sha256": "318d4032042a68cf6c3aaa366ec75445f1f4d05a2028119fdb68bbf1675f0f90",
+      "sha256": "be29c719303b64920f3f6fb6e33b08ab0cfd3971fbc71d9e088f164e8c760880",
       "bytes": 3538
     },
     {
@@ -40,8 +40,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "4e4bc199ffa34732ef49b1fd7f9274b2a3ca8846d972f496b428194ac4778451",
-      "bytes": 15069
+      "sha256": "1845899b48141af874dc968e4fadf30f740d37428ae414a063db5b7786e75da6",
+      "bytes": 16573
     },
     {
       "path": "CONTRIBUTING.md",
@@ -60,8 +60,8 @@
     },
     {
       "path": "README.md",
-      "sha256": "5e120b3b9d127e3067c514e6a8677ffb3326944b6b22642067f5de5b5adfa7db",
-      "bytes": 7556
+      "sha256": "4e084534d841804212c51d4a5a58b7750f18fd599d0665f3e7276dc744bad603",
+      "bytes": 7679
     },
     {
       "path": "ROADMAP.md",
@@ -165,8 +165,8 @@
     },
     {
       "path": "app/portal/artisan_profiles.py",
-      "sha256": "7ee9aa70c23bb4aa8abb061dce2a797fbd86511cb45e2980d7fed18f9ef4d579",
-      "bytes": 26572
+      "sha256": "62e20a390ac3a38400b1bfb0c0b0c2896ce63ac4a684fb105485480fd9bc5b2a",
+      "bytes": 26678
     },
     {
       "path": "app/portal/artisan_uploads.py",
@@ -295,13 +295,18 @@
     },
     {
       "path": "app/portal/label_filler.py",
-      "sha256": "7835ffe6e3105d38660c9bccd0955fef58d0a1467aee09d1c6973d2cf56b1190",
-      "bytes": 5764
+      "sha256": "6584fe10ec3cd5d223cd23546f6d7d187be165ae9c5588d0d6f49fc833f0e10d",
+      "bytes": 6183
     },
     {
       "path": "app/portal/label_sheets.py",
       "sha256": "eab04dbfc0a2cdbed098754aae9ec00da0ac5ff1878853d5faf5c7660687e91f",
       "bytes": 24937
+    },
+    {
+      "path": "app/portal/load_override.py",
+      "sha256": "2ea208215b72f086e66e5cd6eb7d3d2c2f676a8c2758f3743246470a57cf75f8",
+      "bytes": 5224
     },
     {
       "path": "app/portal/management/__init__.py",
@@ -374,14 +379,24 @@
       "bytes": 2111
     },
     {
+      "path": "app/portal/migrations/0010_roast_day_corrections.py",
+      "sha256": "242f23947d054d9ed1c0107e976dfaa852609d7df6243c29127434603f54f9d3",
+      "bytes": 1979
+    },
+    {
+      "path": "app/portal/migrations/0011_wholesale_accounts.py",
+      "sha256": "34ca0b257388a051a77166a8599dc3921e48319b9479793614ec1b2f9fe2f24c",
+      "bytes": 1285
+    },
+    {
       "path": "app/portal/migrations/__init__.py",
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "bytes": 0
     },
     {
       "path": "app/portal/models.py",
-      "sha256": "9c72b33a22330b2c47514a5b3bf95632ac53b9f16bc7deb3911c197ca30c785e",
-      "bytes": 69518
+      "sha256": "de08055f7849f5b90eae3336429a8fbf25ba2b66cc2b4909c25221dade7b7baa",
+      "bytes": 71355
     },
     {
       "path": "app/portal/neutral_print.py",
@@ -390,8 +405,8 @@
     },
     {
       "path": "app/portal/order_import.py",
-      "sha256": "46f444ed54d79e6c1a281406ba7dbdcc0fe9adcf80da3bb09be6f7b44bcf8c09",
-      "bytes": 35039
+      "sha256": "7144e51cf59d1ba64a3c188478d33df299d24a3baf9e15afa401e2471e74143a",
+      "bytes": 36421
     },
     {
       "path": "app/portal/order_lookup.py",
@@ -420,13 +435,13 @@
     },
     {
       "path": "app/portal/plan_completion.py",
-      "sha256": "a44e48c77759f344902a917a07b427cf5b8d35e61912b3d061cbb789c60ea077",
-      "bytes": 8910
+      "sha256": "0862346852375ece77f8ff954a0d748faa18216478216a1690a41665166dac74",
+      "bytes": 9260
     },
     {
       "path": "app/portal/planning.py",
-      "sha256": "10aa0af764cdb6f354589bb707a65a39444b975c44f1a47c891b862fed7eded0",
-      "bytes": 30749
+      "sha256": "f713b44a3f8efb057241ff6442313dd08f5cfaa2722f46eb04daa169ceeb9bcd",
+      "bytes": 31242
     },
     {
       "path": "app/portal/product_checks.py",
@@ -440,13 +455,13 @@
     },
     {
       "path": "app/portal/production_orders.py",
-      "sha256": "5cdab5e31fb353fa3a40f2b9022e1aaf03cb3de6744dcc8b3902ccede1fb089e",
-      "bytes": 6394
+      "sha256": "b3ee16b3f4a90df0e7def36643622fce1f21b0f467c40224703400a9370a9d7c",
+      "bytes": 6516
     },
     {
       "path": "app/portal/recovery.py",
-      "sha256": "fc067ef85924f977308c4a19d67b85038dd136a8d9821b3af3f77d4a0494c155",
-      "bytes": 6408
+      "sha256": "ae4bccead38ebe380e00a7dee23e77523b0fbee7eab34d136f2aeafcdad32e88",
+      "bytes": 6428
     },
     {
       "path": "app/portal/roast_pooling.py",
@@ -455,8 +470,8 @@
     },
     {
       "path": "app/portal/roast_sheet.py",
-      "sha256": "4cf8d7155f95edcb08385bde05996875129a470aac39eff7fbee736c5d095484",
-      "bytes": 9326
+      "sha256": "c9ed40b6fa5846affa3eab6d9482b09bb70d558d241081a18c30f939df43763c",
+      "bytes": 9360
     },
     {
       "path": "app/portal/roasted_stock.py",
@@ -512,6 +527,11 @@
       "path": "app/portal/stores.py",
       "sha256": "ab468e76829282cbec40ecd6f57539da127dbcd7ab67a5fde273814dbc7df7cb",
       "bytes": 18776
+    },
+    {
+      "path": "app/portal/subscription_planning.py",
+      "sha256": "2a80776b65398822c2a7bb35019292393a4e1964891a7df3a6fb81905a69500f",
+      "bytes": 12730
     },
     {
       "path": "app/portal/subscriptions.py",
@@ -725,8 +745,8 @@
     },
     {
       "path": "app/portal/templates/portal/help.html",
-      "sha256": "9ba7340795c38733280f834535855fdb0cd9242457f2ca81577696fdbad139c0",
-      "bytes": 14777
+      "sha256": "7265eb2adb50dfae2b1f4f53c0e47d87b8f2ce347d8dbf022aba57e10db6edd5",
+      "bytes": 17716
     },
     {
       "path": "app/portal/templates/portal/historical_roasts.html",
@@ -752,6 +772,11 @@
       "path": "app/portal/templates/portal/label_sheets.html",
       "sha256": "e902d8d9f1122bedb5871c40aeb529b0cee73fd0ff05175293cfcb4a3776a543",
       "bytes": 16518
+    },
+    {
+      "path": "app/portal/templates/portal/load_override.html",
+      "sha256": "bce712be887ca2556b1e01f7a42d09dca2fd9d0200204ab1eb3eaa970e5c9df6",
+      "bytes": 1053
     },
     {
       "path": "app/portal/templates/portal/login.html",
@@ -835,8 +860,8 @@
     },
     {
       "path": "app/portal/templates/portal/planning.html",
-      "sha256": "874f7369c8a8f04079f488ae62b8fd6ba92988642589d697ae39072dfc0c802a",
-      "bytes": 31038
+      "sha256": "82df5dff401b005fb65912f1697c64c6e8c23857323a338208e8b5d035288ad0",
+      "bytes": 31648
     },
     {
       "path": "app/portal/templates/portal/plans.html",
@@ -880,13 +905,13 @@
     },
     {
       "path": "app/portal/templates/portal/review_import.html",
-      "sha256": "948bcb97abfa796fa1ebd198a7e4dc006f3c3e470403c4a60c0427b37f22a9b4",
-      "bytes": 11688
+      "sha256": "474edb7974870abe6d7eeaf3da65c6ef39394728eb7fc4efb3c97c61a4c13ae3",
+      "bytes": 12062
     },
     {
       "path": "app/portal/templates/portal/roast_sheet.html",
-      "sha256": "ff3ea8ecdf601c202791d93bd04d18a0b09aeee4e1a25e3dd1aaae03d887d8e2",
-      "bytes": 17426
+      "sha256": "633b31930c9e6e23e7d90597b3273ff969bbb60f9b2e43984598bba5a50a0bf5",
+      "bytes": 17566
     },
     {
       "path": "app/portal/templates/portal/roasted_stock.html",
@@ -929,6 +954,16 @@
       "bytes": 5080
     },
     {
+      "path": "app/portal/templates/portal/subscription_planning.html",
+      "sha256": "c86e0c0741243702ad832ffbc243b4fbf9ba3950d6fdd2e3e2934214b23f493c",
+      "bytes": 2904
+    },
+    {
+      "path": "app/portal/templates/portal/subscription_renewal.html",
+      "sha256": "a5a1a48aee0509a56938537213214a522e169944b0d39d771cdf97bd8d0e1095",
+      "bytes": 2137
+    },
+    {
       "path": "app/portal/templates/portal/subscriptions.html",
       "sha256": "15288fd3999f26584d5a8180fa1c5061d78911c572c1772253a5b2b873e5ca20",
       "bytes": 4248
@@ -960,8 +995,13 @@
     },
     {
       "path": "app/portal/templates/portal/wholesale.html",
-      "sha256": "118a8a92aceb5c67ebefaa258ba92d1f1611fe05437d384fc8e12a0377bd7d5f",
-      "bytes": 11071
+      "sha256": "0096da63e11870b1a070ce5c1d4612e123a99105467ff991dac6cd96be7f0823",
+      "bytes": 11956
+    },
+    {
+      "path": "app/portal/templates/portal/wholesale_accounts.html",
+      "sha256": "b6fc7d18dbd620ea99cfed451457487865dd103ba3bbab4fafcb7a5bc89effda",
+      "bytes": 1175
     },
     {
       "path": "app/portal/templates/portal/wholesale_item.html",
@@ -985,8 +1025,13 @@
     },
     {
       "path": "app/portal/wholesale.py",
-      "sha256": "798f4f46c73f636ed6205d02e6a2215da9ee488002a9c9f010ae3211e8e687ce",
-      "bytes": 13614
+      "sha256": "cc51f721e0e9998bde1d12d70a3b23db78115feb5803db8fc592d66f8d06f437",
+      "bytes": 15623
+    },
+    {
+      "path": "app/portal/wholesale_accounts.py",
+      "sha256": "e50e5959605012e37de62a93c83c46a25f2d8fbfc1832a5fce866472d594ee20",
+      "bytes": 3615
     },
     {
       "path": "app/portal/workflow.py",
@@ -1005,8 +1050,8 @@
     },
     {
       "path": "app/project_urls.py",
-      "sha256": "761034880e841f37ad4ab60738537bac545de565d542fd0f76683a737cac2172",
-      "bytes": 10662
+      "sha256": "cfd430bf24abf004e197303d86140668137af9fd2f65fa84e41f8889622496bf",
+      "bytes": 11275
     },
     {
       "path": "app/project_wsgi.py",
@@ -1034,18 +1079,23 @@
       "bytes": 19926
     },
     {
+      "path": "companion/windows/CompanionTray.cs",
+      "sha256": "9587eafb9cc8f986929987e54bdff7cdcec453bcbde445170fa1154ce13e8104",
+      "bytes": 2577
+    },
+    {
       "path": "companion/windows/CompanionWindow.cs",
-      "sha256": "99c7119e957cb5c6e91b8e4019e37dcbf89776742d6f6d3ba0f628fcae24f276",
-      "bytes": 15361
+      "sha256": "4b0757646ccfcdaaddbb80fef2c835e0a8b6ba8828f041944d02e7892cc185fe",
+      "bytes": 17905
     },
     {
       "path": "companion/windows/ConnectedChecks.cs",
-      "sha256": "991f177319d7d96109834d0d2a383f0736dbeeee3ebad3e2f6b035ccf1c1c279",
-      "bytes": 7406
+      "sha256": "58cf3499211a120b1c6077b94b6bb0121af5db1667b55ebc61f5a167afbe3e16",
+      "bytes": 9730
     },
     {
       "path": "companion/windows/CremaCompanion.csproj",
-      "sha256": "6c3630292d8e8c64525089c61d6f7db712b43372a52e2b603bc815314e7292f1",
+      "sha256": "7e9d69956546fa7bf3cd4f98acf88e7f5c55eda8c67bb0f70d0da6fdbe289525",
       "bytes": 1087
     },
     {
@@ -1065,8 +1115,8 @@
     },
     {
       "path": "companion/windows/PortalClient.cs",
-      "sha256": "b53664d60f9e16a60b3220d7f475aee2e92b49d8b26cf29dddd5077fbba58296",
-      "bytes": 9252
+      "sha256": "ed31724b4b53c483acc3b39d82cb32cbd63c37932c53e6d5d79d8ef011932cfd",
+      "bytes": 10211
     },
     {
       "path": "companion/windows/Preparation.cs",
@@ -1075,13 +1125,18 @@
     },
     {
       "path": "companion/windows/Program.cs",
-      "sha256": "2a42ff54863b8fc6c425b947a8e4344c2c1774a34b99fb5297ed22c01ad60fec",
-      "bytes": 1023
+      "sha256": "9a51358e908b7e9672cc2ecb62076b0428ffa2f58f05ab49c5f958811b239a47",
+      "bytes": 1130
     },
     {
       "path": "companion/windows/README.md",
-      "sha256": "badb41e1eb01cc1835764b39c5211de44aa282f2e115474c9fe7417d305c317f",
-      "bytes": 8611
+      "sha256": "a06bc9cc02d3231b3a40f7ec275a96a332f3c1156d594ab575e779688a55497e",
+      "bytes": 9369
+    },
+    {
+      "path": "companion/windows/WindowActivation.cs",
+      "sha256": "e20f1c8b386953e63fffde086ef51a2575480c90938a5556c5f94d292809204a",
+      "bytes": 2437
     },
     {
       "path": "companion/windows/app.manifest",
@@ -1095,7 +1150,7 @@
     },
     {
       "path": "companion/windows/build-installer.ps1",
-      "sha256": "46dc67f53ada6d9d3165bcda3493342bc4c4d37ab7f24c2a2f3d5eb8e2014a98",
+      "sha256": "634efaeb5b3815d9adafd5458a7f41ffd7ad51e446ac49001d0589970cc73cae",
       "bytes": 2090
     },
     {
@@ -1110,13 +1165,13 @@
     },
     {
       "path": "companion/windows/installer-checks.ps1",
-      "sha256": "1e56ff26015df9aa07d8178fe01392db1c99fc70b28ef5b3ba9bd1843fee1f6f",
+      "sha256": "448780eaa4dcebc1e100032fc665cb81b9b7d240d4eff622ba0bcf6623c13af7",
       "bytes": 5009
     },
     {
       "path": "companion/windows/installer.nsi",
-      "sha256": "36220641ca51a19ebc389d009f0bac241d6fc68f0994656a4edd7fad2d07d11c",
-      "bytes": 5003
+      "sha256": "6f6c98fc4ca6da2648977aace7afd6dd49fee34abf6599fea76b9f87bdefd077",
+      "bytes": 5061
     },
     {
       "path": "companion/windows/packages.lock.json",
@@ -1125,18 +1180,18 @@
     },
     {
       "path": "companion/windows/ui/app.css",
-      "sha256": "e61e88a23eb936c217d42a4f9b24662cb151c66f23513e6b20f037d7dc9f8d87",
-      "bytes": 5743
+      "sha256": "090ab32a8e3aac563f6f1185303bcfbaca2dcc27dfd543ac4962da7971678451",
+      "bytes": 6328
     },
     {
       "path": "companion/windows/ui/app.js",
-      "sha256": "9e5b80090df5c6eb357fd22d2c21030b1c74942050ee6dcc0d51b76b3c733365",
-      "bytes": 6445
+      "sha256": "f35fbdd6dc6f61138b34ad3cce267810a354149c8e662482d55fcaf81ce38659",
+      "bytes": 7915
     },
     {
       "path": "companion/windows/ui/index.html",
-      "sha256": "922e20d2c51848782eb8d9723d72c0269d26e5d34af9e4453c28f32857e256f8",
-      "bytes": 5960
+      "sha256": "bcd56a1db8b17bcf8c76d51996cd45b33277f24232fa09ad15169a617447cb90",
+      "bytes": 6310
     },
     {
       "path": "compose.build.yaml",
@@ -1145,7 +1200,7 @@
     },
     {
       "path": "compose.yaml",
-      "sha256": "d362773daeece053212b80a26cb9141aa31fac336d803b4654bef71ec85fe608",
+      "sha256": "883d3455e7ced45baa5f4975221179467ce3ed91ff4ac72c6712c8fd939b4902",
       "bytes": 3036
     },
     {
@@ -1250,8 +1305,13 @@
     },
     {
       "path": "docs/companion-connections.md",
-      "sha256": "99df670a46c4c65414bd5ef8a05279ad466b7ea66104a73da4d8deae510dfc74",
-      "bytes": 6228
+      "sha256": "04e1bafc135752f4f57899c041e87efce03ff205af36bef226199d4799a118fe",
+      "bytes": 6756
+    },
+    {
+      "path": "docs/roast-day-corrections.md",
+      "sha256": "9d2fdfd56d8e40c51414d9b6a022074ddc393154ab4258dc914efa6f8aeaa44f",
+      "bytes": 4391
     },
     {
       "path": "services/.dockerignore",
@@ -1360,8 +1420,8 @@
     },
     {
       "path": "tools/production_checks.py",
-      "sha256": "4bff39e9149cd9a25ac62650e33fb91973f6f7bb1b2adee3ec88049212c62dc2",
-      "bytes": 9929
+      "sha256": "f1f849ffafede02e2f20469b7d67cf2739b48a9e7204b8b0fb80923d8c1f300c",
+      "bytes": 10231
     },
     {
       "path": "tools/production_order_checks.py",
@@ -1377,6 +1437,11 @@
       "path": "tools/review_checks.py",
       "sha256": "de9788dbedbdd11dd5341a56b30aff4880c5bf89a39b2522d2ab175c2849653e",
       "bytes": 2729
+    },
+    {
+      "path": "tools/roast_day_checks.py",
+      "sha256": "450330c250fcd16c5b1bf14229252853bc7301e807dcb1f0e8126aa041c84d5e",
+      "bytes": 9982
     },
     {
       "path": "tools/roast_pooling_checks.py",
@@ -1410,8 +1475,8 @@
     },
     {
       "path": "tools/test_release.py",
-      "sha256": "6e89776594a159c84764e31d4aac110776ae33333873772b12e6d4478981c763",
-      "bytes": 5523
+      "sha256": "ab44ec85a73a0b5d61200aa92971f13769c7d5ce9abf3d344bc0f2a942665dea",
+      "bytes": 5608
     },
     {
       "path": "tools/today_packing_checks.py",

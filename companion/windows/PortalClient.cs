@@ -47,12 +47,20 @@ internal sealed class PortalClient : IDisposable
         {
             var raw=await Bounded(response,1_000_000,ct);
             JsonElement value;
-            try{value=JsonDocument.Parse(raw,new JsonDocumentOptions{MaxDepth=24}).RootElement.Clone();}
-            catch(JsonException){throw new IOException("This portal does not support connected Companion yet, or returned an invalid response.");}
+            try{using var document=JsonDocument.Parse(raw,new JsonDocumentOptions{MaxDepth=24});value=document.RootElement.Clone();}
+            catch(JsonException){throw new IOException(ResponseProblem(response.StatusCode));}
+            if(value.ValueKind!=JsonValueKind.Object)throw new IOException(ResponseProblem(response.StatusCode));
             if(!response.IsSuccessStatusCode)throw new PortalException(response.StatusCode,value.TryGetProperty("error",out var e)?e.GetString()??"Portal request failed.":"Portal request failed.",value);
             return value;
         }
     }
+    internal static string ResponseProblem(HttpStatusCode status)=>status switch
+    {
+        HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden=>"The portal or its gateway denied this connection (HTTP "+(int)status+"). Open the production portal in your browser and check its access settings.",
+        HttpStatusCode.MovedPermanently or HttpStatusCode.Found or HttpStatusCode.TemporaryRedirect or HttpStatusCode.PermanentRedirect=>"This address redirects to another page. Enter the final HTTPS address of your Crema production portal.",
+        _ when (int)status>=500=>"The portal is temporarily unavailable (HTTP "+(int)status+"). Try again when the production portal is responding.",
+        _=>"This address did not return Crema's Companion connection service. Enter your production portal address, rather than a marketing website or shop homepage."
+    };
     private static HttpRequestMessage Post(string path,object data)=>new(HttpMethod.Post,"api/companion/v1/"+path){Content=JsonContent.Create(data)};
     internal Task<JsonElement> Start(CancellationToken ct)=>Json(Post("start/",new{name=Environment.MachineName}),ct);
     internal async Task<bool> Poll(string code,CancellationToken ct)

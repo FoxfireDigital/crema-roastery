@@ -88,6 +88,9 @@ def run_production_checks(root,client,user):
         buffer=io.BytesIO();Image.new('RGB',(200,280),'black').save(buffer,format='PNG');raw=buffer.getvalue()
         LabelArtwork.objects.create(coffee=coffee,size_oz=16,roast_level='Medium',per_sheet=4,image_data=raw,image_format='PNG',source_name='fictional.png',active=True,width=200,height=280,sha256=hashlib.sha256(raw).hexdigest(),uploaded_by=user)
         labels=order_labels(plan);assert len(labels)==1 and labels[0]['bags']==2 and not labels[0]['issue'],labels
+        assert any('Cooled' in issue for issue in completion_checks(plan)), 'Missing cooling did not block closure'
+        row.batch.refresh_from_db();row.batch.cooled_at=now;row.batch.bagged_at=None;row.batch.sealed_at=None
+        row.batch.save(update_fields=['cooled_at','bagged_at','sealed_at'])
         assert not completion_checks(plan),completion_checks(plan)
         response=client.post(f'/plans/{plan.pk}/close/',{'version':plan.version});assert response.status_code==302
         plan.refresh_from_db();assert plan.closed_at and PlanEvent.objects.filter(plan=plan,action='closed').exists()

@@ -13,22 +13,47 @@ internal sealed class CompanionWindow : Form
     private readonly WebView2 web=new(){Dock=DockStyle.Fill};
     private readonly string root=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"CremaCompanionPilot");
     private readonly CancellationTokenSource lifetime=new();
+    private readonly CompanionTray tray;
+    private bool exiting,quickView;
+    private Size fullSize=new(580,790);
     private PortalClient? portal;
     private JsonElement? account,roasts;
     private Preparation? preparation;
     private string? folder;
     private HandoffProgress progress=new();
     private bool busy=true,onlinePreparation,ready,curve,alarms;
-    private bool initialized;
+    private bool initialized,launched;
     private string artisan="",status="Connect to your roastery, or open a fresh preparation ZIP.",code="",verification="";
     private bool problem;
+    private string lastOrigin="";
     private CancellationTokenSource? pairing;
     internal CompanionWindow(string? initialPath)
     {
-        Text="Crema Companion";ClientSize=new Size(1000,825);MinimumSize=new Size(720,650);StartPosition=FormStartPosition.CenterScreen;BackColor=Color.FromArgb(244,247,244);
+        Text="Crema Companion";ClientSize=fullSize;MinimumSize=new Size(450,570);StartPosition=FormStartPosition.CenterScreen;BackColor=Color.FromArgb(244,247,244);
+        tray=new CompanionTray(()=>RestoreWindow(false),()=>RestoreWindow(true),ExitCompanion);Icon=tray.WindowIcon;
         Controls.Add(web);
-        Shown+=async(_,_)=>await Initialize(initialPath);
-        FormClosed+=(_,_)=>{pairing?.Cancel();lifetime.Cancel();web.Dispose();};
+        HandleCreated+=(_,_)=>CompanionTray.RoundCorners(Handle);
+        Shown+=async(_,_)=>{if(launched)return;launched=true;_ = WindowActivation.Listen(WindowActivation.PipeName,QueueRestore,lifetime.Token);await Initialize(initialPath);};
+        FormClosing+=(_,e)=>{if(!exiting && e.CloseReason==CloseReason.UserClosing){e.Cancel=true;HideToTray();}};
+        FormClosed+=(_,_)=>{pairing?.Cancel();lifetime.Cancel();portal?.Dispose();web.Dispose();Icon=null;tray.Dispose();};
+    }
+    private void QueueRestore()
+    {
+        if(IsDisposed || Disposing || !IsHandleCreated)return;
+        try{BeginInvoke((Action)(()=>{if(!IsDisposed && !Disposing)RestoreWindow(false);}));}
+        catch(InvalidOperationException)when(IsDisposed || Disposing || !IsHandleCreated){}
+    }
+    private void HideToTray(){Hide();ShowInTaskbar=false;tray.ExplainHidden();}
+    private void ExitCompanion(){exiting=true;Close();}
+    private void RestoreWindow(bool quick)
+    {
+        if(IsDisposed)return;
+        if(!quickView && Visible && WindowState==FormWindowState.Normal)fullSize=ClientSize;
+        quickView=quick;WindowState=FormWindowState.Normal;
+        MinimumSize=quick?new Size(400,440):new Size(450,570);ClientSize=quick?new Size(440,560):fullSize;
+        if(quick){var area=Screen.FromPoint(Cursor.Position).WorkingArea;Location=new Point(Math.Max(area.Left,area.Right-Width-16),Math.Max(area.Top,area.Bottom-Height-16));}
+        else{var area=Screen.FromControl(this).WorkingArea;Location=new Point(Math.Clamp(Left,area.Left,Math.Max(area.Left,area.Right-Width)),Math.Clamp(Top,area.Top,Math.Max(area.Top,area.Bottom-Height)));}
+        ShowInTaskbar=true;Show();Activate();Publish();
     }
     private async Task Initialize(string? path)
     {
@@ -66,6 +91,8 @@ internal sealed class CompanionWindow : Form
                     if(File.Exists(settings) && new FileInfo(settings).Length<8192)artisan=JsonDocument.Parse(File.ReadAllText(settings)).RootElement.GetProperty("artisan").GetString()??"";
                     artisan=File.Exists(artisan)?artisan:ArtisanTransport.FindInstalled()??"";
                     portal=PortalClient.Restore(root);Publish();
+                    string originFile=Path.Combine(root,"portal-origin.txt");
+                    if(portal==null && File.Exists(originFile) && new FileInfo(originFile).Length<1024)lastOrigin=PortalClient.ValidateOrigin(File.ReadAllText(originFile)).GetLeftPart(UriPartial.Authority);
                     if(path!=null)Read(path,false);
                     if(portal!=null)await RefreshPortal();
                 }
@@ -80,7 +107,7 @@ internal sealed class CompanionWindow : Form
             var panel=new FlowLayoutPanel{Dock=DockStyle.Fill,Padding=new Padding(30),FlowDirection=FlowDirection.TopDown};
             panel.Controls.Add(new Label{AutoSize=true,MaximumSize=new Size(600,0),Text="The redesigned Companion needs Microsoft Edge WebView2 Runtime. Install the Microsoft runtime, then reopen Companion. The classic offline preparation window is available meanwhile."});
             var download=new Button{AutoSize=true,Text="Open Microsoft runtime download"};download.Click+=(_,_)=>OpenBrowser("https://developer.microsoft.com/en-us/microsoft-edge/webview2/");panel.Controls.Add(download);
-            var classic=new Button{AutoSize=true,Text="Open classic offline window"};classic.Click+=(_,_)=>{using var fallback=new ClassicCompanionWindow(path);Hide();fallback.ShowDialog();Close();};panel.Controls.Add(classic);Controls.Add(panel);
+            var classic=new Button{AutoSize=true,Text="Open classic offline window"};classic.Click+=(_,_)=>{using var fallback=new ClassicCompanionWindow(path);Hide();fallback.ShowDialog();ExitCompanion();};panel.Controls.Add(classic);Controls.Add(panel);
         }
     }
     private async Task HandleAction(JsonElement data)
@@ -88,6 +115,9 @@ internal sealed class CompanionWindow : Form
         string action=data.GetProperty("action").GetString()??"";
         if(action=="hello"){Publish();return;}
         if(action=="cancel"){pairing?.Cancel();return;}
+        if(action=="hide"){HideToTray();return;}
+        if(action=="view"){RestoreWindow(!quickView);return;}
+        if(action=="exit"){ExitCompanion();return;}
         if(busy)return;
         if(action=="check")
         {
@@ -128,6 +158,7 @@ internal sealed class CompanionWindow : Form
         var start=await portal.Start(linked.Token);code=start.GetProperty("user_code").GetString()!;
         verification=start.GetProperty("verification_uri").GetString()!;
         if(new Uri(verification)!=new Uri(portal.Origin,"companion/"))throw new IOException("The portal returned an unexpected sign-in address.");
+        lastOrigin=portal.Origin.GetLeftPart(UriPartial.Authority);Directory.CreateDirectory(root);File.WriteAllText(Path.Combine(root,"portal-origin.txt"),lastOrigin);
         SetStatus("Sign in in your browser. Enter the displayed code and approve this computer.");OpenBrowser(verification);
         int interval=Math.Clamp(start.GetProperty("interval").GetInt32(),5,60);
         try
@@ -146,7 +177,8 @@ internal sealed class CompanionWindow : Form
     private async Task RefreshPortal()
     {
         if(portal?.Connected!=true)throw new IOException("Connect to your Crema portal first.");
-        account=await portal.Get("me/",lifetime.Token);roasts=(await portal.Get("roasts/",lifetime.Token)).GetProperty("roasts");SetStatus("Roast list and account theme refreshed.");
+        account=await portal.Get("me/",lifetime.Token);roasts=(await portal.Get("roasts/",lifetime.Token)).GetProperty("roasts");
+        if(preparation==null)SetStatus("Roast list and account theme refreshed.");else Publish();
     }
     private async Task Prepare(JsonElement data)
     {
@@ -209,7 +241,8 @@ internal sealed class CompanionWindow : Form
         if(!initialized || IsDisposed)return;
         var p=preparation;string version="Artisan not selected";
         try{if(File.Exists(artisan))version="Artisan "+ArtisanTransport.InspectExecutable(artisan).ToString(3);}catch{version="Choose a supported Artisan installation";}
-        web.CoreWebView2.PostWebMessageAsJson(JsonSerializer.Serialize(new{busy,status,problem,code,verification,connected=portal?.Connected==true,origin=portal?.Origin.GetLeftPart(UriPartial.Authority)??"",account,roasts,stage=progress.Stage.ToString(),ready,curve,alarms,artisan=version,onlinePreparation,preparation=p==null?null:new{p.Coffee,p.Roast,p.Roaster,p.Green,p.Mode,p.Title,p.Charge,p.Drop,p.Off,p.Plan,p.Row}}));
+        tray.Status(p?.Coffee);
+        web.CoreWebView2.PostWebMessageAsJson(JsonSerializer.Serialize(new{busy,quickView,status,problem,code,verification,connected=portal?.Connected==true,origin=portal?.Origin.GetLeftPart(UriPartial.Authority)??lastOrigin,account,roasts,stage=progress.Stage.ToString(),ready,curve,alarms,artisan=version,onlinePreparation,preparation=p==null?null:new{p.Coffee,p.Roast,p.Roaster,p.Green,p.Mode,p.Title,p.Charge,p.Drop,p.Off,p.Plan,p.Row}}));
     }
     private static void OpenBrowser(string uri)=>Process.Start(new ProcessStartInfo(uri){UseShellExecute=true});
 }

@@ -16,7 +16,7 @@ try{foreach($entry in $zip.Entries){$target=[IO.Path]::GetFullPath((Join-Path $t
 [IO.Compression.ZipFile]::ExtractToDirectory([IO.Path]::GetFullPath($CompilerArchive),$toolRoot,$true)
 $compiler=Join-Path $toolRoot "nsis-$($pin.version)/makensis.exe"
 Copy-Item -LiteralPath (Join-Path $toolRoot "nsis-$($pin.version)/COPYING") -Destination (Join-Path $app 'INSTALLER-NOTICE.txt')
-$installer=Join-Path $output 'CremaCompanion-Setup-0.2.0-preview1-win-x64.exe'
+$installer=Join-Path $output 'CremaCompanion-Setup-0.2.0-preview2-win-x64.exe'
 & $compiler '/V2' "/DPayloadDir=$app" "/DInstallerOutput=$installer" (Join-Path $PSScriptRoot 'installer.nsi')
 if($LASTEXITCODE -ne 0){throw 'Installer build failed.'}
 Get-FileHash -LiteralPath $installer -Algorithm SHA256 | Select-Object Hash

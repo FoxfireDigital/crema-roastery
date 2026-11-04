@@ -3,7 +3,7 @@ from datetime import timedelta
 from decimal import Decimal,InvalidOperation
 import hashlib,json
 from django.utils import timezone
-from .models import SubscriptionContract,Coffee,LabelVariant,LabelPrintRun,LabelQueueLock,GRIND_CHOICES
+from .models import SubscriptionContract,SubscriptionCycle,Coffee,LabelVariant,LabelPrintRun,LabelQueueLock,GRIND_CHOICES
 from .order_import import infer_grind,expand_frac_line
 
 LOOKAHEAD_DAYS=14
@@ -12,7 +12,8 @@ def forecast_revision(include_queue=True):
     from .label_bestsellers import sales_revision
     contracts=list(SubscriptionContract.objects.order_by('pk').values('pk','status','next_billing_at','lines','refreshed_at'))
     version=(LabelQueueLock.objects.filter(pk=1).values_list('version',flat=True).first() or 0) if include_queue else None
-    return hashlib.sha256(json.dumps([version,contracts,sales_revision()],sort_keys=True,default=str).encode()).hexdigest()
+    early=list(SubscriptionCycle.objects.order_by('pk').values('contract_id','due_at','forecast_order__imported_at','forecast_order__dismissed_at','plan__removed_at'))
+    return hashlib.sha256(json.dumps([version,contracts,early,sales_revision()],sort_keys=True,default=str).encode()).hexdigest()
 
 def upcoming_labels(now=None):
     from .label_sheets import find_art
@@ -23,6 +24,7 @@ def upcoming_labels(now=None):
     pool={};issues=[]
     contracts=SubscriptionContract.objects.filter(status='ACTIVE',next_billing_at__gte=now,next_billing_at__lte=until).order_by('next_billing_at','pk')
     for contract in contracts:
+        if SubscriptionCycle.objects.filter(contract=contract,due_at=contract.next_billing_at,forecast_order__imported_at__isnull=False,forecast_order__dismissed_at__isnull=True,plan__removed_at__isnull=True).exists():continue
         if contract.refreshed_at<now-timedelta(days=14):
             issues.append('Subscription '+contract.external_id+': export is over 14 days old; refresh it first.');continue
         items=[]

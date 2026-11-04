@@ -57,6 +57,8 @@ from artisan_checks import run_artisan_checks
 run_artisan_checks(client,owner)
 from green_checks import run_green_checks
 run_green_checks(client,owner)
+from roast_day_checks import run_roast_day_checks
+run_roast_day_checks(client,owner)
 from production_order_checks import run_production_order_checks
 run_production_order_checks(client,owner)
 from review_checks import run_review_checks

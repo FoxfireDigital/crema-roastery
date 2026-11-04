@@ -75,3 +75,5 @@ See [ROADMAP.md](ROADMAP.md) for the proposed stages to 1.0, release acceptance 
 The generic image includes component declarations and available notices. See [image review](docs/IMAGE-REVIEW.md) for source/revision verification, build-context checks and remaining distribution gates. Dependencies retain their own licenses.
 
 The Linux [deployment/recovery trial](docs/DEPLOYMENT-QA.md) verifies fictional data restored into separate volumes. The [distribution worksheet](docs/DISTRIBUTION-REVIEW.md) tracks dependency/native-library questions that still need review.
+
+Roast-day corrections, early subscriptions and saved wholesale accounts: [operator guide](docs/roast-day-corrections.md).

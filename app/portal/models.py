@@ -18,6 +18,7 @@ class Coffee(models.Model):
     roast_base=models.ForeignKey('self',on_delete=models.PROTECT,null=True,blank=True,related_name='flavors',help_text='Default Medium base when no suitable Medium roast is planned. The ordered flavor remains separate for packaging and labels.')
     flavor_base_allowed=models.BooleanField(default=True,help_text='Disable for decaf, half-caff or any coffee unsuitable for flavor bases.')
     bulk_stock_enabled=models.BooleanField(default=True,help_text='Include this coffee in manual roasted whole-bean counts.')
+    wholesale_only_customer=models.ForeignKey('WholesaleCustomer',on_delete=models.PROTECT,null=True,blank=True,related_name='exclusive_coffees',help_text='Optional: offer this product only on wholesale orders for this saved account.')
     @property
     def roasting_coffee(self):return self.roast_base if self.roast_base_id else self
     @property
@@ -81,6 +82,7 @@ class Batch(models.Model):
     coffee=models.ForeignKey(Coffee,on_delete=models.PROTECT)
     label_variant=models.ForeignKey(LabelVariant,on_delete=models.PROTECT,null=True,blank=True)
     green_oz=models.DecimalField(max_digits=9,decimal_places=2)
+    green_override=models.JSONField(default=dict,db_default={},blank=True)
     roasted_oz=models.DecimalField(max_digits=9,decimal_places=2,null=True,blank=True)
     roast_level=models.CharField(max_length=20,choices=LEVELS)
     measured_at=models.DateTimeField(null=True,blank=True)
@@ -111,6 +113,10 @@ class Batch(models.Model):
         if self.green_oz and self.roasted_oz is not None:
             return round((1-float(self.roasted_oz/self.green_oz))*100,1)
         return None
+    @property
+    def has_green_override(self):
+        from .load_override import authorized_weight
+        return authorized_weight(self)
     def clean(self):
         super().clean()
         errors={}
@@ -121,9 +127,9 @@ class Batch(models.Model):
                 cap=self.roaster.capacity
                 if cap is None or cap<=0:
                     errors['roaster']='Set the green input capacity for this roaster first.'
-                elif self.green_oz>cap:
+                elif self.green_oz>cap and not self.has_green_override:
                     errors['green_oz']=f'{self.roaster.name} holds at most {cap:g} oz of green coffee.'
-                elif self.green_oz<self.roaster.minimum and (self._state.adding or Batch.all_objects.filter(pk=self.pk).exclude(green_oz=self.green_oz,roaster_id=self.roaster_id).exists()):
+                elif self.green_oz<self.roaster.minimum and not self.has_green_override and (self._state.adding or Batch.all_objects.filter(pk=self.pk).exclude(green_oz=self.green_oz,roaster_id=self.roaster_id).exists()):
                     errors['green_oz']=f'{self.roaster.name} needs at least {self.roaster.minimum:g} oz of green coffee.'
         if self.coffee_id:
             if self.coffee.experimental and not (self.experimental_origin or '').strip():errors['experimental_origin']='Record the origin or lot for this experimental batch.'
@@ -297,6 +303,8 @@ class RoastPlan(models.Model):
 class WholesaleCustomer(models.Model):
     name=models.CharField(max_length=120)
     name_key=models.CharField(max_length=256,unique=True)
+    active=models.BooleanField(default=True,db_default=True)
+    notes=models.CharField(max_length=500,blank=True,db_default='')
     default_grind=models.CharField(max_length=12,choices=GRIND_CHOICES,default='whole')
     usual_items=models.JSONField(default=list)
     version=models.PositiveIntegerField(default=0)
@@ -315,6 +323,7 @@ class CustomerPreferenceEvent(models.Model):
 
 class WholesaleOrder(models.Model):
     plan=models.ForeignKey(RoastPlan,on_delete=models.PROTECT,related_name='wholesale_orders')
+    account=models.ForeignKey(WholesaleCustomer,on_delete=models.PROTECT,null=True,blank=True,related_name='orders')
     customer=models.CharField(max_length=120)
     reference=models.CharField(max_length=100,blank=True)
     request_key=models.UUIDField(unique=True,editable=False)
@@ -404,6 +413,7 @@ class PlannedBatch(models.Model):
     group=models.ForeignKey(RoastGroup,on_delete=models.PROTECT,related_name='planned_batches')
     roaster=models.ForeignKey(Roaster,on_delete=models.PROTECT)
     green_oz=models.DecimalField(max_digits=9,decimal_places=2)
+    green_override=models.JSONField(default=dict,db_default={},blank=True)
     estimated_loss_pct=models.DecimalField(max_digits=4,decimal_places=1,null=True,blank=True)
     yield_basis=models.JSONField(default=dict,blank=True)
     batch=models.OneToOneField(Batch,on_delete=models.PROTECT,null=True,blank=True,related_name='planned_from')
@@ -413,15 +423,19 @@ class PlannedBatch(models.Model):
     class Meta:
         ordering=['id']
         base_manager_name='all_objects'
+    @property
+    def has_green_override(self):
+        from .load_override import authorized_weight
+        return authorized_weight(self)
     def clean(self):
         super().clean()
         if self.green_oz is None or not self.green_oz.is_finite() or self.green_oz<=0:
             raise ValidationError({'green_oz':'Enter a positive green input weight.'})
         if self.roaster_id:
             cap=self.roaster.capacity
-            if cap is None or cap<=0 or self.green_oz>cap:
+            if cap is None or cap<=0 or (self.green_oz>cap and not self.has_green_override):
                 raise ValidationError({'green_oz':f'{self.roaster.name} allows at most {cap or 0:g} oz green input.'})
-            if not self.batch_id and not self.removed_at and self.green_oz<self.roaster.minimum:
+            if not self.batch_id and not self.removed_at and self.green_oz<self.roaster.minimum and not self.has_green_override:
                 raise ValidationError({'green_oz':f'{self.roaster.name} needs at least {self.roaster.minimum:g} oz green input.'})
     def save(self,*args,**kwargs):
         self.full_clean()
@@ -576,6 +590,19 @@ class SubscriptionContract(models.Model):
     lines=models.JSONField(default=list)
     refreshed_at=models.DateTimeField(auto_now=True)
     class Meta: ordering=['next_billing_at','id']
+
+
+class SubscriptionCycle(models.Model):
+    contract=models.ForeignKey(SubscriptionContract,on_delete=models.PROTECT,related_name='production_cycles')
+    due_at=models.DateTimeField()
+    plan=models.ForeignKey(RoastPlan,on_delete=models.PROTECT,related_name='subscription_cycles')
+    forecast_order=models.OneToOneField(ImportOrder,on_delete=models.PROTECT,related_name='forecast_cycle')
+    renewal_order=models.OneToOneField(ImportOrder,on_delete=models.PROTECT,null=True,blank=True,related_name='advance_cycle')
+    schedule_refreshed_at=models.DateTimeField()
+    created_at=models.DateTimeField(default=timezone.now)
+    class Meta:
+        constraints=[models.UniqueConstraint(fields=['contract','due_at'],name='unique_subscription_production_cycle')]
+        ordering=['due_at','id']
 
 
 class LabelQueueLock(models.Model):

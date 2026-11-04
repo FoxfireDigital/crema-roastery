@@ -110,7 +110,7 @@ def save_roast_row(request,pk):
                 if not row.roaster.active:raise ValidationError('This roaster is inactive. Review the plan first.')
                 row.full_clean()
                 batch=Batch(date=plan.date,operator=request.user,roaster=row.roaster,coffee=row.group.coffee,label_variant=row.group.label_variant,
-                            green_oz=row.green_oz,roast_level=row.group.roast_level,planned_group=row.group)
+                            green_oz=row.green_oz,green_override=row.green_override,roast_level=row.group.roast_level,planned_group=row.group)
                 before=sheet_state(batch)
             else:batch=row.batch;before=sheet_state(batch)
             now=timezone.now()

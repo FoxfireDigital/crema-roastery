@@ -36,6 +36,9 @@ def invalidate_confirmation(order):
 
 
 def source_hold_reason(order):
+    from .subscription_planning import forecast_hold
+    early=forecast_hold(order)
+    if early is not None:return early
     if order.source_flags:return '; '.join(order.source_flags)
     if order.source_changed:return 'Source items changed — review refreshed items'
     if order.cancelled:return 'Cancelled source order — review required'

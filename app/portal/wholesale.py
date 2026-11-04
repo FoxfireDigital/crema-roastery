@@ -21,7 +21,8 @@ SALT='coffee-wholesale-order'
 
 
 class HeaderForm(forms.Form):
-    customer=forms.CharField(max_length=120,label='Customer / business')
+    account=forms.ModelChoiceField(queryset=WholesaleCustomer.objects.none(),required=False,empty_label='New / one-time customer',label='Wholesale account')
+    customer=forms.CharField(max_length=120,label='Customer / business',required=False)
     reference=forms.CharField(max_length=100,required=False,label='Order reference (optional)')
     plan=forms.ChoiceField(label='Add to roast plan')
     plan_date=forms.DateField(required=False,widget=forms.DateInput(attrs={'type':'date'}),label='New plan date')
@@ -32,9 +33,16 @@ class HeaderForm(forms.Form):
     remember_customer=forms.BooleanField(required=False,label='Save these choices as this customer’s usual order')
     def __init__(self,*args,plans,**kwargs):
         super().__init__(*args,**kwargs)
+        self.fields['account'].queryset=WholesaleCustomer.objects.filter(active=True)
         self.fields['plan'].choices=[('new','Create a new roast plan')]+[(str(p.pk),f'#{p.pk} · {p.date:%b %d, %Y}'+(' · Accepted' if p.accepted_at else ' · Draft')) for p in plans]
     def clean(self):
         data=super().clean()
+        account=data.get('account')
+        if account:
+            from .customer_preferences import customer_key
+            if data.get('customer') and customer_key(data['customer'])!=account.name_key:self.add_error('customer','Use the selected account name, or choose New / one-time customer.')
+            data['customer']=account.name
+        if not data.get('customer'):self.add_error('customer','Choose a wholesale account or enter the customer / business.')
         if data.get('plan')=='new' and not data.get('plan_date'):self.add_error('plan_date','Choose a date for the new roast plan.')
         return data
 
@@ -47,10 +55,16 @@ class ItemForm(forms.Form):
     label_variant=forms.ModelChoiceField(queryset=LabelVariant.objects.none(),required=False,empty_label='Standard label',label='Packaging label')
     roast_level=forms.ChoiceField(choices=[('','Use standard roast')]+ROAST_LEVELS,required=False,label='Roast override')
     target_finish_temp_f=forms.DecimalField(max_digits=5,decimal_places=1,min_value=Decimal('.1'),required=False,label='Custom finish temperature (°F)')
-    def __init__(self,*args,**kwargs):
+    def __init__(self,*args,wholesale_customer=None,**kwargs):
         super().__init__(*args,**kwargs)
-        self.fields['coffee'].queryset=Coffee.objects.filter(active=True,experimental=False).select_related('roast_base')
-        self.fields['label_variant'].queryset=LabelVariant.objects.filter(active=True,coffee__active=True)
+        from django.db.models import Q
+        self.wholesale_customer=wholesale_customer
+        self.fields['coffee'].queryset=Coffee.objects.filter(active=True,experimental=False).select_related('roast_base').filter(Q(wholesale_only_customer__isnull=True)|Q(wholesale_only_customer=wholesale_customer)) if wholesale_customer and wholesale_customer.active else Coffee.objects.filter(active=True,experimental=False,wholesale_only_customer__isnull=True)
+        self.fields['label_variant'].queryset=LabelVariant.objects.filter(active=True,coffee__in=self.fields['coffee'].queryset)
+        # Offer account changes without reloading unsaved rows; validation still
+        # uses the account-scoped querysets above.
+        self.fields['coffee'].widget.choices=[('','Choose coffee')]+[(c.pk,c.name) for c in Coffee.objects.filter(active=True,experimental=False)]
+        self.fields['label_variant'].widget.choices=[('','Standard label')]+[(v.pk,v.name) for v in LabelVariant.objects.filter(active=True,coffee__active=True)]
         self.fields['count'].widget.attrs.update({'inputmode':'numeric','step':'1'})
     def clean(self):
         data=super().clean()
@@ -70,7 +84,7 @@ class ItemForm(forms.Form):
             roast=data.get('roast_level') or c.standard_roast
             validation=IncomingForm({'coffee':c.pk,'label_variant':data['label_variant'].pk if data.get('label_variant') else '',
                 'extra_oz':str(size*count),'roast_level':roast,'target_finish_temp_f':data.get('target_finish_temp_f') or '',
-                'grind':data['grind']})
+                'grind':data['grind']},wholesale_customer=self.wholesale_customer)
             if not validation.is_valid():
                 raise ValidationError([f'{c.name}: {message}' for errors in validation.errors.values() for message in errors])
             expanded.append({**validation.cleaned_data,'packaging':[{'size_oz':str(size),'bags':count,'per_sheet':8 if size==Decimal('2.5') else 4}]})
@@ -120,7 +134,7 @@ def save_order(request,header,items):
     if data.get('remember_customer'):
         from .customer_preferences import save_preferences
         save_preferences(actor,{**data,'usual_grind':data.get('usual_grind') or 'whole'},rows)
-    saved=WholesaleOrder.objects.create(plan=plan,customer=data['customer'],reference=data['reference'],request_key=key,request_hash=fingerprint,original_items=original_items(rows),created_by=actor)
+    saved=WholesaleOrder.objects.create(plan=plan,account=data.get('account'),customer=data['customer'],reference=data['reference'],request_key=key,request_hash=fingerprint,original_items=original_items(rows),created_by=actor)
     # Nonflavored demand first lets flavors share a suitable real Medium roast.
     expanded=[entry for form in rows for entry in form.cleaned_data['expanded']]
     expanded.sort(key=lambda entry:entry['coffee'].kind=='flavored')
@@ -149,11 +163,12 @@ def wholesale_order(request):
     copied=None;item_initial=None;preference_customer=None;size_review=False
     if request.method=='GET' and request.GET.get('customer'):
         preference_customer=get_object_or_404(WholesaleCustomer,pk=request.GET['customer'])
-        initial.update(customer=preference_customer.name,customer_version=preference_customer.version,usual_grind=preference_customer.default_grind)
+        initial.update(account=preference_customer.pk,customer=preference_customer.name,customer_version=preference_customer.version,usual_grind=preference_customer.default_grind)
         item_initial=preference_customer.usual_items
     if request.method=='GET' and request.GET.get('repeat'):
         copied=get_object_or_404(WholesaleOrder,pk=request.GET['repeat'])
         initial['customer']=copied.customer
+        initial['account']=copied.account_id
         item_initial=copied.original_items
     if item_initial is not None:
         # Preserve old receipts/preferences. A discontinued size requires an
@@ -162,7 +177,9 @@ def wholesale_order(request):
         size_review=any(str(row.get('size','')) not in allowed for row in item_initial)
         item_initial=[{**row,'size':row.get('size') if str(row.get('size','')) in allowed else ''} for row in item_initial]
     header=HeaderForm(request.POST if request.method=='POST' else None,plans=plans,initial=initial)
-    items=ItemForms(request.POST if request.method=='POST' else None,prefix='items',initial=item_initial)
+    account_id=request.POST.get('account') if request.method=='POST' else initial.get('account')
+    account=WholesaleCustomer.objects.filter(pk=account_id,active=True).first() if str(account_id or '').isdigit() else None
+    items=ItemForms(request.POST if request.method=='POST' else None,prefix='items',initial=item_initial,form_kwargs={'wholesale_customer':account})
     # Repeats contain exactly their saved rows, without an extra blank item.
     if item_initial is not None:items.extra=0
     status=200
@@ -184,8 +201,8 @@ def wholesale_order(request):
                 return redirect('/planning/?plan='+str(saved.plan_id)+'#incoming-orders')
         except ValidationError as error:header.add_error(None,error)
         status=400
-    coffees=[{'id':c.pk,'name':c.name,'roast':c.standard_roast,'locked':c.roast_locked} for c in Coffee.objects.filter(active=True,experimental=False)]
-    customers=[{'id':c.pk,'name':c.name,'key':c.name_key,'grind':c.default_grind,'version':c.version,'items':c.usual_items} for c in WholesaleCustomer.objects.all()]
+    coffees=[{'id':c.pk,'name':c.name,'roast':c.standard_roast,'locked':c.roast_locked,'account':c.wholesale_only_customer_id} for c in Coffee.objects.filter(active=True,experimental=False)]
+    customers=[{'id':c.pk,'name':c.name,'key':c.name_key,'grind':c.default_grind,'version':c.version,'items':c.usual_items} for c in WholesaleCustomer.objects.filter(active=True)]
     return render(request,'portal/wholesale.html',{'header':header,'items':items,'copied':copied,'coffees':coffees,'customers':customers,'preference_customer':preference_customer,'size_review':size_review,
         'label_coffees':{str(v.pk):v.coffee_id for v in LabelVariant.objects.filter(active=True)},
         'plan_versions':{str(p.pk):p.version for p in plans},'recent':WholesaleOrder.objects.select_related('plan','created_by')[:15]},status=status)

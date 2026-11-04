@@ -7,7 +7,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AssemblyName>CremaCompanion</AssemblyName>
-    <Version>0.2.0-preview.1</Version>
+    <Version>0.2.0-preview.2</Version>
     <Product>Crema Companion Pilot</Product>
     <Description>Operator-controlled Artisan preparation companion</Description>
     <Deterministic>true</Deterministic>

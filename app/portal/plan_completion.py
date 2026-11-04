@@ -37,9 +37,14 @@ def completion_checks(plan):
     rows=list(PlannedBatch.objects.filter(group__plan=plan).select_related('batch'))
     if any(not row.batch_id for row in rows):issues.append('Finish or remove remaining unstarted draft loads.')
     actual=list(Batch.objects.filter(planned_group__plan=plan,merged_into__isnull=True))
-    if any(b.roasted_oz is None or not all(getattr(b,key) for key in ('measured_at','roasted_at','bagged_at','sealed_at')) for b in actual):issues.append('Record finished weights and complete all roast-sheet status boxes.')
+    if any(b.roasted_oz is None or not all(getattr(b,key) for key in ('measured_at','roasted_at','cooled_at')) for b in actual):issues.append('Record finished weights and complete Measured, Roasted and Cooled for each roast. Finish bagging and sealing on the customer packing checklists.')
     if RoastedStockAllocation.objects.filter(line__group__plan=plan,status='reserved').exists():issues.append('Mark the bulk stock actually taken as used, or resolve unused reservations first.')
     for order in ImportOrder.objects.filter(imported_plan=plan,imported_at__isnull=False):
+        from .subscription_planning import forecast_hold
+        early=forecast_hold(order)
+        if early is not None:
+            if early:issues.append(order.reference+': '+early)
+            continue
         if order.source_flags or order.source_changed or order.cancelled or order.financial_status!='paid' or order.fulfillment_status not in ('unfulfilled','fulfilled'):
             issues.append(order.reference+': review the changed source items, payment or fulfillment status before closing.')
     return list(dict.fromkeys(issues))
@@ -53,7 +58,7 @@ def completion_snapshot(plan):
     result={'date':plan.date,'orders':[{'id':line.pk,'reference':line.reference,'customer':line.customer,'coffee':line.ordered_coffee.name,
         'label':line.ordered_label.name if line.ordered_label else 'Standard label','roast':line.group.roast_level,'finished_oz':line.finished_oz,
         'grind':line.get_grind_display(),'packaging':line.packaging,'packing':{key:getattr(progress[line.pk],key) for key,_ in applicable_steps(line)}} for line in lines],
-        'batches':[{'id':b.pk,'coffee':b.coffee.name,'roaster':b.roaster.name,'roast':b.roast_level,'green_oz':b.green_oz,'roasted_oz':b.roasted_oz,'operator':b.operator.username,'sealed_at':b.sealed_at,'merged_into':b.merged_into_id} for b in Batch.objects.filter(planned_group__plan=plan).select_related('coffee','roaster','operator').order_by('pk')],
+        'batches':[{'id':b.pk,'coffee':b.coffee.name,'roaster':b.roaster.name,'roast':b.roast_level,'green_oz':b.green_oz,'roasted_oz':b.roasted_oz,'operator':b.operator.username,'measured_at':b.measured_at,'roasted_at':b.roasted_at,'cooled_at':b.cooled_at,'sealed_at':b.sealed_at,'merged_into':b.merged_into_id} for b in Batch.objects.filter(planned_group__plan=plan).select_related('coffee','roaster','operator').order_by('pk')],
         'shopify_orders':list(ImportOrder.objects.filter(imported_plan=plan,imported_at__isnull=False).values('pk','reference','external_id')),
         'stock':[{'stock_id':a.stock_id,'line_id':a.line_id,'amount_oz':a.amount_oz,'source_coffee':a.stock.coffee.name,'ordered_coffee':a.line.ordered_coffee.name} for a in RoastedStockAllocation.objects.filter(line__group__plan=plan,status='used').select_related('stock__coffee','line__product_coffee','line__group__coffee')]}
     result['finished_coverage']=plan_coverage(plan)

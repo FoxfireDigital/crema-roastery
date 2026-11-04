@@ -1,0 +1,7 @@
+{% extends 'portal/base.html' %}{% block content %}
+<h1>Override green weight</h1><section class="card"><h2>{{ row.group.coffee }} · {{ row.group.roast_level }} · {{ row.roaster }}</h2>
+<p>Plan #{{ row.group.plan_id }} · Load #{{ row.pk }}{% if row.batch_id %} · Batch #{{ row.batch_id }}{% endif %}</p>
+<p>Configured range: {{ row.roaster.minimum|floatformat:1 }}–{{ row.roaster.capacity|floatformat:1 }} oz green. This override changes only this load. Automatic suggestions keep the configured limits.</p>
+<p>Recorded results, photos, logs, packing and other batches stay in place. Existing measured green usage is adjusted by the difference. A changed weight invalidates earlier preparation downloads; prepare a fresh file before an unroasted load.</p>
+{% if error %}<p class="notice danger" role="alert">{{ error }}</p>{% endif %}
+<form method="post">{% csrf_token %}{{ form.as_p }}<button>Apply green-weight override</button><a class="button secondary" href="/planning/?plan={{ row.group.plan_id }}">Cancel</a></form></section>{% endblock %}

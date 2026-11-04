@@ -206,7 +206,7 @@ def eligible(entry,revision,row,mode):
 def row_fingerprint(row):
     batch=row.batch if row.batch_id else None
     weight=Decimal(str(batch.green_oz if batch else row.green_oz)).quantize(Decimal('.01'))
-    raw=[row.pk,row.group.plan.version,row.group.coffee_id,row.group.roast_level,str(row.group.target_finish_temp_f),row.roaster_id,str(row.roaster.minimum),str(row.roaster.capacity),str(weight),row.batch_id,str(batch.roasted_at) if batch else None,str(batch.roasted_oz) if batch else None]
+    raw=[row.pk,row.group.plan.version,row.group.coffee_id,row.group.roast_level,str(row.group.target_finish_temp_f),row.roaster_id,str(row.roaster.minimum),str(row.roaster.capacity),row.green_override,str(weight),row.batch_id,str(batch.roasted_at) if batch else None,str(batch.roasted_oz) if batch else None]
     return hashlib.sha256(json.dumps(raw).encode()).hexdigest()
 
 def preparation_row(pk,lock=False):
@@ -219,7 +219,7 @@ def usable_row(row):
     if row.batch_id and (row.batch.removed_at or row.batch.merged_into_id or row.batch.roasted_at or row.batch.roasted_oz is not None):raise ValidationError('This roast already has a result or was removed. Prepare only an unroasted load.')
     if not row.roaster.active:raise ValidationError('This roaster is inactive.')
     green=row.batch.green_oz if row.batch_id else row.green_oz
-    if green<row.roaster.minimum or not row.roaster.capacity or green>row.roaster.capacity:raise ValidationError(f'Use {row.roaster.minimum:g}–{row.roaster.capacity or 0:g} oz green input for this roaster before preparing.')
+    if not row.roaster.capacity or ((green<row.roaster.minimum or green>row.roaster.capacity) and not (row.batch.has_green_override if row.batch_id else row.has_green_override)):raise ValidationError(f'Use {row.roaster.minimum:g}–{row.roaster.capacity or 0:g} oz green input for this roaster before preparing.')
 
 @login_required
 @require_http_methods(['GET','POST'])

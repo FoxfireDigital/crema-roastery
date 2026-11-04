@@ -64,11 +64,39 @@ internal static class ConnectedChecks
         handler.Responses.Enqueue(_=>new(HttpStatusCode.Found){Content=new StringContent("unexpected login redirect")});
         try{await client.Get("me/",CancellationToken.None);throw new Exception("Redirect was accepted.");}catch(IOException){}
         checks.Add("login-redirect-is-not-an-api-response");
+        foreach(var (status,phrase) in new[]{(HttpStatusCode.OK,"marketing website"),(HttpStatusCode.Forbidden,"HTTP 403"),(HttpStatusCode.BadGateway,"temporarily unavailable"),(HttpStatusCode.Found,"final HTTPS")})
+        {
+            handler.Responses.Enqueue(_=>new(status){Content=new StringContent("<html>not a portal API</html>")});
+            try{await client.Get("me/",CancellationToken.None);throw new Exception("HTML accepted as portal JSON.");}
+            catch(IOException e)when(e.Message.Contains(phrase)){}
+            checks.Add("friendly-non-api-response-"+(int)status);
+        }
+        handler.Responses.Enqueue(_=>Response(new[]{"unexpected"}));
+        try{await client.Get("me/",CancellationToken.None);throw new Exception("JSON array accepted as portal JSON.");}
+        catch(IOException e)when(e.Message.Contains("production portal")){}
+        checks.Add("non-object-api-response-explained");
         handler.Responses.Enqueue(_=>Response(new{access_token=c,refresh_token=d}));handler.Responses.Enqueue(_=>Response(new{disconnected=true}));await client.Disconnect(CancellationToken.None);
         if(client.Connected || File.Exists(file) || handler.Responses.Count!=0)throw new Exception("Disconnect did not clear credentials.");
         checks.Add("disconnect-revokes-and-forgets-local-credential");
         var assembly=Assembly.GetExecutingAssembly();
         foreach(var name in new[]{"index.html","app.css","app.js"})if(assembly.GetManifestResourceStream("CremaCompanion.ui."+name)==null)throw new Exception("Missing embedded interface asset.");
         checks.Add("interface-assets-bundled-offline");
+        await ActivationChecks(checks);
+    }
+    private static async Task ActivationChecks(List<string> checks)
+    {
+        string pipe="CremaActivationTest-"+Guid.NewGuid().ToString("N");
+        using var stop=new CancellationTokenSource();int wakes=0;
+        var wake=new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var listener=WindowActivation.Listen(pipe,()=>{Interlocked.Increment(ref wakes);wake.TrySetResult();},stop.Token);
+        using(var invalid=new System.IO.Pipes.NamedPipeClientStream(".",pipe,System.IO.Pipes.PipeDirection.Out,System.IO.Pipes.PipeOptions.Asynchronous|System.IO.Pipes.PipeOptions.CurrentUserOnly))
+        {await invalid.ConnectAsync(2000);await invalid.WriteAsync("load\n"u8.ToArray());await invalid.FlushAsync();}
+        if(!await WindowActivation.Wake(pipe))throw new Exception("Hidden-window wake failed.");
+        await wake.Task.WaitAsync(TimeSpan.FromSeconds(3));
+        if(wakes!=1)throw new Exception("Activation accepted a command other than show.");
+        checks.Add("same-user-fixed-wake-restores-only-on-show");
+        stop.Cancel();await listener.WaitAsync(TimeSpan.FromSeconds(3));checks.Add("activation-listener-stops-on-exit");
+        if(await WindowActivation.Wake(pipe))throw new Exception("Stopped activation pipe accepted a wake.");
+        checks.Add("closed-instance-wake-times-out-cleanly");
     }
 }

@@ -69,9 +69,12 @@ class IncomingForm(forms.Form):
     roast_level=forms.ChoiceField(choices=ROAST_LEVELS,initial='Medium')
     target_finish_temp_f=forms.DecimalField(max_digits=5,decimal_places=1,min_value=Decimal('.1'),required=False,label='Custom finish temperature (°F, optional)')
     grind=forms.ChoiceField(choices=GRIND_CHOICES,initial='unknown',required=False,label='Bagging / grind')
-    def __init__(self,*args,**kwargs):
+    def __init__(self,*args,wholesale_customer=None,**kwargs):
         super().__init__(*args,**kwargs)
-        coffees=Coffee.objects.filter(active=True,experimental=False);labels=LabelVariant.objects.filter(active=True,coffee__active=True)
+        from django.db.models import Q
+        coffees=Coffee.objects.filter(active=True,experimental=False)
+        coffees=coffees.filter(Q(wholesale_only_customer__isnull=True)|Q(wholesale_only_customer=wholesale_customer)) if wholesale_customer and wholesale_customer.active else coffees.filter(wholesale_only_customer__isnull=True)
+        labels=LabelVariant.objects.filter(active=True,coffee__in=coffees)
         self.fields['coffee'].queryset=coffees;self.fields['label_variant'].queryset=labels
         self.fields['coffee'].widget.attrs['data-incoming-policies']=json.dumps({str(c.pk):{'locked':c.roast_locked,'roast':c.standard_roast} for c in coffees})
         self.fields['label_variant'].widget.attrs['data-label-map']=json.dumps({str(l.pk):l.coffee_id for l in labels})
@@ -142,6 +145,8 @@ def planner(request):
                 day=parse_date(request.POST.get('date','')) if request.POST.get('date') else timezone.localdate()
                 if day is None:raise ValidationError('Choose a valid date for the roast plan.')
                 plan=RoastPlan.objects.create(created_by=request.user,date=day)
+                from .subscription_planning import upcoming
+                if upcoming(plan).exists():return redirect('/plans/'+str(plan.pk)+'/subscriptions/')
                 return redirect('/planning/?plan='+str(plan.pk))
             if not plan:raise ValidationError('Create a roast plan first.')
             with transaction.atomic():
@@ -278,7 +283,7 @@ def planner(request):
                             from .production_orders import source_hold_reason
                             if any(source_hold_reason(order) for order in included):raise ValidationError('An included Shopify order changed after import. Review it in the order list before starting production.')
                             # Save only after weighing; this never controls the machine.
-                            b=Batch.objects.create(date=plan.date,operator=request.user,roaster=row.roaster,coffee=row.group.coffee,label_variant=row.group.label_variant,green_oz=row.green_oz,roast_level=row.group.roast_level,order=row.group.legacy_order,planned_group=row.group,measured_at=timezone.now(),note=f'Roast plan #{plan.pk}; '+(f'target {row.group.target_finish_temp_f} F' if row.group.target_finish_temp_f is not None else 'standard roast'))
+                            b=Batch.objects.create(date=plan.date,operator=request.user,roaster=row.roaster,coffee=row.group.coffee,label_variant=row.group.label_variant,green_oz=row.green_oz,green_override=row.green_override,roast_level=row.group.roast_level,order=row.group.legacy_order,planned_group=row.group,measured_at=timezone.now(),note=f'Roast plan #{plan.pk}; '+(f'target {row.group.target_finish_temp_f} F' if row.group.target_finish_temp_f is not None else 'standard roast'))
                             row.batch=b
                         from .yield_learning import row_loss
                         if row.estimated_loss_pct is not None and row_loss(row,Decimal(-1))<0:row.estimated_loss_pct=None;row.yield_basis={}

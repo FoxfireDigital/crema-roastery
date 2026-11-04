@@ -200,6 +200,13 @@ def line_data(line):
     return {'reference':'','customer':'','coffee':line.get('coffee') or '', 'label_variant':line.get('label_variant') or '', 'bags_1lb':0,'bags_5lb':0,'extra_oz':str(size*qty),'roast_level':line.get('roast_level') or '', 'target_finish_temp_f':line.get('target_finish_temp_f') or ''}
 
 def readiness(order):
+    from .subscription_planning import forecast_cycle,forecast_hold,renewal_review_needed
+    from .models import SubscriptionCycle
+    linked=SubscriptionCycle.objects.filter(renewal_order=order).first()
+    if linked:return False,'Already covered by early subscription plan #'+str(linked.plan_id)
+    if renewal_review_needed(order):return False,'Review this renewal against early subscription production'
+    cycle=forecast_cycle(order)
+    if cycle and forecast_hold(order):return False,forecast_hold(order)
     if order.source_flags:return False,'; '.join(order.source_flags)
     if order.dismissed_at:return False,'Dismissed — restore this order before adding it'
     if order.imported_at:return False,'Already added to plan #'+str(order.imported_plan_id)
@@ -208,7 +215,7 @@ def readiness(order):
     if order.fulfillment_status=='fulfilled':return False,'Already fulfilled'
     if order.fulfillment_status in ('partial','partially_fulfilled'):return False,'Partially fulfilled — review remaining quantities before export'
     if order.fulfillment_status!='unfulfilled':return False,'Not a currently unfulfilled delivery — review its schedule/status'
-    if order.financial_status!='paid':return False,'Payment / refund status needs review'
+    if order.financial_status!='paid' and not (cycle and order.financial_status=='scheduled'):return False,'Payment / refund status needs review'
     if order.subscription=='prepaid':return False,'Prepaid subscription: delivery scheduling must be connected before import'
     if order.instructions and not order.instructions_confirmed:return False,'Review the order’s instructions before adding it'
     if any(line.get('cycle_choice') and not line.get('coffee') and not line.get('skip') for line in order.lines):return False,'Choose this cycle’s coffees'
@@ -243,6 +250,9 @@ def add_selected(plan,ids,user):
         if len(orders)!=len(set(ids)):raise ValidationError('The selected orders changed. Refresh the list.')
         # Validate the whole selection before changing production demand.
         for order in orders:
+            from .subscription_planning import forecast_cycle
+            cycle=forecast_cycle(order)
+            if cycle and cycle.plan_id!=plan.pk:raise ValidationError('This early delivery belongs to plan #'+str(cycle.plan_id)+'. Open its original plan.')
             ready,reason=readiness(order)
             if not ready:raise ValidationError(f'{order.reference}: {reason}')
         for order in orders:
@@ -321,7 +331,7 @@ def import_rows(dismissed=False):
     coffee_names={str(pk):name for pk,name in Coffee.objects.values_list('pk','name')}
     for order in ImportOrder.objects.filter(dismissed_at__isnull=not dismissed).select_related('imported_plan','store')[:1000]:
         ready,reason=readiness(order)
-        actionable=not order.source_flags and not order.dismissed_at and not order.imported_at and not order.cancelled and order.financial_status=='paid' and order.fulfillment_status=='unfulfilled' and order.subscription!='prepaid'
+        actionable=not order.source_flags and not order.dismissed_at and not order.imported_at and not order.cancelled and (order.financial_status=='paid' or order.financial_status=='scheduled' and hasattr(order,'forecast_cycle')) and order.fulfillment_status=='unfulfilled' and order.subscription!='prepaid'
         weight=Decimal(0);allocations=[];mapped=True;source_items=[];seen_bundles=set()
         for line in order.lines:
             bundle=line.get('bundle_key')
@@ -351,7 +361,10 @@ def import_rows(dismissed=False):
         rows[-1]['alert']=source_hold_reason(order) if not historical and order.imported_at else ''
         rows[-1]['production_confirmed']=production_confirmed(order) if order.imported_at else False
         rows[-1]['production_review_url']=f'/imports/{order.pk}/production/' if order.imported_at and order.fulfillment_status=='fulfilled' and not historical and not closed else ''
-        if closed:rows[-1]['alert']='Source changed after closure — completed snapshot retained' if order.source_changed or order.cancelled or order.financial_status!='paid' else ''
+        if closed:
+            from .subscription_planning import forecast_hold
+            early=forecast_hold(order)
+            rows[-1]['alert']=early if early is not None else 'Source changed after closure — completed snapshot retained' if order.source_changed or order.cancelled or order.financial_status!='paid' else ''
     return rows
 
 
@@ -412,12 +425,16 @@ def visibility_redirect(request,dismissed=False):
 
 @staff_member_required
 def review_import(request,pk):
+    from .subscription_planning import forecast_cycle
+    def return_to_orders(order):
+        cycle=forecast_cycle(order)
+        return redirect('/imports/?plan='+str(cycle.plan_id) if cycle else '/imports/')
     order=get_object_or_404(ImportOrder,pk=pk)
-    if order.imported_at or order.dismissed_at:return redirect('/imports/')
+    if order.imported_at or order.dismissed_at:return return_to_orders(order)
     if request.method=='POST':
         with transaction.atomic():
             order=ImportOrder.objects.select_for_update().get(pk=pk)
-            if order.imported_at or order.dismissed_at:return redirect('/imports/')
+            if order.imported_at or order.dismissed_at:return return_to_orders(order)
             if request.POST.get('action')=='adopt_source':
                 revision=hashlib.sha256(json.dumps([order.latest_lines,order.latest_api_signature,order.instructions],sort_keys=True).encode()).hexdigest()
                 if not order.source_changed or request.POST.get('source_revision')!=revision:
@@ -434,7 +451,7 @@ def review_import(request,pk):
                     except (ValueError,TypeError):raise ValidationError('Choose valid coffee allocations before saving.')
                     save_allocations(order,payload,request.POST.get('review_revision'),request.user,request.POST.get('instructions_confirmed')=='on')
                     messages.success(request,'Assortment saved. Quantities match the original order; roast and packaging rules were checked.')
-                    return redirect('/imports/')
+                    return return_to_orders(order)
                 except ValidationError as error:
                     messages.error(request,'; '.join(error.messages));return redirect('review_import',pk=pk)
             order.instructions_confirmed=request.POST.get('instructions_confirmed')=='on'
@@ -477,9 +494,10 @@ def review_import(request,pk):
                 if remember_mapping(order,line,request.user):continue
                 ProductMapping.objects.update_or_create(fingerprint=mapping_key(line['title'],line.get('sku','')),defaults={'title':line['title'][:500],'sku':line.get('sku','')[:150],'coffee_id':line.get('coffee') if not line.get('skip') else None,'label_variant_id':line.get('label_variant') if not line.get('skip') else None,'size_oz':line.get('size_oz') or None,'skip':line.get('skip',False),'updated_by':request.user})
         messages.success(request,'Mapping saved. The order must pass quantity and roast checks before it can be added.')
-        return redirect('/imports/')
+        return return_to_orders(order)
     from .models import ROAST_LEVELS,GRIND_CHOICES
+    from .subscription_planning import renewal_review_needed
     revision=hashlib.sha256(json.dumps([order.latest_lines,order.latest_api_signature,order.instructions],sort_keys=True).encode()).hexdigest()
     from .allocations import source_groups,review_token
     coffees=list(Coffee.objects.filter(active=True,experimental=False))
-    return render(request,'portal/review_import.html',{'order':order,'source_revision':revision,'review_revision':review_token(order),'allocation_groups':source_groups(order),'allocation_coffees':[{'id':c.pk,'name':c.name,'roast':c.standard_roast,'locked':c.roast_locked} for c in coffees],'allocation_labels':list(LabelVariant.objects.filter(active=True).values('id','name','coffee_id')),'coffees':coffees,'labels':LabelVariant.objects.filter(active=True),'roasts':ROAST_LEVELS,'grinds':GRIND_CHOICES})
+    return render(request,'portal/review_import.html',{'order':order,'source_revision':revision,'review_revision':review_token(order),'early_renewal_review':renewal_review_needed(order),'allocation_groups':source_groups(order),'allocation_coffees':[{'id':c.pk,'name':c.name,'roast':c.standard_roast,'locked':c.roast_locked} for c in coffees],'allocation_labels':list(LabelVariant.objects.filter(active=True).values('id','name','coffee_id')),'coffees':coffees,'labels':LabelVariant.objects.filter(active=True),'roasts':ROAST_LEVELS,'grinds':GRIND_CHOICES})

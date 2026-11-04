@@ -12,7 +12,7 @@ Sign in as an active staff account. Open **More → Companion computers** to rev
 
 ## First connection
 
-1. Install/open Companion and enter the portal's HTTPS address.
+1. Install/open Companion, choose **Choose roast / connection**, and enter the portal's HTTPS address.
 2. Choose **Connect to Crema**. The usual browser opens the portal's connection page.
 3. Sign in normally. Enter the code displayed in Companion, review the named computer and approve only the connection you initiated.
 4. Return to Companion. It displays the signed-in account, installation name and saved account palette.
@@ -45,3 +45,7 @@ The new interface uses Microsoft WebView2. Its Runtime is a separate Microsoft c
 Run `python tools/companion_checks.py` for the fictional in-memory server suite and the normal `tools/test_release.py` regression. The Windows executable's `--self-test` checks use fictional archives, protected temporary credentials, a fake HTTP transport and a random test-only pipe. They do not access a real account or Artisan endpoint. Native UI inspection, a valid-HTTPS server connection and the roasting-PC operator trial are separate release gates. Build with the locked Microsoft package versions and retain the supplied licenses.
 
 Deploy first to an isolated fictional demo with a verified backup, inspect connection/revocation and theme matching, then rehearse the private installation upgrade before promotion. Keep the previous Companion and offline workflow available throughout the pilot.
+
+## Compact view and tray
+
+The main preparation window has one roast card. The chooser holds accepted loads and connection settings. Quick view gives a compact summary and preparation details. X and Hide to tray keep the application running; the coffee tray menu offers Quick view, Open Companion and Exit Companion. Reopening the desktop shortcut restores that same process. Use Exit Companion before updating or uninstalling. No hide, restore or view action loads anything into Artisan.

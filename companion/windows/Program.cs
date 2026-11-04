@@ -12,7 +12,7 @@ internal static class Program
         try
         {
             try{owned=mutex.WaitOne(0);}catch(AbandonedMutexException){owned=true;}
-            if(!owned){MessageBox.Show("Crema Companion is already open. Use its existing window.","Crema Companion",MessageBoxButtons.OK,MessageBoxIcon.Information);return 0;}
+            if(!owned){if(!WindowActivation.Wake(WindowActivation.PipeName).GetAwaiter().GetResult())MessageBox.Show("Crema Companion is already running. Open it using the coffee icon in the Windows tray.","Crema Companion",MessageBoxButtons.OK,MessageBoxIcon.Information);return 0;}
             if(args.Length>1)throw new ArgumentException("Open one preparation ZIP at a time.");
             Application.Run(new CompanionWindow(args.FirstOrDefault()));return 0;
         }

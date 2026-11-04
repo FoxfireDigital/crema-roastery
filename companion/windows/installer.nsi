@@ -9,15 +9,15 @@ RequestExecutionLevel user
 SetCompressor /SOLID zlib
 SetOverwrite on
 BrandingText "Crema · Artisan preparation"
-VIProductVersion "0.2.0.1"
+VIProductVersion "0.2.0.2"
 VIAddVersionKey "ProductName" "Crema Companion Pilot"
 VIAddVersionKey "FileDescription" "Crema Companion per-user installer"
-VIAddVersionKey "FileVersion" "0.2.0-preview.1"
+VIAddVersionKey "FileVersion" "0.2.0-preview.2"
 VIAddVersionKey "LegalCopyright" "Crema contributors · MIT"
 Var CompanionMutex
 !define MUI_ABORTWARNING
 !define MUI_WELCOMEPAGE_TITLE "Set up Crema Companion"
-!define MUI_WELCOMEPAGE_TEXT "Prepare your next roast in Artisan with a clear roast summary and guided background/alarm handoff.$\r$\n$\r$\nInstalls for your Windows account and adds desktop and Start menu shortcuts. No administrator account or background service is required.$\r$\n$\r$\nClose Companion before installing. Artisan can stay open."
+!define MUI_WELCOMEPAGE_TEXT "Prepare your next roast in Artisan with a clear roast summary and guided background/alarm handoff.$\r$\n$\r$\nInstalls for your Windows account and adds desktop and Start menu shortcuts. No administrator account or background service is required.$\r$\n$\r$\nChoose Exit Companion from the coffee tray menu before installing. Artisan can stay open."
 !define MUI_FINISHPAGE_RUN "$INSTDIR\CremaCompanion.exe"
 !define MUI_FINISHPAGE_RUN_NOTCHECKED
 !define MUI_FINISHPAGE_RUN_TEXT "Open Crema Companion"
@@ -34,7 +34,7 @@ Var CompanionMutex
   StrCpy $CompanionMutex $0
   ${If} $1 = 183
     System::Call 'kernel32::CloseHandle(p r0)'
-    MessageBox MB_OK|MB_ICONINFORMATION "Close Crema Companion, then run setup or uninstall again." /SD IDOK
+    MessageBox MB_OK|MB_ICONINFORMATION "Choose Exit Companion from the coffee tray menu, then run setup or uninstall again." /SD IDOK
     SetErrorLevel 4
     Abort
   ${EndIf}
@@ -68,7 +68,7 @@ Section "Crema Companion"
   WriteUninstaller "$INSTDIR\Uninstall.exe"
   CreateShortcut "$SMPROGRAMS\Crema Companion\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
   WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\CremaCompanionPilot" "DisplayName" "Crema Companion Pilot"
-  WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\CremaCompanionPilot" "DisplayVersion" "0.2.0-preview.1"
+  WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\CremaCompanionPilot" "DisplayVersion" "0.2.0-preview.2"
   WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\CremaCompanionPilot" "Publisher" "Crema contributors"
   WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\CremaCompanionPilot" "InstallLocation" "$INSTDIR"
   WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\CremaCompanionPilot" "DisplayIcon" "$INSTDIR\CremaCompanion.exe"

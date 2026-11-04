@@ -73,7 +73,7 @@ def export_records(request):
     from django.contrib.auth import get_user_model
     names=['StoreProductMapping','StoreSyncRun','StoreEvent','PortalConfiguration','BeanSupplier','GreenBeanDetails','GreenPurchase','CuppingRecord','SourcingEvent','SupplyItem','SupplyMovement','FlavorSupplyRate','MaintenanceTask','MaintenanceService','Coffee','LabelVariant','Roaster','RoastPlan','RoastGroup','IncomingOrderLine','WholesaleOrder','WholesaleCustomer',
            'GreenBeanItem','GreenRecipe','GreenBatchUsage','GreenMovement','GreenRecipeEvent','CustomerPreferenceEvent','OrderLookupEvent','PlannedBatch','Batch','HistoricalRoast','ImportOrder','ProductMapping','PackingProgress','PackingProgressEvent',
-           'Shift','WorkBreak','TimeEvent','TimeAdjustment','HoursPayment','HourlyRate','PayrollAccess','RoastedStock','RoastedStockAllocation','PlanEvent','SubscriptionContract','LabelPrintRun']
+           'Shift','WorkBreak','TimeEvent','TimeAdjustment','HoursPayment','HourlyRate','PayrollAccess','RoastedStock','RoastedStockAllocation','PlanEvent','SubscriptionContract','SubscriptionCycle','LabelPrintRun']
     output=tempfile.SpooledTemporaryFile(max_size=5*1024*1024,mode='w+b')
     with zipfile.ZipFile(output,'w',compression=zipfile.ZIP_DEFLATED) as archive:
         archive.writestr('README.txt','Business records exported from Crema. Deleted rows are retained. Times include timezone offsets. IDs link the CSV files. This export excludes passwords, Shopify credentials and binary label artwork; use the full recovery backup for disaster recovery.\n')
