@@ -18,7 +18,7 @@ internal sealed class CompanionWindow : Form
     private Preparation? preparation;
     private string? folder;
     private HandoffProgress progress=new();
-    private bool busy,onlinePreparation,ready,curve,alarms;
+    private bool busy=true,onlinePreparation,ready,curve,alarms;
     private bool initialized;
     private string artisan="",status="Connect to your roastery, or open a fresh preparation ZIP.",code="",verification="";
     private bool problem;
@@ -70,6 +70,7 @@ internal sealed class CompanionWindow : Form
                     if(portal!=null)await RefreshPortal();
                 }
                 catch(Exception ex){SetStatus(ex.Message,true);}
+                finally{busy=false;Publish();}
             };
             core.Navigate(AppOrigin+"index.html");
         }
