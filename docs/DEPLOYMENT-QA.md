@@ -3,7 +3,7 @@
 `tools/test_compose.py` runs on a Linux Docker host with Docker Compose, curl and Python 3.11+. It accepts an already built **generic** candidate image and a matching reviewed source checkout. It does not deploy a customer installation.
 
 ```sh
-export CREMA_VERSION=0.1.0-rc20
+export CREMA_VERSION=0.1.0-rc22
 export CREMA_REVISION=$(git rev-parse HEAD)
 docker compose -f compose.yaml -f compose.build.yaml build --pull web postgres proxy
 python tools/test_compose.py --image "crema:$CREMA_VERSION" \

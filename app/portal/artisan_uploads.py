@@ -104,6 +104,16 @@ def reference_choices(batch):
         result.append(('revision:'+str(rev.pk) if rev else 'original:'+entry['key'],config['name']+' · '+('revision '+str(rev.revision) if rev else 'supplied original')))
     return result
 
+def default_reference(batch):
+    """Use the most recent preparation bound to this physical batch's row."""
+    rows=PlannedBatch.all_objects.filter(batch=batch).values_list('pk',flat=True)
+    for prepared in ArtisanPreparation.objects.filter(planned_batch_id__in=rows).order_by('-created_at','-pk'):
+        snapshot=prepared.snapshot
+        if snapshot.get('roaster')==batch.roaster.name and snapshot.get('coffee')==batch.coffee.name and snapshot.get('roast_level')==batch.roast_level:
+            return 'prepared:'+str(prepared.pk)
+    return ''
+
+
 def resolve_reference(value,batch):
     if not value:return {},None,None
     kind,_,identifier=value.partition(':')
@@ -156,7 +166,7 @@ def upload_batch_log(request,pk):
     batch=get_object_or_404(Batch.all_objects.select_related('coffee','roaster'),pk=pk)
     try:attachable(batch)
     except ValidationError as exc:return render(request,'portal/artisan_log_upload.html',{'batch':batch,'error':' '.join(exc.messages)},status=409)
-    form=UploadForm(request.POST or None,request.FILES or None);source=None;ticket='';error='';status=200;selected=request.POST.get('reference','');reference=None;reference_snapshot={};notes=request.POST.get('notes','')
+    form=UploadForm(request.POST or None,request.FILES or None);source=None;ticket='';error='';status=200;selected=request.POST.get('reference',default_reference(batch));reference=None;reference_snapshot={};notes=request.POST.get('notes','')
     try:
         if request.method=='POST':
             if request.POST.get('action')=='preview':

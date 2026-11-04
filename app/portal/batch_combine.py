@@ -18,7 +18,7 @@ PACK_STEPS=('flavored_at','ground_at','bagged_at','labeled_at','sealed_at')
 
 
 class MachineField(forms.ModelChoiceField):
-    def label_from_instance(self,machine):return f'{machine.name} — up to {machine.capacity:g} oz green'
+    def label_from_instance(self,machine):return f'{machine.name} — {machine.minimum:g}–{machine.capacity:g} oz green'
 
 
 class CombineForm(forms.Form):
@@ -80,13 +80,13 @@ def preview(plan,row_ids,machine,*,lock=False):
         raise ValidationError('Save each selected green weight in tenths of an ounce before combining.')
     total=sum((r.green_oz for r in rows),Decimal(0))
     from .planning import split_weights
-    weights=split_weights(total,machine.capacity)
+    weights=split_weights(total,machine.capacity,machine.minimum)
     assert sum(weights)==total
     all_rows=list(PlannedBatch.objects.filter(group_id__in=ids).order_by('pk').values())
     lines=list(IncomingOrderLine.objects.filter(group_id__in=ids).order_by('pk').values())
     packing=list(PackingProgress.objects.filter(line__group_id__in=ids).order_by('pk').values())
     facts={'plan':[plan.pk,plan.version,plan.date,plan.estimated_loss_pct,plan.spillage_pct,plan.accepted_at],
-           'selected':row_ids,'machine':[machine.pk,machine.active,machine.capacity],
+           'selected':row_ids,'machine':[machine.pk,machine.active,machine.capacity,machine.minimum],
            'groups':list(RoastGroup.objects.filter(pk__in=ids).order_by('pk').values()),
            'rows':all_rows,'orders':lines,'packing':packing,'recipe':recipe,
            'coffee':list(Coffee.objects.filter(pk=groups[0].coffee_id).values('id','active','kind','experimental','standard_roast'))}

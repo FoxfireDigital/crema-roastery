@@ -20,7 +20,7 @@ def sync_group(group,plan,actor=None):
     machines=sorted([r for r in Roaster.objects.filter(active=True) if r.capacity and r.capacity>=Decimal('.1')],key=lambda r:(r.capacity,r.pk))
     if needed and not machines:return False
     roaster=next((r for r in machines if r.capacity>=needed),machines[-1]) if machines else None
-    weights=split_weights(needed,roaster.capacity) if needed else []
+    weights=split_weights(needed,roaster.capacity,roaster.minimum,allow_extra=True) if needed else []
     drafts=group.planned_batches.filter(pk__in=[row.pk for row in rows])
     desired=[(roaster.pk,weight) for weight in weights]
     if list(drafts.values_list('roaster_id','green_oz'))==desired:return False

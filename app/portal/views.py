@@ -34,6 +34,8 @@ class BatchForm(CatalogFormMixin,forms.ModelForm):
         from .models import GreenBeanItem
         self.fields['green_item'].queryset=GreenBeanItem.objects.filter(active=True)
         self.fields['experimental_origin'].label='Experimental origin / lot'
+        self.fields['roaster'].label_from_instance=lambda r:f'{r.name} · {r.minimum:g}–{r.capacity or 0:g} oz green'
+        self.fields['green_oz'].help_text='Use the selected machine’s minimum and maximum green input; experimental coffees use the same machine limits.'
         self.fields['roast_level'].help_text='Experimental batches may use any roast at any weight. Normal coffees keep their existing rules.'
     class Meta:
         model=Batch

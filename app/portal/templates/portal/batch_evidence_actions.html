@@ -1,0 +1,3 @@
+{% if user.is_staff %}<section class="card batch-evidence-actions" aria-label="Batch {{ batch.pk }} photo and log uploads">
+{% if not batch.removed_at and not batch.merged_into_id %}{% if batch.roasted_at or batch.roasted_oz != None %}<a class="button" href="/batches/{{ batch.pk }}/photos/?capture=1#capture">Capture photo</a><a class="button" href="/batches/{{ batch.pk }}/artisan/upload/">Upload .alog</a>{% else %}<button disabled>Capture photo</button><button disabled>Upload .alog</button><p class="muted">Available once this batch is recorded as roasted.</p>{% endif %}{% else %}<p class="muted">This batch is excluded or merged; its existing photos and logs remain in its history.</p>{% endif %}
+</section>{% endif %}

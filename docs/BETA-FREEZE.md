@@ -1,3 +1,5 @@
+The operator explicitly requested configured machine minimums and permitted minimum-sized overproduction with weighed leftovers recorded in stock. This reopens only that bounded policy correction; other release gates remain.
+
 The operator explicitly requested the rc20 manual Combine / rebalance action. This reopens only that bounded workflow scope; public-release gates remain unchanged.
 
 The rc19 operator-reported defect correction pools identical unstarted retail/wholesale roast requirements while retaining per-order packing labels. No schema, hardware-control or public-publication scope is added.
@@ -6,7 +8,7 @@ The rc19 operator-reported defect correction pools identical unstarted retail/wh
 
 The rc16 changes stay within security/distribution scope: patched service-image builds, default proxy restrictions, system-linked supported image codecs/FFI, expanded third-party notices and checked artifact/registry installation. No business workflow, schema, private deployment or Artisan behavior is changed. Each replacement candidate needs its own source/image/installation/recovery evidence; a local anonymous-registry rehearsal is not authorization to publish.
 
-The feature baseline is 0.1.0-rc12, source revision a7e7c5a32aa4b570302d615de2f11b5e6f7a81ea. The corrective candidate is 0.1.0-rc20. Existing order-to-plan, stock, roast/cooling, packing/labels and supporting workflows are frozen. New feature work waits until the beta review is complete. Only verified defects, distribution/security corrections, essential documentation and relevant tests belong in this candidate.
+The feature baseline is 0.1.0-rc12, source revision a7e7c5a32aa4b570302d615de2f11b5e6f7a81ea. The corrective candidate is 0.1.0-rc22. Existing order-to-plan, stock, roast/cooling, packing/labels and supporting workflows are frozen. New feature work waits until the beta review is complete. Only verified defects, distribution/security corrections, essential documentation and relevant tests belong in this candidate.
 
 The maintainer review compared the baseline archive with its manifest and committed source, scanned all thirteen reachable commits and their identities, exercised103 anonymous route boundaries, checked privileged recovery and employee record access, rejected invalid uploads and writes, verified signed/replayed notifications, and inspected an actual generic image. The isolated PostgreSQL, HTTPS, restart and consistent database/key restore trial passed. These are bounded maintainer checks, not a completed independent assessment.
 
@@ -17,3 +19,5 @@ Broader container scanning identified operating-system, vendored installer and s
 The rc14 correction builds the same Psycopg version's C extension against system libpq, removes the bundled binary client, retains exact extension source/build provenance and updates tzdata. Its image verifier requires actual C implementation, system linkage and no runtime build tools. This candidate needs its own source/image/regression/recovery evidence; earlier rc13 results do not validate a changed image. This is a distribution correction within the freeze, not a new feature or production promotion.
 
 Remaining gates: independent security review and disposition of relevant advisories; complete dependency/native-library/source distribution review; documented operator and small external pilot; approved public generic image and anonymous deployment test; final source/image visibility approval. Marketplace integrations without merchant-account trials remain experimental. Paid hosting has separate service and isolation gates. The source, drafts and images remain private throughout this review.
+
+The owner explicitly requested the rc22 direct evidence controls and saved-reference default after a production trial. This bounded workflow change does not reopen public publication or the separate release-review gates.

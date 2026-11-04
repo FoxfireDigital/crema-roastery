@@ -106,7 +106,7 @@ def batch_photos(request,pk):
     removed=request.GET.get('removed')=='1'
     photos=batch.photos.filter(removed_at__isnull=not removed).defer('image_data','thumbnail_data').select_related('created_by','removed_by')
     page=Paginator(photos,12).get_page(request.GET.get('page'))
-    response=render(request,'portal/batch_photos.html',{'batch':batch,'form':form,'photos':page,'removed':removed,'can_capture':allowed(batch),'photo_error':error},status=status)
+    response=render(request,'portal/batch_photos.html',{'batch':batch,'form':form,'photos':page,'removed':removed,'can_capture':allowed(batch),'capture_requested':request.method=='GET' and request.GET.get('capture')=='1','photo_error':error},status=status)
     response['Cache-Control']='private, no-store';return response
 
 @login_required
