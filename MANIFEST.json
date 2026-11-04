@@ -30,8 +30,8 @@
     },
     {
       "path": ".github/workflows/verify.yml",
-      "sha256": "b177c564e48fe77a33077d4d7ff5dbee38b47b7a216c2ae3f4d27ee9682117ee",
-      "bytes": 4325
+      "sha256": "54f34bdee0327db702282bcb8862bf5d2f852174b9455faa9e164b8145b606c6",
+      "bytes": 5069
     },
     {
       "path": ".gitignore",
@@ -60,8 +60,8 @@
     },
     {
       "path": "README.md",
-      "sha256": "14c19a6f07ad025f18cfe33d12934243f40081073ffb0b24089c3c976e07386f",
-      "bytes": 7542
+      "sha256": "5e120b3b9d127e3067c514e6a8677ffb3326944b6b22642067f5de5b5adfa7db",
+      "bytes": 7556
     },
     {
       "path": "ROADMAP.md",
@@ -1145,12 +1145,12 @@
     },
     {
       "path": "compose.yaml",
-      "sha256": "edebe22352d5ea387133145646127843e8b4810c272c2a61b439aaf5a7827648",
+      "sha256": "d362773daeece053212b80a26cb9141aa31fac336d803b4654bef71ec85fe608",
       "bytes": 3036
     },
     {
       "path": "docs/ARTIFACT-INSTALL.md",
-      "sha256": "7ac18a2dfdb2895dd487913356fd11a3f30fd91f647b18db31e0f3e425f15f10",
+      "sha256": "8783db9db7a59dc72f4d8968d05eadc31c78e24aa55b79e07c0a7a1d7cee7241",
       "bytes": 4105
     },
     {
