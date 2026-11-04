@@ -25,8 +25,8 @@
     },
     {
       "path": ".github/workflows/companion.yml",
-      "sha256": "be29c719303b64920f3f6fb6e33b08ab0cfd3971fbc71d9e088f164e8c760880",
-      "bytes": 3538
+      "sha256": "dcb4e79906c461802923f08c256fb3df2533edab1af1fd268d6d22d772140ec4",
+      "bytes": 3649
     },
     {
       "path": ".github/workflows/verify.yml",
