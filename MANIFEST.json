@@ -40,8 +40,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "1845899b48141af874dc968e4fadf30f740d37428ae414a063db5b7786e75da6",
-      "bytes": 16573
+      "sha256": "b95bcd9ba966f59cf3b942ae2c49095db05017b43ede427010160a2545c9da17",
+      "bytes": 16752
     },
     {
       "path": "CONTRIBUTING.md",
@@ -535,8 +535,8 @@
     },
     {
       "path": "app/portal/subscriptions.py",
-      "sha256": "67a33cc3021f7763fff56fa7783fd96b09fce352d3065529dfb9f2234d7a8097",
-      "bytes": 5568
+      "sha256": "fb900ec1310bd9849397992a77657cc1790b7f0c8b58f7831a4deb8daff0f9a4",
+      "bytes": 7339
     },
     {
       "path": "app/portal/templates/portal/accepted_board.html",
@@ -1310,8 +1310,8 @@
     },
     {
       "path": "docs/roast-day-corrections.md",
-      "sha256": "9d2fdfd56d8e40c51414d9b6a022074ddc393154ab4258dc914efa6f8aeaa44f",
-      "bytes": 4391
+      "sha256": "99ee3d642d1728a96fa1bf5c116d600aa80026e08d8c43ef5d483fc242f2383a",
+      "bytes": 4697
     },
     {
       "path": "services/.dockerignore",
@@ -1440,8 +1440,8 @@
     },
     {
       "path": "tools/roast_day_checks.py",
-      "sha256": "450330c250fcd16c5b1bf14229252853bc7301e807dcb1f0e8126aa041c84d5e",
-      "bytes": 9982
+      "sha256": "a85c0866633a3ab8bbfd5c5d38d4656f1989eb312d1831a03538ebb2b197cb09",
+      "bytes": 12191
     },
     {
       "path": "tools/roast_pooling_checks.py",

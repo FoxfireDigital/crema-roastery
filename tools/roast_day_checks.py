@@ -109,4 +109,28 @@ def run_roast_day_checks(client,user):
         first.active=False;first.save()
         assert not ItemForm(data,wholesale_customer=first).is_valid()
         transaction.set_rollback(True)
-    print('PASS: exact active-load override, inventory delta/replay/stale/CSRF guards, preserved results, four-day subscription choices/renewal deduplication, saved wholesale accounts and enforced exclusive products.')
+    with transaction.atomic():
+        import csv,io
+        from portal.models import ShopifyCatalog,ShopifyConnection
+        from portal.subscriptions import stage_contracts
+        ShopifyConnection.objects.update_or_create(pk=1,defaults={'shop_domain':'fixture-roastery.myshopify.com','updated_by':user})
+        ShopifyCatalog.objects.update_or_create(pk=1,defaults={'shop_domain':'fixture-roastery.myshopify.com','products':[{'title':'Demo Hearth','variants':[{'id':'gid://shopify/ProductVariant/810001','title':'Whole Bean / 16 oz','sku':''}]},{'title':'Monthly Coffee Subscription','variants':[{'id':'gid://shopify/ProductVariant/810002','title':'Whole Bean / Light to Medium / 2 lbs','sku':''}]}]})
+        def csv_export(variant,handle='fixture-csv-refresh'):
+            output=io.StringIO();writer=csv.writer(output)
+            writer.writerow(['handle','status','upcoming_billing_date','line_variant_id','line_quantity'])
+            writer.writerow([handle,'ACTIVE',(timezone.now()+timedelta(days=2)).isoformat(),variant,1])
+            return output.getvalue().encode()
+        assert stage_contracts(csv_export('810001'))==1
+        saved=SubscriptionContract.objects.get(external_id='fixture-csv-refresh');assert saved.lines[0]['coffee']==Coffee.objects.get(name='Demo Hearth').pk
+        assert stage_contracts(csv_export('810002','fixture-csv-assortment'))==1
+        assert SubscriptionContract.objects.get(external_id='fixture-csv-assortment').lines[0]['needs_cycle_assignment']
+        # Existing known variant details remain usable after a catalog is cleared.
+        ShopifyCatalog.objects.filter(pk=1).update(products=[])
+        assert stage_contracts(csv_export('gid://shopify/ProductVariant/810001'))==1
+        before=list(SubscriptionContract.objects.values('pk','lines','next_billing_at'))
+        try:stage_contracts(csv_export('999999'))
+        except ValidationError as exc:assert 'Check products' in str(exc)
+        else:raise AssertionError('An unknown variant overwrote known subscription details')
+        assert list(SubscriptionContract.objects.values('pk','lines','next_billing_at'))==before
+        transaction.set_rollback(True)
+    print('PASS: exact active-load override, inventory delta/replay/stale/CSRF guards, preserved results, four-day subscription choices/renewal deduplication, saved wholesale accounts/exclusive products and CSV refresh without private mapping files.')

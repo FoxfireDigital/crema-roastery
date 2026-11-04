@@ -5,6 +5,7 @@
 * Companion 0.2.0-preview.2 uses the compact preparation/quick-view layouts, rounded cards and the account palette. X and Hide to tray retain the process; the coffee tray menu offers Quick view, Open and Exit. Reopening a shortcut restores the existing window without an Artisan handoff.
 * Explain marketing-site, redirect, gateway and invalid-API connection responses. Keep remembered portal origins separate from protected credentials.
 * Add an audited per-load green-weight override for started/accepted plans, including explicit exceptions to configured capacity. Preserve results/packing and reconcile measured green usage by the difference using the saved recipe.
+* Resolve subscription CSV variants using saved product/contract details without requiring a private mapping file; reject unknown variants without overwriting existing contracts.
 * Review known subscriptions due in the next four days, require per-cycle assortment choices, and explicitly link later renewals to early production without duplicate demand or inferred payment.
 * Put saved wholesale accounts at the top of order entry, support account creation without an order, and enforce account-exclusive coffees. Keep private customer/catalog seeds outside the product source.
 * Close plans using Measured/Roasted/Cooled plus customer packing, removing the obsolete per-batch Bagged/Sealed requirement. Add backward-write-compatible defaults to additive fields; preserve existing closure snapshots.

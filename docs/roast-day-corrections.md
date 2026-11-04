@@ -10,7 +10,7 @@ A stale page is rejected. Earlier Artisan preparations become stale after a chan
 
 ## Review subscriptions for the next four days
 
-New empty plans open the subscription review when known active deliveries fall within the next four days. The planner always has **Review upcoming subscriptions**. Dates and fixed items come from the latest subscription export; refresh it when outdated. No dates are extrapolated from old contracts.
+New empty plans open the subscription review when known active deliveries fall within the next four days. The planner always has **Review upcoming subscriptions**. Dates and fixed items come from the latest subscription export; refresh it when outdated. No dates are extrapolated from old contracts. Subscription CSV variants are resolved from the saved product check and previously known contract details; a private mapping file is optional. Refresh Check products before importing newly added variants. Unknown variants stop the import with an actionable message and preserve the previous subscriptions.
 
 Choose a delivery and confirm preparation ahead of its charge date. Crema stages it as **scheduled**, not paid. No Shopify order, charge or payment is created. Each assortment starts without a coffee selection; choose and split that delivery's coffees using the ordinary item review. Then add the reviewed delivery to its designated plan. The contract and due date identify a single early delivery, so retries do not create another one.
 
