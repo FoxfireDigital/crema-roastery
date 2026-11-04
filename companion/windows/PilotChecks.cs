@@ -72,6 +72,11 @@ internal static class PilotChecks
             bool expired=false;try{valid.CheckAge(DateTimeOffset.UtcNow.AddHours(25));}catch(InvalidDataException){expired=true;}if(!expired)throw new Exception("Expired materialized package accepted.");checks.Add("age-rechecked-before-send");
             string message=ArtisanTransport.FileMessage(Path.Combine(root,"a name # one.alog"),true);
             if(!message.StartsWith("file:///") || !message.EndsWith("?template\n") || message.Contains(' ') || message.Contains('#'))throw new Exception("Unsafe file URL encoding.");checks.Add("file-url-encoding");
+            foreach(var version in new[]{new Version(3,1,0),new Version(4,0,2),new Version(4,0,2,0)})
+            {if(!ArtisanTransport.Supports(version))throw new Exception("Reviewed version rejected.");checks.Add("reviewed-version-"+version);}
+            foreach(var version in new[]{new Version(3,1,1),new Version(4,0,0),new Version(4,0,3),new Version(4,2,0)})
+            {if(ArtisanTransport.Supports(version))throw new Exception("Unreviewed version accepted.");checks.Add("unreviewed-version-"+version);}
+            if(ArtisanTransport.Supports(null))throw new Exception("Missing version accepted.");checks.Add("missing-version-refused");
             // Exercise exact send bytes with a random test-only pipe. No real Artisan endpoint is opened.
             string testPipe="CremaPilotTest-"+Guid.NewGuid().ToString("N");
             using(var server=new NamedPipeServerStream(testPipe,PipeDirection.In,1,PipeTransmissionMode.Byte,PipeOptions.Asynchronous))

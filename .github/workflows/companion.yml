@@ -43,5 +43,5 @@ jobs:
           $process=Start-Process -FilePath $exe -ArgumentList @('--self-test',('"'+$report+'"')) -WindowStyle Hidden -Wait -PassThru
           if($process.ExitCode -ne 0){Get-Content $report;throw 'Pilot checks failed'}
           $result=Get-Content $report -Raw|ConvertFrom-Json
-          if($result.result -ne 'passed' -or $result.realArtisanTouched -or $result.serverChanged){throw 'Unexpected pilot result'}
+          if($result.result -ne 'passed' -or $result.count -ne 40 -or $result.realArtisanTouched -or $result.serverChanged){throw 'Unexpected pilot result'}
           Get-Content $report

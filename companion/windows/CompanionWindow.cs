@@ -15,6 +15,7 @@ internal sealed class CompanionWindow : Form
     private readonly Label readinessText=Label("Current plan checked; correct USB roaster connected; previous work saved; Artisan idle with monitoring OFF.");
     private readonly Label curveText=Label("The expected background curve is visible, and Artisan is still idle with monitoring OFF.");
     private readonly TableLayoutPanel curveRow;
+    private readonly Label artisanStatus=Label("Artisan not selected.",9);
     private Preparation? preparation;
     private string? folder;
     private string artisan="";
@@ -34,7 +35,7 @@ internal sealed class CompanionWindow : Form
         var files=new FlowLayoutPanel{AutoSize=true,Dock=DockStyle.Fill,WrapContents=true,Margin=new Padding(0,15,0,12)};files.Controls.Add(open);files.Controls.Add(choose);Add(layout,files);
         zipPath.Margin=new Padding(0,0,0,14);Add(layout,zipPath);
         summary.Font=new Font(Font.FontFamily,14,FontStyle.Bold);Add(layout,summary);
-        Add(layout,targets);Add(layout,local);
+        Add(layout,targets);Add(layout,local);Add(layout,artisanStatus);
         var titleRow=new TableLayoutPanel{AutoSize=true,Dock=DockStyle.Fill,ColumnCount=1,Margin=new Padding(0,12,0,8)};
         titleRow.Controls.Add(Label("Roast title",9));titleRow.Controls.Add(title);titleRow.Controls.Add(copy);Add(layout,titleRow);
         Add(layout,Label("Copy replaces clipboard text. Paste into Artisan → Roast → Properties → Title. This pilot does not set the active title automatically.",9));
@@ -43,7 +44,7 @@ internal sealed class CompanionWindow : Form
         curveRow=CheckRow(curve,curveText);curveRow.Visible=false;Add(layout,curveRow);
         load.BackColor=Color.FromArgb(35,80,60);load.ForeColor=Color.White;load.FlatStyle=FlatStyle.Flat;load.MinimumSize=new Size(210,44);Add(layout,load);
         status.Margin=new Padding(0,14,0,8);status.Font=new Font(Font.FontFamily,10,FontStyle.Bold);Add(layout,status);
-        Add(layout,Label("A sent request is not a verified load. Check Charge / Drop / Off in Config → Alarms before roasting. Off stops Artisan monitoring; it does not guarantee a heater shutdown.",9));
+        Add(layout,Label("A sent request is not a verified load. Check Charge / Drop / Off in Config → Alarms. In Artisan 4 Production mode, use Config → Mode → Standard to show Alarms. Off stops Artisan monitoring; it does not guarantee a heater shutdown.",9));
         Add(layout,Label("No monitoring, recording or roast is started. Packing, stock and production records are unchanged.",9));
         open.Click+=(_,_)=>{using var dialog=new OpenFileDialog{Title="Open fresh Crema preparation",Filter="Crema preparation (*.zip;*.crema)|*.zip;*.crema",CheckFileExists=true};if(dialog.ShowDialog(this)==DialogResult.OK)Read(dialog.FileName);};
         zipPath.KeyDown+=(_,e)=>{if(e.KeyCode==Keys.Enter && !busy){e.SuppressKeyPress=true;Read(zipPath.Text.Trim().Trim('"'));}};
@@ -53,7 +54,7 @@ internal sealed class CompanionWindow : Form
         DragEnter+=(_,e)=>{if(!busy && e.Data?.GetData(DataFormats.FileDrop) is string[] paths && paths.Length==1)e.Effect=DragDropEffects.Copy;};
         DragDrop+=(_,e)=>{if(!busy && e.Data?.GetData(DataFormats.FileDrop) is string[] paths && paths.Length==1)Read(paths[0]);};
         layout.SizeChanged+=(_,_)=>{int width=Math.Max(300,layout.ClientSize.Width-60);foreach(var l in new[]{summary,status,targets,local,title})l.MaximumSize=new Size(width,0);readinessText.MaximumSize=new Size(width-32,0);curveText.MaximumSize=new Size(width-32,0);};
-        LoadSettings();UpdateControls();Shown+=(_,_)=>{if(initial!=null)Read(initial);};
+        LoadSettings();RefreshArtisanStatus();UpdateControls();Shown+=(_,_)=>{if(initial!=null)Read(initial);};
     }
     private static Label Label(string text,int size=10)=>new(){AutoSize=true,Text=text,MaximumSize=new Size(580,0),Margin=new Padding(0,0,0,9),Font=new Font("Segoe UI",size)};
     private static Button Button(string text)=>new(){AutoSize=true,Text=text,AccessibleName=text,Padding=new Padding(10,6,10,6),Margin=new Padding(0,0,10,4),UseVisualStyleBackColor=true};
@@ -71,6 +72,7 @@ internal sealed class CompanionWindow : Form
     private void Read(string path)
     {
         if(busy)return;
+        RefreshArtisanStatus();
         preparation=null;folder=null;phase=0;ready.Checked=false;curve.Checked=false;curve.Visible=false;curveRow.Visible=false;
         try
         {
@@ -89,13 +91,25 @@ internal sealed class CompanionWindow : Form
         using var dialog=new OpenFileDialog{Title="Choose your installed artisan.exe",Filter="Artisan (artisan.exe)|artisan.exe",CheckFileExists=true};
         if(dialog.ShowDialog(this)!=DialogResult.OK)return false;
         if(!Path.GetFileName(dialog.FileName).Equals("artisan.exe",StringComparison.OrdinalIgnoreCase)){SetStatus("Choose artisan.exe.",true);return false;}
-        artisan=dialog.FileName;
+        try{ArtisanTransport.InspectExecutable(dialog.FileName);}catch(Exception e){SetStatus(e.Message,true);return false;}
+        artisan=dialog.FileName;RefreshArtisanStatus();
         try{Directory.CreateDirectory(stateRoot);File.WriteAllText(Path.Combine(stateRoot,"settings.json"),JsonSerializer.Serialize(new{artisan}));SetStatus("Artisan location remembered for this Windows user.");return true;}
         catch(Exception e){SetStatus("Could not save the Artisan location: "+e.Message,true);return false;}
     }
     private void LoadSettings()
     {
         try{string file=Path.Combine(stateRoot,"settings.json");if(File.Exists(file) && new FileInfo(file).Length<8192){using var d=JsonDocument.Parse(File.ReadAllText(file));artisan=d.RootElement.GetProperty("artisan").GetString()??"";}}catch{artisan="";}
+    }
+    private void RefreshArtisanStatus()
+    {
+        try
+        {
+            if(string.IsNullOrWhiteSpace(artisan) || !File.Exists(artisan))artisan=ArtisanTransport.FindInstalled()??"";
+            if(string.IsNullOrWhiteSpace(artisan)){artisanStatus.Text="Choose your installed Artisan 3.1.0 or 4.0.2.";return;}
+            var version=ArtisanTransport.InspectExecutable(artisan);
+            artisanStatus.Text=$"Selected Artisan {version.ToString(3)} · {artisan}";
+        }
+        catch(Exception e){artisanStatus.Text=e.Message;}
     }
     private async Task LoadPreparation()
     {
@@ -118,13 +132,14 @@ internal sealed class CompanionWindow : Form
                 SetStatus(found?"Artisan opened. Finish its dialogs, confirm monitoring OFF, then check readiness and load the background.":"Artisan has not exposed its main connection yet. Finish startup, check readiness and retry.",!found);return;
             }
             if(IsDisposed)return;
+            artisanStatus.Text=ArtisanTransport.ConnectedDescription;
             string file=phase==0?"reference.alog":"alarms.alrm";
             // Recheck the stored payload before each send; never execute package scripts.
             if(!File.ReadAllBytes(Path.Combine(folder,file)).SequenceEqual(preparation.Data[file]))throw new IOException("A local preparation file changed. Open the fresh ZIP again.");
             attempted=true;await ArtisanTransport.Send(pipe,Path.Combine(folder,file),phase==0);
             if(IsDisposed)return;
             if(phase==0){phase=1;curve.Visible=true;curveRow.Visible=true;curve.Checked=false;SetStatus("Background request sent. Check its curve in Artisan; then confirm below to send the paired alarms.");}
-            else{phase=2;SetStatus("Alarm request sent. Verify all three targets in Config → Alarms, and copy/paste the active roast title before roasting.");}
+            else{phase=2;SetStatus("Alarm request sent. Verify the three targets in Config → Alarms (Artisan 4: choose Standard mode if Alarms is hidden), then copy/paste the active roast title.");}
         }
         catch(Exception e){if(!IsDisposed){if(attempted)phase=3;SetStatus(e.Message+(attempted?" Delivery is uncertain. Inspect Artisan and reopen the preparation before retrying.":""),true);}}
         finally{busy=false;if(!IsDisposed)UpdateControls();}

@@ -1,6 +1,6 @@
 # Crema Companion — portable Windows pilot
 
-This is an optional pilot for Windows x64 and Artisan 3.1.0. Operator validation on the roasting computer is required before relying on it. The existing portal ZIP/CMD workflow remains the fallback. Crema server installation and production data are unchanged.
+This is an optional pilot for Windows x64 and reviewed Artisan 3.1.0 and 4.0.2 handoffs. The selected installed version is displayed, and the connected main-window process is checked for a reviewed version and the same Windows session. Operator validation on the roasting computer is required before relying on it. The existing portal ZIP/CMD workflow remains the fallback. Crema server installation and production data are unchanged.
 
 ## Roast-day use
 
@@ -8,8 +8,8 @@ This is an optional pilot for Windows x64 and Artisan 3.1.0. Operator validation
 2. In Crema, prepare the accepted, unroasted load using the correct machine, First/Second schedule and targets. Download a fresh preparation ZIP. Changed plans or profiles require a new preparation.
 3. In the companion, choose **Open preparation ZIP**, drag that ZIP onto its window, or paste its local path and press Enter. Open always offers a new file selection, even after a previous preparation was loaded. Manual extraction is unnecessary. The program reads data files only; included CMD/PowerShell files are never extracted or executed.
 4. Review the coffee, green ounces, machine, session, title and Fahrenheit targets against the current portal. Check that the correct USB roaster is connected, previous work saved, and Artisan idle with monitoring OFF. Check readiness and choose **Load background**.
-5. If Artisan is closed, choose its installed artisan.exe when asked. The companion opens it without control arguments. Finish startup dialogs, confirm monitoring OFF, check readiness again and load the background. A running but unreachable Artisan instance is an error, not permission to launch a second copy.
-6. Verify the expected background curve is visible and monitoring remains OFF. Check the inline confirmation, then choose **Load paired alarms**. Verify Charge / Drop / Off targets under **Config → Alarms**; enable Load from background for embedded alarms. No successful send is described as a verified load.
+5. The normal Program Files installation is detected automatically. Choose Artisan can select another supported installation. If Artisan is closed, its selected artisan.exe opens when requested. The companion opens it without control arguments. Finish startup dialogs, confirm monitoring OFF, check readiness again and load the background. A running but unreachable Artisan instance is an error, not permission to launch a second copy.
+6. Verify the expected background curve is visible and monitoring remains OFF. Check the inline confirmation, then choose **Load paired alarms**. Verify Charge / Drop / Off targets under **Config → Alarms**. Artisan 4 Production mode hides this menu: use **Config → Mode → Standard** to inspect it, and return to Production afterward if desired; enable Load from background for embedded alarms. No successful send is described as a verified load.
 7. Choose **Copy roast title**, then paste into **Roast → Properties → Title**. Copying replaces the current clipboard text. The active foreground title is not set automatically.
 8. Operate the roast manually. Record finished weight/cooling in Crema and upload the saved foreground .alog using its existing review workflow. This pilot does not watch folders or upload files.
 
@@ -32,3 +32,9 @@ Build from the canonical source using .NET 10 SDK and build.ps1 with an output d
 Run `CremaCompanion.exe --self-test <absolute-report-path>` in a task-owned folder. Tests generate fictional preparations, reject invalid/stale/tampered archives, verify data-only extraction and exercise exact background/alarm messages against a random test-only named pipe. They never connect to the real Artisan endpoint, launch Artisan or use production data. Native GUI inspection and a real idle-Artisan operator trial are separate checks.
 
 Before wider use: trusted package delivery/current-preparation checks, installer and signed update design, live operator validation, supported Windows/Artisan matrix, and independent review remain open. This pilot does not clear Crema's public-release gates.
+
+## Exact 4.0.2 source review
+
+Artisan v4.0.2 commit 1f678a8336c28c4dc0ac08b9a28eccbc361130e5 retains main GUID 9068bd2fa8e54945a6be1f1a0a589e92, line-delimited file URLs, `?template` for background loading, and `.alrm` for alarm loading. [Official source](https://github.com/artisan-roaster-scope/artisan/tree/1f678a8336c28c4dc0ac08b9a28eccbc361130e5). This is independent client interoperability; no Artisan code or application binary is bundled. Other Artisan versions are held for review rather than assumed compatible. Source inspection is distinct from a real idle-application trial.
+
+Photos and completed .alog uploads belong in Crema using the direct controls below each batch. This Companion remains a preparation utility, with no portal credentials, folder watching, camera access or automatic uploads.
