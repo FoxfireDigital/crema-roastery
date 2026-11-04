@@ -43,7 +43,7 @@ internal sealed class CompanionWindow : Form
         titleRow.Controls.Add(Field("ROAST TITLE · paste into Artisan Properties",title),0,0);titleRow.Controls.Add(copy,1,0);Add(layout,titleRow);
         var actionCard=Card();Add(actionCard,artisanStatus);Add(actionCard,status);Add(actionCard,instruction);
         readyRow=CheckRow(ready);curveRow=CheckRow(curve);alarmsRow=CheckRow(alarms);Add(actionCard,readyRow);Add(actionCard,curveRow);Add(actionCard,alarmsRow);
-        load.Dock=DockStyle.Fill;load.Height=46;load.MinimumSize=new Size(230,46);load.Margin=new Padding(0,9,0,0);Add(actionCard,load);Add(layout,actionCard);
+        load.AutoSize=false;load.Dock=DockStyle.Top;load.Height=46;load.MinimumSize=new Size(230,46);load.MaximumSize=new Size(0,46);load.Margin=new Padding(0,9,0,0);Add(actionCard,load);Add(layout,actionCard);
         Add(layout,TextLabel("Preparation only · Start and operate the roast in Artisan",9));
         helpPanel=Card();helpPanel.Visible=false;
         Add(helpPanel,TextLabel("Help && settings",12,true));Add(helpPanel,choose);Add(helpPanel,zipPath);
