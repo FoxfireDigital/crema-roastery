@@ -70,7 +70,11 @@ internal static class PilotChecks
             });
             bool networkRefused=false;try{Preparation.Read("\\\\invalid.example\\share\\preparation.zip",DateTimeOffset.UtcNow);}catch(InvalidDataException){networkRefused=true;}if(!networkRefused)throw new Exception("Network path accepted.");checks.Add("network-path-refused-before-opening");
             bool expired=false;try{valid.CheckAge(DateTimeOffset.UtcNow.AddHours(25));}catch(InvalidDataException){expired=true;}if(!expired)throw new Exception("Expired materialized package accepted.");checks.Add("age-rechecked-before-send");
-            string message=ArtisanTransport.FileMessage(Path.Combine(root,"a name # one.alog"),true);
+            string encodedPath=Path.Combine(root,"a name # one.alog");File.WriteAllText(encodedPath,"fictional");
+            string physicalPath=ArtisanTransport.ExistingLocalPath(encodedPath);
+            if(!File.Exists(physicalPath) || File.ReadAllText(physicalPath)!="fictional" || physicalPath.StartsWith("\\\\"))throw new Exception("Physical preparation path differs.");
+            checks.Add("physical-file-path-from-open-handle");
+            string message=ArtisanTransport.FileMessage(encodedPath,true);
             if(!message.StartsWith("file:///") || !message.EndsWith("?template\n") || message.Contains(' ') || message.Contains('#'))throw new Exception("Unsafe file URL encoding.");checks.Add("file-url-encoding");
             foreach(var version in new[]{new Version(3,1,0),new Version(4,0,2),new Version(4,0,2,0)})
             {if(!ArtisanTransport.Supports(version))throw new Exception("Reviewed version rejected.");checks.Add("reviewed-version-"+version);}

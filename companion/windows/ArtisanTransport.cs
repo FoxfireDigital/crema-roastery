@@ -38,6 +38,27 @@ internal static class ArtisanTransport
     [return:MarshalAs(UnmanagedType.Bool)]
     private static extern bool GetNamedPipeServerProcessId(Microsoft.Win32.SafeHandles.SafePipeHandle pipe,out uint pid);
 
+    [DllImport("kernel32.dll",CharSet=CharSet.Unicode,SetLastError=true)]
+    private static extern uint GetFinalPathNameByHandle(Microsoft.Win32.SafeHandles.SafeFileHandle file,StringBuilder path,uint capacity,uint flags);
+
+    internal static string ExistingLocalPath(string path)
+    {
+        string full=Path.GetFullPath(path);
+        if(full.StartsWith("\\\\",StringComparison.Ordinal))throw new IOException("Preparation files must be local.");
+        // Packaged Windows launchers can virtualize AppData. Resolve the open file's
+        // real location so an independently running Artisan sees the same bytes.
+        using var file=File.OpenHandle(full,FileMode.Open,FileAccess.Read,FileShare.Read);
+        var resolved=new StringBuilder(32768);
+        uint length=GetFinalPathNameByHandle(file,resolved,(uint)resolved.Capacity,0);
+        if(length==0 || length>=resolved.Capacity)throw new IOException("The saved preparation location could not be resolved.");
+        string result=resolved.ToString();
+        if(result.StartsWith("\\\\?\\",StringComparison.Ordinal))result=result[4..];
+        if(result.StartsWith("UNC\\",StringComparison.OrdinalIgnoreCase) || result.StartsWith("\\\\",StringComparison.Ordinal) ||
+           result.Length<3 || !char.IsAsciiLetter(result[0]) || result[1]!=':' || result[2]!='\\')
+            throw new IOException("The saved preparation must resolve to a local drive.");
+        return result;
+    }
+
     internal static async Task<NamedPipeClientStream?> ConnectMain()
     {
         var pipe=new NamedPipeClientStream(".",MainPipe,PipeDirection.Out,PipeOptions.Asynchronous);
@@ -71,7 +92,7 @@ internal static class ArtisanTransport
         var processes=Process.GetProcessesByName("artisan");
         bool running=processes.Length>0;foreach(var process in processes)process.Dispose();return running;
     }
-    internal static string FileMessage(string path,bool background)=>new Uri(Path.GetFullPath(path)).AbsoluteUri+(background?"?template":"")+"\n";
+    internal static string FileMessage(string path,bool background)=>new Uri(ExistingLocalPath(path)).AbsoluteUri+(background?"?template":"")+"\n";
     internal static async Task Send(NamedPipeClientStream pipe,string path,bool background)
     {
         byte[] bytes=new UTF8Encoding(false,true).GetBytes(FileMessage(path,background));
