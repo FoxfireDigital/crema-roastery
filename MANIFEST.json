@@ -1180,13 +1180,13 @@
     },
     {
       "path": "companion/windows/ui/app.css",
-      "sha256": "090ab32a8e3aac563f6f1185303bcfbaca2dcc27dfd543ac4962da7971678451",
-      "bytes": 6328
+      "sha256": "dd086d8ebcebbbea7b1760b917c922da7f8b1cc2f38f868bc07508635e8e0c5c",
+      "bytes": 6379
     },
     {
       "path": "companion/windows/ui/app.js",
-      "sha256": "f35fbdd6dc6f61138b34ad3cce267810a354149c8e662482d55fcaf81ce38659",
-      "bytes": 7915
+      "sha256": "784a3c61a7741c1f877ab484bea3e2e12d5c6037b1454ba851a4efe65c1f943c",
+      "bytes": 7992
     },
     {
       "path": "companion/windows/ui/index.html",
