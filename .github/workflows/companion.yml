@@ -43,5 +43,22 @@ jobs:
           $process=Start-Process -FilePath $exe -ArgumentList @('--self-test',('"'+$report+'"')) -WindowStyle Hidden -Wait -PassThru
           if($process.ExitCode -ne 0){Get-Content $report;throw 'Pilot checks failed'}
           $result=Get-Content $report -Raw|ConvertFrom-Json
-          if($result.result -ne 'passed' -or $result.count -ne 41 -or $result.realArtisanTouched -or $result.serverChanged){throw 'Unexpected pilot result'}
+          if($result.result -ne 'passed' -or $result.count -ne 49 -or $result.realArtisanTouched -or $result.serverChanged){throw 'Unexpected pilot result'}
           Get-Content $report
+      - name: Obtain checksum-pinned installer compiler
+        shell: pwsh
+        run: |
+          $ErrorActionPreference='Stop'
+          $pin=Get-Content companion/windows/build-installer.json -Raw|ConvertFrom-Json
+          $archive=Join-Path $env:RUNNER_TEMP 'nsis.zip'
+          Invoke-WebRequest $pin.mirror -OutFile $archive
+          if((Get-FileHash $archive -Algorithm SHA256).Hash.ToLowerInvariant() -ne $pin.sha256){throw 'NSIS vendor checksum mismatch'}
+      - name: Build and test per-user installer, upgrade and uninstall
+        shell: pwsh
+        run: |
+          $ErrorActionPreference='Stop'
+          $app=Join-Path $env:RUNNER_TEMP 'companion-build/app'
+          $output=Join-Path $env:RUNNER_TEMP 'companion-installer'
+          ./companion/windows/build-installer.ps1 -AppDirectory $app -OutputDirectory $output -CompilerArchive (Join-Path $env:RUNNER_TEMP 'nsis.zip')
+          ./companion/windows/installer-checks.ps1 -Installer (Join-Path $output 'CremaCompanion-Setup-0.1.0-preview4-win-x64.exe') -AppDirectory $app -TrialDirectory (Join-Path $env:RUNNER_TEMP 'companion-install-trial') -ReportPath (Join-Path $env:RUNNER_TEMP 'installer-checks.json')
+          Get-Content (Join-Path $env:RUNNER_TEMP 'installer-checks.json')

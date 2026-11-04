@@ -81,6 +81,16 @@ internal static class PilotChecks
             foreach(var version in new[]{new Version(3,1,1),new Version(4,0,0),new Version(4,0,3),new Version(4,2,0)})
             {if(ArtisanTransport.Supports(version))throw new Exception("Unreviewed version accepted.");checks.Add("unreviewed-version-"+version);}
             if(ArtisanTransport.Supports(null))throw new Exception("Missing version accepted.");checks.Add("missing-version-refused");
+            void MustRefuse(Action action){bool refused=false;try{action();}catch(InvalidOperationException){refused=true;}if(!refused)throw new Exception("Invalid handoff transition accepted.");}
+            var progress=new HandoffProgress();
+            if(progress.CanSend(false,false))throw new Exception("Readiness skipped.");MustRefuse(()=>progress.Sent(true,false,false));checks.Add("readiness-required-before-background");
+            MustRefuse(()=>progress.Sent(false,true,true));checks.Add("paired-alarms-cannot-precede-background");
+            MustRefuse(()=>progress.Verify(true));checks.Add("cannot-verify-before-alarm-send");
+            progress.Sent(true,true,false);if(progress.Stage!=HandoffStage.BackgroundSent || progress.CanSend(true,false))throw new Exception("Curve review skipped.");MustRefuse(()=>progress.Sent(false,true,false));checks.Add("background-send-awaits-curve-review");
+            progress.Sent(false,true,true);if(progress.Stage!=HandoffStage.AlarmsSent || progress.CanSend(true,true))throw new Exception("Duplicate sends allowed.");MustRefuse(()=>progress.Verify(false));checks.Add("alarm-send-awaits-target-review");
+            progress.Verify(true);if(progress.Stage!=HandoffStage.Verified || progress.CanSend(true,true))throw new Exception("Verification differs.");MustRefuse(()=>progress.Sent(true,true,true));checks.Add("verification-is-explicit-operator-attestation");
+            var uncertain=new HandoffProgress();uncertain.Uncertain();if(uncertain.CanSend(true,true))throw new Exception("Uncertain send can retry.");MustRefuse(()=>uncertain.Verify(true));MustRefuse(()=>uncertain.Sent(true,true,true));checks.Add("uncertain-handoff-locked-until-fresh-preparation");
+            var fresh=new HandoffProgress();if(fresh.Stage!=HandoffStage.Review || !fresh.CanSend(true,false))throw new Exception("Fresh preparation did not reset.");checks.Add("fresh-preparation-starts-at-review");
             // Exercise exact send bytes with a random test-only pipe. No real Artisan endpoint is opened.
             string testPipe="CremaPilotTest-"+Guid.NewGuid().ToString("N");
             using(var server=new NamedPipeServerStream(testPipe,PipeDirection.In,1,PipeTransmissionMode.Byte,PipeOptions.Asynchronous))
