@@ -5,7 +5,7 @@ from datetime import timedelta
 ROOT=Path(__file__).resolve().parents[1]
 if os.environ.get('DB_HOST'):raise SystemExit('Unset DB_HOST: Companion checks only use an in-memory database.')
 os.environ.update(DJANGO_SETTINGS_MODULE='project_settings',DJANGO_SECRET_KEY='fictional-device-protocol-test-only-0123456789',PORTAL_LOCAL_DEVELOPMENT='1',PORTAL_BASE_URL='http://localhost',PORTAL_SQLITE_PATH=':memory:',PORTAL_COMPANION_ENABLED='1')
-sys.path.insert(0,str(ROOT/'app'))
+sys.path.insert(0,os.environ.get('PORTAL_APP_ROOT',str(ROOT/'app')))
 import django;django.setup()
 from django.core.management import call_command
 from django.test import Client,override_settings
@@ -82,4 +82,15 @@ check('revocation-account-owned',device.revoked_at is None)
 owner.set_password('changed-synthetic-password-192');owner.save()
 check('password-change-revokes',get('me/',newaccess).status_code==401 and post('token/',{'refresh_token':newrefresh}).status_code==401)
 browser.force_login(owner);browser.post('/companion/',{'revoke':str(device.pk)});device.refresh_from_db();check('browser-revoke',device.revoked_at is not None)
+check('invalid-revoke-safe',browser.post('/companion/',{'revoke':'not-a-uuid'}).status_code==400)
+denied=post('start/',{'name':'Declined fictional PC'}).json();browser.post('/companion/',{'code':denied['user_code'],'decision':'deny'})
+check('denied-device-cannot-connect',post('token/',{'device_code':denied['device_code']}).json()['error']=='access_denied')
+expired=post('start/',{}).json();CompanionGrant.objects.filter(device_hash=digest(expired['device_code'])).update(expires_at=timezone.now()-timedelta(seconds=1))
+check('expired-device-cannot-connect',post('token/',{'device_code':expired['device_code']}).json()['error']=='expired_token')
+ordinary=get_user_model().objects.create_user('ordinary',password='synthetic-normal-password-199')
+ordinary_browser=Client(HTTP_HOST='localhost');ordinary_browser.force_login(ordinary)
+check('nonstaff-cannot-approve',ordinary_browser.post('/companion/',{'code':code,'decision':'approve'}).status_code==403)
+LoginAttemptWindow.objects.all().delete()
+for _ in range(12):assert post('start/',{}).status_code==200
+check('start-rate-limited',post('start/',{}).status_code==429)
 print(json.dumps({'result':'passed','count':len(checks),'checks':checks,'data':'fictional in-memory only'},indent=2))
