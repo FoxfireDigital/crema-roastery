@@ -106,6 +106,7 @@ internal static class PilotChecks
                 if(received.GetAwaiter().GetResult()!=ArtisanTransport.FileMessage(Path.Combine(extracted,"alarms.alrm"),false).TrimEnd('\n'))throw new Exception("Alarm message changed.");
             }
             checks.Add("background-and-alarm-messages-on-test-only-pipe");
+            ConnectedChecks.Run(checks,root);
             File.WriteAllText(reportPath,JsonSerializer.Serialize(new{result="passed",checks,count=checks.Count,fixtureDirectory=root,realArtisanTouched=false,serverChanged=false},new JsonSerializerOptions{WriteIndented=true}));return 0;
         }
         catch(Exception e){File.WriteAllText(reportPath,JsonSerializer.Serialize(new{result="failed",checks,error=e.ToString()}));return 1;}

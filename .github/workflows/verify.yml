@@ -53,6 +53,7 @@ jobs:
       - run: python -m pip install -r app/requirements.txt
       - run: python -c "from psycopg import pq; assert pq.__impl__ == 'c'"
       - run: python tools/test_release.py
+      - run: python tools/companion_checks.py
   postgres:
     name: PostgreSQL regression
     runs-on: ubuntu-latest

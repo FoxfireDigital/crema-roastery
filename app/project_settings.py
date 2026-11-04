@@ -13,6 +13,7 @@ _url=urlsplit(PORTAL_BASE_URL)
 if _url.scheme not in ['https','http'] or not _url.hostname or _url.path or _url.query or _url.fragment or _url.username or _url.password:raise ValueError('PORTAL_BASE_URL must be an origin URL.')
 LOCAL_DEVELOPMENT=os.environ.get('PORTAL_LOCAL_DEVELOPMENT')=='1'
 PORTAL_DEMO_MODE=os.environ.get('PORTAL_DEMO_MODE')=='1'
+COMPANION_ENABLED=os.environ.get('PORTAL_COMPANION_ENABLED')=='1'
 if _url.scheme!='https' and not LOCAL_DEVELOPMENT:raise ValueError('Production requires HTTPS.')
 ALLOWED_HOSTS=[_url.hostname,'localhost','127.0.0.1',*filter(None,os.environ.get('PORTAL_LAN_HOSTS','').split(','))]
 CSRF_TRUSTED_ORIGINS=[PORTAL_BASE_URL]

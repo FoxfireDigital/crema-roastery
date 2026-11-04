@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.0-rc23 candidate — connected Companion
+
+* Add opt-in browser-approved device connections with revocation, expiring/rotating protected credentials and preparation-only API capabilities.
+* List accepted, active unroasted loads and matching approved profiles; retrieve the signed-in user's saved palette and installation name. Recheck snapshots before connected handoffs.
+* Companion 0.2.0-preview.1 renders the preparation-window design using bundled HTML/CSS in WebView2, retaining the reviewed Artisan transport and explicit operator checks. Keep the classic offline window and preparation ZIP fallback.
+* Add two device/pairing tables. Existing production, stock, orders, evidence and hours are unchanged. See docs/companion-connections.md for migration, permissions and operator acceptance gates.
+
 ## 0.1.0-rc22 — direct batch photo and log controls
 
 * Put Capture photo and Upload .alog directly under each coffee on Today and at the top of batch details, with the same actions on planner batch cards. Pending loads show disabled controls; recording a roast enables the controls without a reload.

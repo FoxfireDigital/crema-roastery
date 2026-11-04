@@ -4,6 +4,7 @@ from django.urls import path
 from django.contrib.auth.decorators import login_required
 from django.views.generic import TemplateView
 from portal import views
+from portal import companion
 from portal.planning import planner
 from portal.order_import import order_import,review_import,order_visibility,dismiss_selected
 from portal.subscriptions import subscriptions
@@ -48,6 +49,14 @@ from portal.store_csv import csv_import,csv_example
 from portal.production_orders import review_production
 from portal.batch_combine import combine_batches
 urlpatterns=[
+    path('companion/',companion.devices,name='companion_devices'),
+    path('api/companion/v1/start/',companion.start),
+    path('api/companion/v1/token/',companion.token),
+    path('api/companion/v1/me/',companion.me),
+    path('api/companion/v1/roasts/',companion.roasts),
+    path('api/companion/v1/roasts/<int:pk>/prepare/',companion.prepare),
+    path('api/companion/v1/preparations/<uuid:preparation_id>/validate/',companion.validate),
+    path('api/companion/v1/disconnect/',companion.disconnect),
     path('plans/<int:pk>/combine/',combine_batches,name='combine_batches'),
     path('imports/<int:pk>/production/',review_production,name='review_production'),
     path('plans/<int:pk>/green-review/',green_review_action,name='green_review_action'),

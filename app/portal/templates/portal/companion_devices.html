@@ -1,0 +1,10 @@
+{% extends 'portal/base.html' %}{% block content %}
+<h1>Connect Crema Companion</h1>
+<section class="card"><p>Use the code displayed by your Companion. Only approve a connection you started on your own roasting computer.</p>
+{% if note %}<p role="status">{{ note }}</p>{% endif %}
+{% if pending %}<h2>{{ pending.name }}</h2><p>Code: <strong>{{ code }}</strong></p><p>This computer may read active roast loads, your appearance settings and profile choices, and create preparation files. It cannot change orders, stock, hours, photos, logs or production status.</p>
+<form method="post">{% csrf_token %}<input type="hidden" name="code" value="{{ code }}"><button name="decision" value="approve">Approve this computer</button> <button class="secondary" name="decision" value="deny">Decline</button></form>
+{% else %}<form method="post">{% csrf_token %}<label>Code from Companion <input name="code" maxlength="12" required autocomplete="off" placeholder="ABCD-EFGH"></label><button>Review connection</button></form>{% endif %}</section>
+<section class="card"><h2>Your connected computers</h2><p>Connections expire after thirty days. Revoke a lost or shared computer here.</p>
+{% for device in devices %}<form method="post">{% csrf_token %}<p><strong>{{ device.name }}</strong> · connected {{ device.created_at }}{% if device.last_seen_at %} · last used {{ device.last_seen_at }}{% endif %} <button class="secondary" name="revoke" value="{{ device.pk }}">Revoke access</button></p></form>{% empty %}<p>No connected computers.</p>{% endfor %}</section>
+{% endblock %}

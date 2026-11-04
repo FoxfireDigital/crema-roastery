@@ -1,10 +1,11 @@
-# Crema Companion — portable Windows pilot
+# Crema Companion — connected Windows pilot
 
-This is an optional pilot for Windows x64 and reviewed Artisan 3.1.0 and 4.0.2 handoffs. The selected installed version is displayed, and the connected main-window process is checked for a reviewed version and the same Windows session. Operator validation on the roasting computer is required before relying on it. The existing portal ZIP/CMD workflow remains the fallback. Crema server installation and production data are unchanged.
+The redesigned preparation window supports browser-approved Crema sign-in, an accepted-roast list and the signed-in user's saved palette. See [connection setup and use](../../docs/companion-connections.md). A server upgrade and PORTAL_COMPANION_ENABLED=1 are required before connecting; the previous offline ZIP workflow remains available.
 
+Microsoft WebView2 Runtime is needed for the new interface. If missing, Companion offers Microsoft's official download page and the classic offline window. The package includes the .NET runtime and Microsoft SDK notices. No background service, administrator account or local listening port is required. Microsoft components retain their own licenses.
 ## Roast-day use
 
-1. Run the per-user setup and use the **Crema Companion** desktop or Start menu shortcut. A portable ZIP is also available: keep its entire folder, including the runtime notices, and open CremaCompanion.exe. The build includes its runtime; no service, scheduled task, sign-in, port, startup registration or administrator account is required.
+1. Run the per-user setup and use the **Crema Companion** desktop or Start menu shortcut. A portable ZIP is also available: keep its entire folder, including the runtime notices, and open CremaCompanion.exe. The build includes its runtime; no service, scheduled task, inbound port, startup registration or administrator account is required.
 2. In Crema, prepare the accepted, unroasted load using the correct machine, First/Second schedule and targets. Download a fresh preparation ZIP. Changed plans or profiles require a new preparation.
 3. Choose **Open preparation**, drop the ZIP onto the window, or paste its local path under **Help & settings** and press Enter. Open always offers a new file selection. Review the roast card, machine, green weight, First/Second schedule and three large temperature targets. The four-step strip shows where you are. Manual extraction is unnecessary; included CMD/PowerShell files never execute.
 4. Review the coffee, green ounces, machine, session, title and Fahrenheit targets against the current portal. Check that the correct USB roaster is connected, previous work saved, and Artisan idle with monitoring OFF. Check readiness and choose **Load background**.
@@ -29,7 +30,7 @@ First means cold or this particular machine idle for at least ten minutes; Secon
 
 ## Development checks
 
-Build from the canonical source using .NET 10 SDK and build.ps1 with an output directory outside the repository. The script creates a self-contained Windows-x64 executable and copies Crema/runtime notices; all compiled/cache files stay outside the source tree. No third-party NuGet libraries are added.
+Build from the canonical source using .NET 10 SDK and build.ps1 with an output directory outside the repository. The script creates a self-contained Windows-x64 executable and copies Crema/runtime notices; all compiled/cache files stay outside the source tree. The locked Microsoft.Web.WebView2 package supplies the embedded interface; its license and notice accompany the build.
 
 Run `CremaCompanion.exe --self-test <absolute-report-path>` in a task-owned folder. Tests generate fictional preparations, reject invalid/stale/tampered archives, verify data-only extraction and exercise exact background/alarm messages against a random test-only named pipe. They never connect to the real Artisan endpoint, launch Artisan or use production data. Native GUI inspection and a real idle-Artisan operator trial are separate checks.
 

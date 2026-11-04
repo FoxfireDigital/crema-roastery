@@ -1,11 +1,12 @@
 # Primary install: Docker Compose 2.23.1+. Edit image, domain, origin and timezone.
 # Candidate image is a local build; no public registry image exists yet.
 name: crema
-x-portal-image: &portal-image crema:0.1.0-rc22
+x-portal-image: &portal-image crema:0.1.0-rc23
 x-domain: &domain coffee.example.org
 x-app-environment: &app-environment
   PORTAL_BASE_URL: https://coffee.example.org
   PORTAL_TIME_ZONE: UTC
+  PORTAL_COMPANION_ENABLED: "0" # Set to "1" after applying the Companion device migration.
   DB_HOST: postgres
   DB_PASSWORD_FILE: /run/roastery-secrets/postgres
   DJANGO_SECRET_KEY_FILE: /run/roastery-secrets/django

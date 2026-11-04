@@ -1161,6 +1161,30 @@ class StoreEvent(models.Model):
     at=models.DateTimeField(default=timezone.now)
     details=models.JSONField(default=dict)
 
+class CompanionDevice(models.Model):
+    """Opaque, revocable preparation-only credentials; never store bearer secrets."""
+    id=models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
+    user=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
+    name=models.CharField(max_length=80)
+    created_at=models.DateTimeField(default=timezone.now)
+    last_seen_at=models.DateTimeField(null=True,blank=True)
+    revoked_at=models.DateTimeField(null=True,blank=True)
+    access_hash=models.CharField(max_length=64,unique=True)
+    refresh_hash=models.CharField(max_length=64,unique=True)
+    access_expires_at=models.DateTimeField()
+    refresh_expires_at=models.DateTimeField()
+    auth_fingerprint=models.CharField(max_length=64)
+
+class CompanionGrant(models.Model):
+    device_hash=models.CharField(max_length=64,primary_key=True)
+    code_hash=models.CharField(max_length=64,unique=True)
+    name=models.CharField(max_length=80)
+    expires_at=models.DateTimeField()
+    next_poll_at=models.DateTimeField()
+    interval=models.PositiveIntegerField(default=5)
+    state=models.CharField(max_length=12,default='pending')
+    user=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE,null=True)
+
 class OrderImportPreview(models.Model):
     id=models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
     store=models.ForeignKey(StoreConnection,on_delete=models.PROTECT)
