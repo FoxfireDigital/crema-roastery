@@ -40,8 +40,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "803366700080deaa35f61be33f4cf20bbbd1f50281b5e972628833963c47e782",
-      "bytes": 16944
+      "sha256": "506429f82d963219aadc100353a610ea2ec06b823cb018374269ad4bb487dca9",
+      "bytes": 17047
     },
     {
       "path": "CONTRIBUTING.md",
@@ -400,8 +400,8 @@
     },
     {
       "path": "app/portal/models.py",
-      "sha256": "de08055f7849f5b90eae3336429a8fbf25ba2b66cc2b4909c25221dade7b7baa",
-      "bytes": 71355
+      "sha256": "e708c06ec001d13b999db10c49fa53276c3a90f56d9df0b3be022b46d6574c65",
+      "bytes": 71394
     },
     {
       "path": "app/portal/neutral_print.py",
@@ -1455,8 +1455,8 @@
     },
     {
       "path": "tools/roast_day_checks.py",
-      "sha256": "a85c0866633a3ab8bbfd5c5d38d4656f1989eb312d1831a03538ebb2b197cb09",
-      "bytes": 12191
+      "sha256": "9d7ab28376c75d4ffc6c799ce1285f9d8bcddac73490d1d145e782d885d3f523",
+      "bytes": 12370
     },
     {
       "path": "tools/roast_pooling_checks.py",

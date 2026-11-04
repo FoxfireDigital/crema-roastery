@@ -100,6 +100,8 @@ def run_roast_day_checks(client,user):
         assert not IncomingForm({'coffee':exclusive.pk,'extra_oz':'24','roast_level':'Medium/Dark'}).is_valid()
         assert not HeaderForm({'account':first.pk,'customer':other.name,'plan':'new','plan_date':timezone.localdate()},plans=[]).is_valid()
         response=client.get('/wholesale/',{'customer':first.pk});assert response.status_code==200 and response.context['header'].initial['account']==first.pk
+        assert b'>Fixture Cafe</option>' in response.content and b'>Fixture Gym</option>' in response.content
+        assert b'WholesaleCustomer object (' not in response.content
         response=client.post('/wholesale/accounts/',{'name':'Fixture Bookshop','default_grind':'whole','active':'on','notes':'Use the side entrance'})
         assert response.status_code==302
         account=WholesaleCustomer.objects.get(name_key='fixture bookshop');assert account.notes=='Use the side entrance'

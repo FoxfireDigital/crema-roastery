@@ -310,6 +310,7 @@ class WholesaleCustomer(models.Model):
     version=models.PositiveIntegerField(default=0)
     updated_by=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.PROTECT)
     updated_at=models.DateTimeField(auto_now=True)
+    def __str__(self):return self.name
     class Meta: ordering=['name']
 
 

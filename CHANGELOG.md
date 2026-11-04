@@ -2,6 +2,7 @@
 
 ## 0.1.0-rc24 candidate — compact Companion and roast-day corrections
 
+* Show saved wholesale business names in the account selector instead of internal model record labels.
 * Companion 0.2.0-preview.2 uses the compact preparation/quick-view layouts, rounded cards and the account palette. X and Hide to tray retain the process; the coffee tray menu offers Quick view, Open and Exit. Reopening a shortcut restores the existing window without an Artisan handoff.
 * Add authenticated Windows installer/portable/source downloads inside Crema, using an administrator-published read-only release with exact checksums; no remote installation or silent update.
 * Explain marketing-site, redirect, gateway and invalid-API connection responses. Keep remembered portal origins separate from protected credentials.
