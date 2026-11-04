@@ -1035,8 +1035,8 @@
     },
     {
       "path": "companion/windows/CompanionWindow.cs",
-      "sha256": "56978228d292cf05c9185b52cbf20aad36658e3ee4169dc99bc2ab32ce7aa483",
-      "bytes": 15309
+      "sha256": "99c7119e957cb5c6e91b8e4019e37dcbf89776742d6f6d3ba0f628fcae24f276",
+      "bytes": 15361
     },
     {
       "path": "companion/windows/ConnectedChecks.cs",
