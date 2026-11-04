@@ -1,6 +1,6 @@
 {
   "name": "Crema",
-  "version": "0.1.0-rc21",
+  "version": "0.1.0-rc22",
   "license": "MIT",
   "files": [
     {
@@ -25,7 +25,7 @@
     },
     {
       "path": ".github/workflows/verify.yml",
-      "sha256": "12487d533b7be2a9d22b3fabe9249bebf36b0919ccade4d734cb175de81fe0ab",
+      "sha256": "3ea21b852e69d15fa47626cbe386daa07c67d65f2c033d0652c0fbdaf147fb91",
       "bytes": 4279
     },
     {
@@ -34,59 +34,9 @@
       "bytes": 107
     },
     {
-      "path": "CHANGELOG.md",
-      "sha256": "1bbbb89578ef3262c7fd3dc58b6cf373f8de63f0ae9e92df946f026a0643f694",
-      "bytes": 13545
-    },
-    {
-      "path": "CONTRIBUTING.md",
-      "sha256": "a27f1fe8fc957b45e2421741bcec6ff94c4c406749037dd73e1da41a29f73dd5",
-      "bytes": 732
-    },
-    {
-      "path": "LICENSE",
-      "sha256": "e1f6de38a3239b5123003d4d11d4c641951e2417a69aec8c6198e8d1a753c0a3",
-      "bytes": 1075
-    },
-    {
-      "path": "PRIVACY.md",
-      "sha256": "00866cb8f3087b662c3e9f242ac883ef3e13f25558dc85dec53e8cd5936e9bb6",
-      "bytes": 1364
-    },
-    {
-      "path": "README.md",
-      "sha256": "9a4f0fadd3787e6b1ba1cc22802d1017eb11c1ec7b51880962fb790ee8abf103",
-      "bytes": 7507
-    },
-    {
-      "path": "ROADMAP.md",
-      "sha256": "115a4a6dbb5664383517fad5a30c826b10093bd753bed1937c5b489755c9c4da",
-      "bytes": 16831
-    },
-    {
-      "path": "SECURITY.md",
-      "sha256": "00c5d99da68eada7210e7aed5d97e5b8a105048016c9f0f5c715ef82d20b9e00",
-      "bytes": 1633
-    },
-    {
-      "path": "THIRD_PARTY_NOTICES.md",
-      "sha256": "ac5e9eb2fbc29c4ff59770537be03489e932355a2cabf9b125e02479c1f992ad",
-      "bytes": 814
-    },
-    {
       "path": "app/.dockerignore",
       "sha256": "264d7f06f208feb707258fcc678ffa6f90390222c546a3aa54370d2532f476ad",
       "bytes": 430
-    },
-    {
-      "path": "app/Dockerfile",
-      "sha256": "0d5519ec21ffead58cd5634c47f289ea77168ec615569ac430fdfe4a0b65eb67",
-      "bytes": 5108
-    },
-    {
-      "path": "app/LICENSE",
-      "sha256": "e1f6de38a3239b5123003d4d11d4c641951e2417a69aec8c6198e8d1a753c0a3",
-      "bytes": 1075
     },
     {
       "path": "app/bootstrap.py",
@@ -97,6 +47,11 @@
       "path": "app/build_notices.py",
       "sha256": "99dca8be14e8b9bca229e030dc00a8cf48c3d4122542a7a8c3f8bdcaaae8b472",
       "bytes": 5122
+    },
+    {
+      "path": "app/Dockerfile",
+      "sha256": "0d5519ec21ffead58cd5634c47f289ea77168ec615569ac430fdfe4a0b65eb67",
+      "bytes": 5108
     },
     {
       "path": "app/entrypoint.sh",
@@ -112,6 +67,11 @@
       "path": "app/label_artwork/catalog.json",
       "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
       "bytes": 3
+    },
+    {
+      "path": "app/LICENSE",
+      "sha256": "e1f6de38a3239b5123003d4d11d4c641951e2417a69aec8c6198e8d1a753c0a3",
+      "bytes": 1075
     },
     {
       "path": "app/manage.py",
@@ -165,8 +125,8 @@
     },
     {
       "path": "app/portal/artisan_uploads.py",
-      "sha256": "4f86ba7ba3ce3d8674ec1ede0f9a20219c656070f2b6323faf263707398e18fe",
-      "bytes": 15841
+      "sha256": "04106b2ee3230a856642b67cb0cb7282d4219c91e8d02143212ba02da736b7e6",
+      "bytes": 16417
     },
     {
       "path": "app/portal/artwork_decisions.py",
@@ -195,8 +155,8 @@
     },
     {
       "path": "app/portal/batch_photos.py",
-      "sha256": "cf9d4855333740545efcf13aeb688945f12b0b7d657838eb336d990fa6304c2d",
-      "bytes": 10040
+      "sha256": "ef0e75897ca5288ba22091f3f6714af7f256add7584de5898cceff5e8315a6de",
+      "bytes": 10118
     },
     {
       "path": "app/portal/batch_removal.py",
@@ -530,8 +490,8 @@
     },
     {
       "path": "app/portal/templates/portal/artisan_log_upload.html",
-      "sha256": "c13139035070107bbb6d20ee94a67d02f02574d42c7833453ca0b64c820df820",
-      "bytes": 2643
+      "sha256": "86accb557ee447f046451a9bf168eea21c4a6373c7722285f65e5e76c378b876",
+      "bytes": 2707
     },
     {
       "path": "app/portal/templates/portal/artisan_prepare.html",
@@ -585,8 +545,8 @@
     },
     {
       "path": "app/portal/templates/portal/batch.html",
-      "sha256": "2347c837471281dfd3ecd1c4938d466beadf80b795a3efc38d1598a42d0c1c8d",
-      "bytes": 4380
+      "sha256": "c1074abc3039fac74a453a75f6004095d15b131e486ebcaf169e1dc878a14d07",
+      "bytes": 4430
     },
     {
       "path": "app/portal/templates/portal/batch_artisan_logs.html",
@@ -595,8 +555,13 @@
     },
     {
       "path": "app/portal/templates/portal/batch_camera.html",
-      "sha256": "fe7b5280428aeaa207a507dd4ce4ab5e85de70402a0d767ec1170207a2d87d91",
-      "bytes": 8637
+      "sha256": "02f40db9f7042adef0942df4298a9e36e2ee94d41b3caf33f1835326dbae2a32",
+      "bytes": 8715
+    },
+    {
+      "path": "app/portal/templates/portal/batch_evidence_actions.html",
+      "sha256": "fb539b2c53174b09a66f9d39a671829d83a31d3d869c0e393dfc0c9e84830d9e",
+      "bytes": 726
     },
     {
       "path": "app/portal/templates/portal/batch_photo.html",
@@ -615,8 +580,8 @@
     },
     {
       "path": "app/portal/templates/portal/batch_photos.html",
-      "sha256": "6745925f23c174892ab31c5f82390b8de3ba2d370f0a24be9d08573870e2036f",
-      "bytes": 4795
+      "sha256": "309ba09829c58df1b40071c7841bbd9dd9b2f04b2bdc20890feb1f2ae54fd272",
+      "bytes": 4878
     },
     {
       "path": "app/portal/templates/portal/bean_details.html",
@@ -810,8 +775,8 @@
     },
     {
       "path": "app/portal/templates/portal/planning.html",
-      "sha256": "a17cfc309f206e20cd469821cf8f49914ec391586c232a5a7e254aec27e12096",
-      "bytes": 30988
+      "sha256": "874f7369c8a8f04079f488ae62b8fd6ba92988642589d697ae39072dfc0c802a",
+      "bytes": 31038
     },
     {
       "path": "app/portal/templates/portal/plans.html",
@@ -860,8 +825,8 @@
     },
     {
       "path": "app/portal/templates/portal/roast_sheet.html",
-      "sha256": "4b34849c5453cf320d387eb05111df1fe2b15dd0423ea5eeefb5b300e04c9b1d",
-      "bytes": 16524
+      "sha256": "ff3ea8ecdf601c202791d93bd04d18a0b09aeee4e1a25e3dd1aaae03d887d8e2",
+      "bytes": 17426
     },
     {
       "path": "app/portal/templates/portal/roasted_stock.html",
@@ -999,18 +964,28 @@
       "bytes": 384
     },
     {
+      "path": "CHANGELOG.md",
+      "sha256": "58c9cb6b97da5a3041b24b7b520881200c42ead1c0f07264141fde5c6cc2c36c",
+      "bytes": 14260
+    },
+    {
       "path": "compose.build.yaml",
       "sha256": "4e9bc7650829360a502cf780a7a68344cd3a11de01e8bfaa759aad9518ce2ce4",
       "bytes": 641
     },
     {
       "path": "compose.yaml",
-      "sha256": "44dfe617f296c19932827a29e5b7c06b3b938a459bbf9af5c86a2de2a9193ab3",
+      "sha256": "b5356cbdbf9e2f6352b16ef3bc2d4ae26c5a8111afdce4ca8b831a8189d7fdfd",
       "bytes": 2944
     },
     {
+      "path": "CONTRIBUTING.md",
+      "sha256": "a27f1fe8fc957b45e2421741bcec6ff94c4c406749037dd73e1da41a29f73dd5",
+      "bytes": 732
+    },
+    {
       "path": "docs/ARTIFACT-INSTALL.md",
-      "sha256": "9a657d16978ff95683f427e28378be785a9bbbc34d8e9daa9227915507f75e5a",
+      "sha256": "7ac18a2dfdb2895dd487913356fd11a3f30fd91f647b18db31e0f3e425f15f10",
       "bytes": 4105
     },
     {
@@ -1025,8 +1000,8 @@
     },
     {
       "path": "docs/BETA-FREEZE.md",
-      "sha256": "cdc22d481ac55e43c31aada2b0f1947926168070150f17b16dd9dadbd53d7eec",
-      "bytes": 4210
+      "sha256": "5393108ffd68933141e1e06f1041e3ef211c44df00602a96ddfc8fc9f1289176",
+      "bytes": 4432
     },
     {
       "path": "docs/DEMONSTRATIONS.md",
@@ -1040,7 +1015,7 @@
     },
     {
       "path": "docs/DEPLOYMENT-QA.md",
-      "sha256": "a87ce79cf1c7b58ffbf412a110c21389fc9baaa1b9e0d1d865f8a9cdd765bc81",
+      "sha256": "15c242c3bb38e0c4e53923d41cd43d216121eab6007b869b2d9bf0ce977d5277",
       "bytes": 3824
     },
     {
@@ -1060,7 +1035,7 @@
     },
     {
       "path": "docs/IMAGE-REVIEW.md",
-      "sha256": "099436c2873a2912ec2554183071043237d41d7bf1768c9b62f7a6511dcd0d9a",
+      "sha256": "666cb3ba48aee60748d9b1284b0f159d964af2b9fdb9fe86a8b28ee757677ece",
       "bytes": 7541
     },
     {
@@ -1070,7 +1045,7 @@
     },
     {
       "path": "docs/RELEASE.md",
-      "sha256": "81b9ffbed4b14e018ae45d289e69aba5769f916e726d1ffcfa9b001918bbd328",
+      "sha256": "db06be71f2956ef8e49220e468c814b3029ba3a13781373eb46a422e0ae944ab",
       "bytes": 4278
     },
     {
@@ -1109,14 +1084,34 @@
       "bytes": 2856
     },
     {
+      "path": "LICENSE",
+      "sha256": "e1f6de38a3239b5123003d4d11d4c641951e2417a69aec8c6198e8d1a753c0a3",
+      "bytes": 1075
+    },
+    {
+      "path": "PRIVACY.md",
+      "sha256": "00866cb8f3087b662c3e9f242ac883ef3e13f25558dc85dec53e8cd5936e9bb6",
+      "bytes": 1364
+    },
+    {
+      "path": "README.md",
+      "sha256": "14c19a6f07ad025f18cfe33d12934243f40081073ffb0b24089c3c976e07386f",
+      "bytes": 7542
+    },
+    {
+      "path": "ROADMAP.md",
+      "sha256": "07cd890928d33fbd95db03c68ecd518c0bbb893a97171855e0861a63e66260b4",
+      "bytes": 16831
+    },
+    {
+      "path": "SECURITY.md",
+      "sha256": "00c5d99da68eada7210e7aed5d97e5b8a105048016c9f0f5c715ef82d20b9e00",
+      "bytes": 1633
+    },
+    {
       "path": "services/.dockerignore",
       "sha256": "0a388deff8828d7ee5becfc06b888b90e35494aa383d3be1d992e2bea265dd41",
       "bytes": 128
-    },
-    {
-      "path": "services/LICENSE",
-      "sha256": "e1f6de38a3239b5123003d4d11d4c641951e2417a69aec8c6198e8d1a753c0a3",
-      "bytes": 1075
     },
     {
       "path": "services/database.Dockerfile",
@@ -1139,9 +1134,9 @@
       "bytes": 320
     },
     {
-      "path": "services/proxy.Dockerfile",
-      "sha256": "dcb1d7a9d404e427d71d7508a14864a8196cf8dbdca4c57021717d623690d684",
-      "bytes": 2140
+      "path": "services/LICENSE",
+      "sha256": "e1f6de38a3239b5123003d4d11d4c641951e2417a69aec8c6198e8d1a753c0a3",
+      "bytes": 1075
     },
     {
       "path": "services/proxy/Caddyfile",
@@ -1164,9 +1159,19 @@
       "bytes": 184
     },
     {
+      "path": "services/proxy.Dockerfile",
+      "sha256": "dcb1d7a9d404e427d71d7508a14864a8196cf8dbdca4c57021717d623690d684",
+      "bytes": 2140
+    },
+    {
+      "path": "THIRD_PARTY_NOTICES.md",
+      "sha256": "ac5e9eb2fbc29c4ff59770537be03489e932355a2cabf9b125e02479c1f992ad",
+      "bytes": 814
+    },
+    {
       "path": "tools/artisan_checks.py",
-      "sha256": "cca718e060b317e38d065f53761f4b2e0a1c48a987e2414cad3d089569ebdc60",
-      "bytes": 11785
+      "sha256": "0108cd577ebc79990a8368c7ab90e39d65d2a3d0b2b87127162295505115057c",
+      "bytes": 13307
     },
     {
       "path": "tools/audit_dependencies.py",
@@ -1182,6 +1187,11 @@
       "path": "tools/batch_combine_checks.py",
       "sha256": "c4ed967cf498a4e8210fb6322c571920e1feec0a8faef01d8ea83d1ff42bd124",
       "bytes": 9928
+    },
+    {
+      "path": "tools/evidence_actions_checks.py",
+      "sha256": "75683bb2dabcc201e7cca9a131bdc4a451b341a3654a9a0a974c0f9cb3227cbc",
+      "bytes": 3566
     },
     {
       "path": "tools/green_checks.py",
@@ -1255,8 +1265,8 @@
     },
     {
       "path": "tools/test_release.py",
-      "sha256": "2d778f5c17cb4cddee1c9665b31202aa66b9efa2cc5a5e5c9286627242959b6e",
-      "bytes": 5417
+      "sha256": "6e89776594a159c84764e31d4aac110776ae33333873772b12e6d4478981c763",
+      "bytes": 5523
     },
     {
       "path": "tools/today_packing_checks.py",

@@ -51,6 +51,8 @@ from minimum_load_checks import run_minimum_load_checks
 run_minimum_load_checks(client,owner)
 from today_packing_checks import run_today_packing_checks
 run_today_packing_checks(client,owner)
+from evidence_actions_checks import run_evidence_actions_checks
+run_evidence_actions_checks(client,owner)
 from artisan_checks import run_artisan_checks
 run_artisan_checks(client,owner)
 from green_checks import run_green_checks

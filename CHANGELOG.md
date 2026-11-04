@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.0-rc22 — direct batch photo and log controls
+
+* Put Capture photo and Upload .alog directly under each coffee on Today and at the top of batch details, with the same actions on planner batch cards. Pending loads show disabled controls; recording a roast enables the controls without a reload.
+* Capture opens the existing batch camera preview when supported, keeping permission, review, retake and save explicit. Ordinary photo-page visits keep the camera off.
+* Preselect the latest matching saved preparation when uploading a completed log; retain explicit comparison changes and blank selections. Measurements, stock, existing attachments and plan history are unchanged. No schema or Companion change.
+
 ## 0.1.0-rc21 — configured minimum green loads
 
 - Roasters have configurable minimum and maximum green input. Automatic suggestions meet the minimum and show extra green/finished coffee; zero demand creates no roast. Manual sizing, splits, exact-total combining, acceptance, yield adjustments and Artisan preparations enforce the same bounds.

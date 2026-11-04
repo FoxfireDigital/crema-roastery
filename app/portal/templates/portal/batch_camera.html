@@ -80,4 +80,5 @@
  window.addEventListener('beforeunload',event=>{stopCamera();if(hasPhoto()&&!saving){event.preventDefault();event.returnValue=''}});
  if(!supported){start.disabled=true;report(cameraStatus,window.isSecureContext?'This browser does not offer webcam capture. You can upload a photo.':'Open the secure HTTPS portal address for webcam capture. You can still upload a photo here.')}
  updateSave();
+if(supported&&form.dataset.startCamera==='1'&&!document.hidden)startCamera();
 })();</script>

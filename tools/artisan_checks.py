@@ -88,6 +88,24 @@ def run_artisan_checks(client,user):
                     check=subprocess.run(['powershell.exe','-NoProfile','-ExecutionPolicy','Bypass','-File',str(target/'Prepare-Artisan.ps1'),'-ValidateOnly'],capture_output=True,text=True,timeout=30)
                     assert check.returncode==0,check.stderr
                     assert json.loads(check.stdout)['valid'] is True
+        # A prepared reference follows its physical batch into log upload automatically.
+        from portal.artisan_uploads import default_reference
+        linked=Batch.objects.create(date=plan.date,operator=user,coffee=coffee,roaster=machine,green_oz=20,roasted_oz=17,roasted_at=timezone.now(),roast_level='Medium',planned_group=group)
+        row.batch=linked;row.save(update_fields=['batch'])
+        chosen='prepared:'+str(prepared.pk)
+        assert default_reference(linked)==chosen
+        upload=f'/batches/{linked.pk}/artisan/upload/'
+        response=client.get(upload);assert response.status_code==200 and response.context['selected_reference']==chosen
+        preview=client.post(upload,{'action':'preview','document':SimpleUploadedFile('finished.alog',raw)})
+        assert preview.status_code==200 and preview.context['selected_reference']==chosen,preview.content
+        # An explicitly empty selection remains empty instead of being overwritten.
+        empty=client.post(upload,{'action':'preview','reference':'','document':SimpleUploadedFile('finished.alog',raw)})
+        assert empty.status_code==200 and empty.context['selected_reference']==''
+        saved=client.post(upload,{'action':'attach','ticket':preview.context['ticket'],'confirmed':'on'})
+        assert saved.status_code==302,saved.content
+        attached=BatchArtisanLog.objects.get(batch=linked)
+        assert attached.reference_snapshot['name']==configuration['name']
+        assert attached.reference_source_id==revision.source_id
         plan.version+=1;plan.save(update_fields=['version'])
         assert client.get(url).status_code==409,'Friendly filename bypassed stale preparation protection'
         transaction.set_rollback(True)
