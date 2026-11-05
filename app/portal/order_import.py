@@ -1,4 +1,5 @@
 """Read-only order staging; importing never changes Shopify payment/fulfillment."""
+from .order_payment import payment_allows_production
 import csv,io,re,copy,hashlib,json
 from decimal import Decimal,InvalidOperation
 from django import forms
@@ -204,6 +205,7 @@ def readiness(order):
     from .models import SubscriptionCycle
     linked=SubscriptionCycle.objects.filter(renewal_order=order).first()
     if linked:return False,'Already covered by early subscription plan #'+str(linked.plan_id)
+    if order.imported_at:return False,'Already added to plan #'+str(order.imported_plan_id)
     if renewal_review_needed(order):return False,'Review this renewal against early subscription production'
     cycle=forecast_cycle(order)
     if cycle and forecast_hold(order):return False,forecast_hold(order)
@@ -215,7 +217,7 @@ def readiness(order):
     if order.fulfillment_status=='fulfilled':return False,'Already fulfilled'
     if order.fulfillment_status in ('partial','partially_fulfilled'):return False,'Partially fulfilled — review remaining quantities before export'
     if order.fulfillment_status!='unfulfilled':return False,'Not a currently unfulfilled delivery — review its schedule/status'
-    if order.financial_status!='paid' and not (cycle and order.financial_status=='scheduled'):return False,'Payment / refund status needs review'
+    if not payment_allows_production(order) and not (cycle and order.financial_status=='scheduled'):return False,'Payment / refund status needs review'
     if order.subscription=='prepaid':return False,'Prepaid subscription: delivery scheduling must be connected before import'
     if order.instructions and not order.instructions_confirmed:return False,'Review the order’s instructions before adding it'
     if any(line.get('cycle_choice') and not line.get('coffee') and not line.get('skip') for line in order.lines):return False,'Choose this cycle’s coffees'
@@ -331,7 +333,7 @@ def import_rows(dismissed=False):
     coffee_names={str(pk):name for pk,name in Coffee.objects.values_list('pk','name')}
     for order in ImportOrder.objects.filter(dismissed_at__isnull=not dismissed).select_related('imported_plan','store')[:1000]:
         ready,reason=readiness(order)
-        actionable=not order.source_flags and not order.dismissed_at and not order.imported_at and not order.cancelled and (order.financial_status=='paid' or order.financial_status=='scheduled' and hasattr(order,'forecast_cycle')) and order.fulfillment_status=='unfulfilled' and order.subscription!='prepaid'
+        actionable=not order.source_flags and not order.dismissed_at and not order.imported_at and not order.cancelled and (payment_allows_production(order) or order.financial_status=='scheduled' and hasattr(order,'forecast_cycle')) and order.fulfillment_status=='unfulfilled' and order.subscription!='prepaid'
         weight=Decimal(0);allocations=[];mapped=True;source_items=[];seen_bundles=set()
         for line in order.lines:
             bundle=line.get('bundle_key')
@@ -364,7 +366,7 @@ def import_rows(dismissed=False):
         if closed:
             from .subscription_planning import forecast_hold
             early=forecast_hold(order)
-            rows[-1]['alert']=early if early is not None else 'Source changed after closure — completed snapshot retained' if order.source_changed or order.cancelled or order.financial_status!='paid' else ''
+            rows[-1]['alert']=early if early is not None else 'Source changed after closure — completed snapshot retained' if order.source_changed or order.cancelled or not payment_allows_production(order) else ''
     return rows
 
 

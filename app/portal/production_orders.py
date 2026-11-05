@@ -1,4 +1,5 @@
 """A shipping fulfillment is not proof of production; retain explicit decisions."""
+from .order_payment import payment_allows_production
 import hashlib,json
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
@@ -42,7 +43,7 @@ def source_hold_reason(order):
     if order.source_flags:return '; '.join(order.source_flags)
     if order.source_changed:return 'Source items changed — review refreshed items'
     if order.cancelled:return 'Cancelled source order — review required'
-    if order.financial_status!='paid':return 'Payment / refund status needs review'
+    if not payment_allows_production(order):return 'Payment / refund status needs review'
     if order.fulfillment_status=='unfulfilled':return ''
     if order.fulfillment_status=='fulfilled' and production_confirmed(order):return ''
     return 'Shipping marked fulfilled — confirm remaining production' if order.fulfillment_status=='fulfilled' else 'Delivery status / partial quantities need review'
@@ -54,7 +55,7 @@ def confirm_remaining_production(order,actor,reason,origin='portal'):
     if not reason or len(reason)>300:raise ValidationError('Record a reason of 1–300 characters.')
     plan=order.imported_plan
     if not order.imported_at or not plan or plan.closed_at or plan.historical or plan.removed_at or order.dismissed_at:raise ValidationError('Use an existing order on an active plan; completed history cannot return to production here.')
-    if order.fulfillment_status!='fulfilled' or order.cancelled or order.financial_status!='paid' or order.source_changed or order.source_flags:raise ValidationError('Only unchanged, paid orders marked fulfilled can be confirmed here. Review item, payment, cancellation or partial-delivery changes separately.')
+    if order.fulfillment_status!='fulfilled' or order.cancelled or not payment_allows_production(order) or order.source_changed or order.source_flags:raise ValidationError('Only unchanged, paid or partially refunded orders marked fulfilled can be confirmed here. Review item, payment, cancellation or partial-delivery changes separately.')
     if not IncomingOrderLine.objects.filter(import_order=order,group__plan=plan).exists():raise ValidationError('This order has no active demand on that plan.')
     if production_confirmed(order):return False
     previous=last_confirmation(order)

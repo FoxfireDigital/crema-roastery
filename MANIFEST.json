@@ -1,6 +1,6 @@
 {
   "name": "Crema",
-  "version": "0.1.0-rc24",
+  "version": "0.1.0-rc25",
   "license": "MIT",
   "files": [
     {
@@ -40,8 +40,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "506429f82d963219aadc100353a610ea2ec06b823cb018374269ad4bb487dca9",
-      "bytes": 17047
+      "sha256": "05fb382accd985269762bc5314c9def5e176769ae4194c4d787534c9498af327",
+      "bytes": 17565
     },
     {
       "path": "CONTRIBUTING.md",
@@ -410,13 +410,18 @@
     },
     {
       "path": "app/portal/order_import.py",
-      "sha256": "7144e51cf59d1ba64a3c188478d33df299d24a3baf9e15afa401e2471e74143a",
-      "bytes": 36421
+      "sha256": "a9cb4a914ef9e1bc154059f0c4915b02dc367fb37a8ca0ec62cc30ac93db0f85",
+      "bytes": 36580
     },
     {
       "path": "app/portal/order_lookup.py",
       "sha256": "f3bbb6cd235cd2838ddff4af3043ddb12d1ad50d4577eb7f65b91b253ba09676",
       "bytes": 8048
+    },
+    {
+      "path": "app/portal/order_payment.py",
+      "sha256": "b61bc041408c1adfd360be9690b541336d30f60fb58bf3bd437075c21989ec6c",
+      "bytes": 370
     },
     {
       "path": "app/portal/packing.py",
@@ -440,8 +445,8 @@
     },
     {
       "path": "app/portal/plan_completion.py",
-      "sha256": "0862346852375ece77f8ff954a0d748faa18216478216a1690a41665166dac74",
-      "bytes": 9260
+      "sha256": "0dd602ab4ba5e62db64b575ab621964d45fc4e18b922f7eac499ea5fc5fde3d6",
+      "bytes": 9372
     },
     {
       "path": "app/portal/planning.py",
@@ -460,8 +465,8 @@
     },
     {
       "path": "app/portal/production_orders.py",
-      "sha256": "b3ee16b3f4a90df0e7def36643622fce1f21b0f467c40224703400a9370a9d7c",
-      "bytes": 6516
+      "sha256": "1299c08c15d0ef08f6e7068d37bff38515914b5f15e1d5fd612eca72d9fb9f11",
+      "bytes": 6603
     },
     {
       "path": "app/portal/recovery.py",
@@ -535,8 +540,8 @@
     },
     {
       "path": "app/portal/subscription_planning.py",
-      "sha256": "2a80776b65398822c2a7bb35019292393a4e1964891a7df3a6fb81905a69500f",
-      "bytes": 12730
+      "sha256": "0e925524d2333fad26935a7498313569bdac1d5fda59abf238a16eec97d93da8",
+      "bytes": 12795
     },
     {
       "path": "app/portal/subscriptions.py",
@@ -755,8 +760,8 @@
     },
     {
       "path": "app/portal/templates/portal/help.html",
-      "sha256": "7265eb2adb50dfae2b1f4f53c0e47d87b8f2ce347d8dbf022aba57e10db6edd5",
-      "bytes": 17716
+      "sha256": "4d9ba12977d8876311d5792cdb477daadbd6fd1aae6313e38ad1428ba00922a6",
+      "bytes": 18558
     },
     {
       "path": "app/portal/templates/portal/historical_roasts.html",
@@ -825,8 +830,8 @@
     },
     {
       "path": "app/portal/templates/portal/order_panel.html",
-      "sha256": "580804b5ab67206b68752bdaeef2d61ac6918bf848167a58626b72c08644eb8b",
-      "bytes": 15913
+      "sha256": "0b125f6feaab8000f91bfa53cd23083e4a0fd39b06bf4dec9699568fcf35a503",
+      "bytes": 16096
     },
     {
       "path": "app/portal/templates/portal/orders.html",
@@ -1215,7 +1220,7 @@
     },
     {
       "path": "compose.yaml",
-      "sha256": "883d3455e7ced45baa5f4975221179467ce3ed91ff4ac72c6712c8fd939b4902",
+      "sha256": "53286189aa3dd3dc4d96717d55a403c9d643f5f5999a536a5641cf208e40a7e9",
       "bytes": 3036
     },
     {
@@ -1322,6 +1327,11 @@
       "path": "docs/companion-connections.md",
       "sha256": "f5fb975e557b460dc51f7826a43fb5d56b5eae391251308d0fb0410a19f1d1eb",
       "bytes": 9341
+    },
+    {
+      "path": "docs/partial-refunds.md",
+      "sha256": "462bbfbd48376a475f9060bbeb3fc14d78feff1453e618eaaf4b2e45e1bf8748",
+      "bytes": 1723
     },
     {
       "path": "docs/roast-day-corrections.md",
@@ -1440,8 +1450,8 @@
     },
     {
       "path": "tools/production_order_checks.py",
-      "sha256": "86004749a44637afb2ec10d2b9ee1e7bcfd4e124b210f0a56ec2c1ec5560b38b",
-      "bytes": 5290
+      "sha256": "1ed805a7a472fd192012f7e02e644d645aca6430269f5b295f4bf3ebf9dd9598",
+      "bytes": 9830
     },
     {
       "path": "tools/render_registry_yaml.py",

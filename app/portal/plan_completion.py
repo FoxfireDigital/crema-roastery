@@ -1,4 +1,5 @@
 """Explicit, audited plan closure without releasing orders or rewriting results."""
+from .order_payment import payment_allows_production,PRODUCTION_PAYMENT_STATUSES
 from decimal import Decimal,InvalidOperation
 import json
 from django.contrib import messages
@@ -45,7 +46,7 @@ def completion_checks(plan):
         if early is not None:
             if early:issues.append(order.reference+': '+early)
             continue
-        if order.source_flags or order.source_changed or order.cancelled or order.financial_status!='paid' or order.fulfillment_status not in ('unfulfilled','fulfilled'):
+        if order.source_flags or order.source_changed or order.cancelled or not payment_allows_production(order) or order.fulfillment_status not in ('unfulfilled','fulfilled'):
             issues.append(order.reference+': review the changed source items, payment or fulfillment status before closing.')
     return list(dict.fromkeys(issues))
 
@@ -84,7 +85,7 @@ def close_plan(request,pk,reopen=False):
                     plan.closed_at=None;plan.closed_by=None
                     # Explicit reopening authorizes correction of already completed
                     # work. New demand still uses the ordinary revision checks.
-                    changed=ImportOrder.objects.filter(imported_plan=plan,imported_at__isnull=False).exclude(source_changed=False,cancelled=False,financial_status='paid',fulfillment_status__in=['unfulfilled','fulfilled']).exists()
+                    changed=ImportOrder.objects.filter(imported_plan=plan,imported_at__isnull=False).exclude(source_changed=False,cancelled=False,financial_status__in=PRODUCTION_PAYMENT_STATUSES,fulfillment_status__in=['unfulfilled','fulfilled']).exists()
                     if changed:plan.accepted_at=None;plan.accepted_by=None
                     elif not plan.accepted_at:plan.accepted_at=timezone.now();plan.accepted_by=request.user
                     details={'before':json.loads(json.dumps(before,default=str)),'reason':reason};action='reopened'

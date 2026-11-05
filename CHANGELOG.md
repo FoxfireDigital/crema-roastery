@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.0-rc25 candidate — partial-refund production handling
+
+* Recognize paid and partially refunded orders throughout import readiness, active-plan holds, subscription renewal linking and completion. Preserve original payment status and all cancellation, changed-item, fulfillment and duplicate checks.
+* Explain shipping refunds/local pickup and remaining item quantities on imports and in the how-to. Retain completed orders in their existing plans rather than flagging them as new early-subscription renewals.
+
 ## 0.1.0-rc24 candidate — compact Companion and roast-day corrections
 
 * Show saved wholesale business names in the account selector instead of internal model record labels.

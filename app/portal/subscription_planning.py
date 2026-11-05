@@ -1,4 +1,5 @@
 """Explicit early production, separate from billing; never infer renewal identities."""
+from .order_payment import payment_allows_production
 import copy,hashlib,json
 from datetime import datetime,time,timedelta
 from decimal import Decimal,InvalidOperation
@@ -55,7 +56,7 @@ def forecast_hold(order):
     if order.cancelled or order.source_flags or order.source_changed:return 'Early delivery changed — review its saved production choices'
     if cycle.renewal_order_id:
         actual=cycle.renewal_order
-        if actual.cancelled or actual.source_flags or actual.source_changed or actual.financial_status!='paid' or actual.fulfillment_status not in ('unfulfilled','fulfilled'):
+        if actual.cancelled or actual.source_flags or actual.source_changed or not payment_allows_production(actual) or actual.fulfillment_status not in ('unfulfilled','fulfilled'):
             return 'Linked subscription renewal changed or is unpaid — review its source status'
         linked=cycle.plan.events.filter(action='subscription_linked',details__cycle=cycle.pk).first()
         if not linked or linked.details.get('items')!=renewal_items(actual):return 'Linked renewal items changed after matching — review early production before continuing'
@@ -148,7 +149,7 @@ def reconcile_renewal(request,pk):
                 else:
                     cycle=next((c for c in fresh if str(c.pk)==choice),None)
                     if not cycle:raise ValidationError('Choose an existing early delivery or confirm that this is a different delivery.')
-                    if order.cancelled or order.source_flags or order.source_changed or order.financial_status!='paid':raise ValidationError('Review item changes, cancellation and payment before linking this renewal.')
+                    if order.cancelled or order.source_flags or order.source_changed or not payment_allows_production(order):raise ValidationError('Review item changes, cancellation and payment before linking this renewal.')
                     total=original_total(order)
                     if total is None or total!=original_total(cycle.forecast_order):raise ValidationError('The original delivery totals differ or are unknown. Review the source items before linking; no demand was changed.')
                     cycle=SubscriptionCycle.objects.select_for_update().get(pk=cycle.pk)

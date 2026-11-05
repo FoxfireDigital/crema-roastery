@@ -10,6 +10,56 @@ def run_production_order_checks(client,user):
     from portal.shopify import stage_orders
     from portal.roast_sheet import row_token
     from portal.production_orders import production_confirmed,source_hold_reason,review_token
+    # A shipping refund must retain remaining coffee demand without treating a
+    # partial refund as a cancellation or manufacturing another subscription.
+    from portal.shopify_client import normalize_order
+    from portal.order_import import import_rows
+    from portal.plan_completion import completion_checks
+    with transaction.atomic():
+        node={'id':'gid://shopify/Order/9990002','legacyResourceId':'9990002','name':'#FICTIONAL-PARTIAL-REFUND',
+              'createdAt':timezone.now().isoformat(),'displayFinancialStatus':'PARTIALLY_REFUNDED','displayFulfillmentStatus':'UNFULFILLED',
+              'all_lines':[{'id':'gid://shopify/LineItem/9990002','name':'Demo Hearth - 16 oz / Whole bean','sku':'','quantity':3,'currentQuantity':2,'unfulfilledQuantity':2}]}
+        normalized=normalize_order(node)
+        assert normalized['financial_status']=='partially_refunded' and normalized['lines'][0]['quantity']==2
+        stage_orders([normalized]);order=ImportOrder.objects.get(external_id='9990002')
+        assert readiness(order)[0] and not source_hold_reason(order)
+        listing=next(r for r in import_rows() if r['order'].pk==order.pk)
+        assert listing['ready'] and listing['actionable'] and listing['category']=='ready'
+        assert b'Partial refund: check remaining coffee quantities' in client.get('/imports/').content
+        for payment in ['refunded','pending','partially_paid','authorized','voided','unknown','']:
+            order.financial_status=payment
+            assert not readiness(order)[0] and source_hold_reason(order),payment
+        order.financial_status='partially_refunded';order.cancelled=True
+        assert not readiness(order)[0] and source_hold_reason(order)
+        order.cancelled=False;order.fulfillment_status='partial'
+        assert not readiness(order)[0] and source_hold_reason(order)
+        order.fulfillment_status='fulfilled'
+        assert not readiness(order)[0] and source_hold_reason(order)
+        order.fulfillment_status='unfulfilled';order.source_changed=True
+        assert not readiness(order)[0] and source_hold_reason(order)
+        order.source_changed=False;order.financial_status='paid';order.save()
+        plan=RoastPlan.objects.create(created_by=user);add_selected(plan,[order.pk],user);plan.refresh_from_db()
+        assert client.post(f'/plans/{plan.pk}/accept/',{'version':plan.version}).status_code==302
+        plan.refresh_from_db();before=list(IncomingOrderLine.objects.filter(import_order=order).values('pk','finished_oz','packaging','grind'))
+        stage_orders([normalized]);order.refresh_from_db();plan.refresh_from_db()
+        assert plan.accepted_at and not source_hold_reason(order),'Shipping-only partial refund paused unchanged coffee'
+        assert not any('payment or fulfillment' in issue for issue in completion_checks(plan))
+        assert list(IncomingOrderLine.objects.filter(import_order=order).values('pk','finished_oz','packaging','grind'))==before
+        assert not readiness(order)[0] and readiness(order)[1].startswith('Already added')
+        # A fulfilled, partially refunded order still needs an explicit production confirmation.
+        fulfilled=copy.deepcopy(normalized);fulfilled['fulfillment_status']='fulfilled';fulfilled['lines'][0]['fulfilled']=True
+        stage_orders([fulfilled]);order.refresh_from_db();plan.refresh_from_db()
+        assert not plan.accepted_at and source_hold_reason(order)
+        assert client.post(f'/imports/{order.pk}/production/',{'review_token':review_token(order,user),'confirmed':'on','reason':'Shipping refunded for local pickup; coffee still needed'}).status_code==302
+        order.refresh_from_db();assert production_confirmed(order) and not source_hold_reason(order)
+        changed=copy.deepcopy(node);changed['all_lines'][0].update(currentQuantity=1,unfulfilledQuantity=1)
+        stage_orders([normalize_order(changed)]);order.refresh_from_db()
+        assert order.source_changed and source_hold_reason(order)
+        assert list(IncomingOrderLine.objects.filter(import_order=order).values('pk','finished_oz','packaging','grind'))==before
+        empty=copy.deepcopy(node);empty['all_lines'][0].update(currentQuantity=0,unfulfilledQuantity=0)
+        assert normalize_order(empty)['lines']==[],'Refunded item remained in demand'
+        transaction.set_rollback(True)
+    print('PASS: partial refunds retain current coffee quantities, visible status, import/active-plan/completion parity, fulfilled confirmation and refund/cancellation/change/duplicate guards.')
     with transaction.atomic():
         line=infer_item('Demo Hearth - 16 oz / Whole bean',1,use_saved=False)
         line.update(line_key='1',source_line='1',source_total='16',fulfilled=False,api_line_id='gid://shopify/LineItem/9990001')
