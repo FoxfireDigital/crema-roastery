@@ -23,7 +23,7 @@ services:
     security_opt: [no-new-privileges:true]
     restart: "no"
   postgres:
-    image: crema-database:0.1.0-rc24
+    image: crema-database:0.1.0-rc25
     pull_policy: never
     environment:
       POSTGRES_USER: coffee
@@ -74,7 +74,7 @@ services:
     security_opt: [no-new-privileges:true]
     restart: unless-stopped
   proxy:
-    image: crema-proxy:0.1.0-rc24
+    image: crema-proxy:0.1.0-rc25
     pull_policy: never
     ports: ["80:80", "443:443"]
     environment:
