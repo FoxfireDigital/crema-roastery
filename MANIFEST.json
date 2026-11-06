@@ -40,8 +40,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "05fb382accd985269762bc5314c9def5e176769ae4194c4d787534c9498af327",
-      "bytes": 17565
+      "sha256": "ee26975d47d7fc073e81325868f663745443668c7bf9ab65e921685f3eed4fc3",
+      "bytes": 17853
     },
     {
       "path": "CONTRIBUTING.md",
@@ -760,8 +760,8 @@
     },
     {
       "path": "app/portal/templates/portal/help.html",
-      "sha256": "4d9ba12977d8876311d5792cdb477daadbd6fd1aae6313e38ad1428ba00922a6",
-      "bytes": 18558
+      "sha256": "e80993b152681a5fcca8fca94f0b225be02171de14c83a7ab119009e0dcd4e50",
+      "bytes": 29017
     },
     {
       "path": "app/portal/templates/portal/historical_roasts.html",
@@ -1322,6 +1322,11 @@
       "path": "docs/TRUENAS.md",
       "sha256": "a1c020b33fd20bea39beee1def92aed83131354f689300c7f75472b5bce65c42",
       "bytes": 2856
+    },
+    {
+      "path": "docs/USER-GUIDE.md",
+      "sha256": "c40c1df7366fc0b1998e5e983a0705e8bc6d53d8c8f7e858f852af0a3cdfa992",
+      "bytes": 21798
     },
     {
       "path": "docs/companion-connections.md",

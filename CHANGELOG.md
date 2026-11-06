@@ -2,6 +2,8 @@
 
 ## 0.1.0-rc25 candidate — partial-refund production handling
 
+* Reorganize Help into linked roast-day chapters, with bagged/on-deck and measured-bucket guidance, finished totals, completed-record corrections, Companion and saving help. Identify manual workflows without promising unavailable transfer/correction controls. Add an offline user guide.
+
 * Recognize paid and partially refunded orders throughout import readiness, active-plan holds, subscription renewal linking and completion. Preserve original payment status and all cancellation, changed-item, fulfillment and duplicate checks.
 * Explain shipping refunds/local pickup and remaining item quantities on imports and in the how-to. Retain completed orders in their existing plans rather than flagging them as new early-subscription renewals.
 
