@@ -2,9 +2,11 @@
 
 Installation remains YAML based. The review candidate builds its application, proxy and database images together; [checked artifacts and digest-pinned registry YAML](docs/ARTIFACT-INSTALL.md) are also prepared and tested privately before publication.
 
-Self-hosted coffee production planning, from received orders through roasting, bagging and labels. MIT licensed. One separate installation and database per roastery. 0.1.0-rc23 is a private review candidate with an optional themed Companion and browser-approved roast preparation connections. It must pass the staged upgrade and operational gates before a public beta.
+Self-hosted coffee production planning, from received orders through roasting, bagging and labels. MIT licensed. One separate installation and database per roastery. 0.1.0-rc26 is a private review candidate with an optional themed Companion and browser-approved roast preparation connections. It must pass the staged upgrade and operational gates before a public beta.
 
 ## What it includes
+
+- Reviewed product costs, receipt/recipe sourcing, planned/actual yield, retail and wholesale margins, saved estimates and CSV exports. Read-only Shopify catalog price links; missing costs remain unknown. See [costing guide](docs/COSTING.md).
 
 - Shopify read-only order/product checks and CSV imports, duplicate protection, subscription assortments, wholesale orders and dismissals.
 - Experimental: store-specific order adapters for Shopify, WooCommerce, Wix and Squarespace, plus a mapped CSV preview. New adapters have synthetic coverage; merchant-account verification is pending. See docs/MARKETPLACES.md.

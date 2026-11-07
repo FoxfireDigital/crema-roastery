@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.0-rc26 candidate — costs and margins
+
+* Add staff-only product cost profiles, receipt/recipe-based or manual green costs, planned and actual-batch yield, packaging/flavor/labor allocations, retail and wholesale production/contribution comparisons and per-order fixed-fee allocation. Unknown costs remain unknown; currencies remain separate.
+* Retain reviewed calculations in immutable dated snapshots with source references, audited stale/replay guards and formula-safe CSV exports. Costing never changes inventory, production or employee pay.
+* Read Shopify variant list prices, currency and tax treatment during catalog checks. Link a price only after explicit matching; no store writes, tax guesses or fabricated revenue.
+* Add costing help and a financial-workflow regression suite. Public-source, hosting and Companion release gates remain unchanged.
+
 ## 0.1.0-rc25 candidate — partial-refund production handling
 
 * Reorganize Help into linked roast-day chapters, with bagged/on-deck and measured-bucket guidance, finished totals, completed-record corrections, Companion and saving help. Identify manual workflows without promising unavailable transfer/correction controls. Add an offline user guide.

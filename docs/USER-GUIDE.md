@@ -242,6 +242,22 @@ A stale link must not imply that a removed order was produced by the plan. Clear
 
 Link notes to a batch or origin sample. House ratings use 0–10; blanks remain unscored. Complete all axes for a radar shape. Scores do not alter yield or stock. Archive mistakes with reasons and retain edit history. Artisan flavor values keep their labelled original scale, separate from portal tastings.
 
+## Costs and margins
+
+Staff can open **More → Coffee & artwork → Costs & margins**. Add a profile for a coffee, roast, label and finished bag size. Keep all costs in one currency. Blank inputs remain unknown; enter 0 only for costs that genuinely do not apply.
+
+1. Enter a reviewed manual green cost per pound, or use the physical coffee's recipe and each ingredient's latest nonvoided landed receipt on or before the basis date. Missing or different-currency costs leave the calculation incomplete. This is an estimate, not FIFO or an accounting stock valuation.
+2. Add per-bag packaging, label, flavoring and other production costs. Allocate production minutes and hourly cost; payroll and employee rates are unchanged. Zero minutes explicitly means no allocated labor.
+3. Enter retail and wholesale prices before tax and consider discounts. Enter separate retail and wholesale merchant percentages, fixed fees per order and other selling costs. The selected number of identical bags shares one fixed fee; this is not a mixed-order settlement report.
+4. Preview with planned yield, or select a completed batch to use its actual yield and saved ingredients. Old green usage is never reconstructed. Estimated receipt weights remain flagged.
+5. Save a reviewed estimate to freeze inputs, prices, sources and results. Later profile or invoice edits do not rewrite it. Export saved estimates as CSV.
+
+Production profit subtracts production cost from price. Contribution also subtracts merchant fees and entered other selling costs. Divide profit by price for margin, not markup. Missing production inputs prevent complete production margins; missing fees prevent complete contribution margins. Zero selling prices have no defined percentage margin.
+
+Refresh **Product checks** to read Shopify variant prices, store currency and tax treatment. Explicitly match the exact variant to a cost profile and choose to use its checked retail list price. This never changes Shopify prices or orders. Tax-inclusive or unverified prices need a manual net price. List prices are not discounted order revenue; currencies are not converted.
+
+Labor allocations do not change hours or pay. Cost profiles and snapshots do not change stock or production. Give a reason for assumption edits. These management estimates do not automatically include all overhead or establish accounting/tax treatment.
+
 ## Hours and pay
 
 Clock in and out, record breaks, and edit forgotten times or remove incorrect entries with a reason. History remains. Review accumulated unpaid hours, not just a weekly total.

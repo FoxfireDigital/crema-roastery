@@ -52,7 +52,13 @@ from portal.stores import connections,refresh_store
 from portal.store_csv import csv_import,csv_example
 from portal.production_orders import review_production
 from portal.batch_combine import combine_batches
+from portal import costing
 urlpatterns=[
+    path('costing/',costing.dashboard,name='costing'),
+    path('costing/new/',costing.profile_page,name='cost_profile_new'),
+    path('costing/<int:pk>/',costing.profile_page,name='cost_profile'),
+    path('costing/estimates/<int:pk>/',costing.estimate_page,name='cost_estimate'),
+    path('costing/estimates/<int:pk>/export/',costing.export_estimate,name='cost_estimate_export'),
     path('companion/',companion.devices,name='companion_devices'),
     path('companion/install/',companion_downloads.install,name='companion_install'),
     path('companion/download/<str:kind>/',companion_downloads.download,name='companion_download'),

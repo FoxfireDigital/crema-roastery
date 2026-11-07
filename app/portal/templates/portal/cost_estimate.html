@@ -1,0 +1,5 @@
+{% extends 'portal/base.html' %}{% block content %}
+<h1>Saved estimate #{{ saved.pk }} · {{ payload.name }}</h1><p>Saved {{ saved.created_at }} by {{ saved.created_by }}. This snapshot retains its original cost sources and assumptions; it is not an invoice or accounting valuation.</p>
+<p><a class="button secondary" href="/costing/">Costs &amp; margins</a><a class="button secondary" href="/costing/{{ saved.profile_id }}/">New comparison from current inputs</a><a class="button" href="/costing/estimates/{{ saved.pk }}/export/">Export estimate CSV</a></p>
+{% include 'portal/cost_result.html' %}
+{% endblock %}

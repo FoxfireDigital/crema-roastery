@@ -12,7 +12,7 @@ from django.utils import timezone
 from . import shopify_client as api
 from .models import ShopifyCatalog,ShopifyConnection,Coffee,LabelVariant
 
-VARIANT_FIELDS='id title sku selectedOptions { name value }'
+VARIANT_FIELDS='id title sku price selectedOptions { name value }'
 PRODUCT_FIELDS='id title status productType description onlineStoreUrl variants(first:20) { nodes { '+VARIANT_FIELDS+' } pageInfo { hasNextPage endCursor } }'
 OFFERED={'ACTIVE','UNLISTED'}
 
@@ -23,9 +23,14 @@ def catalog_nodes(value):
 
 
 def fetch_catalog(connection):
-    products=[];cursor=None;seen=set();cursors=set();variant_ids=set()
+    products=[];cursor=None;seen=set();cursors=set();variant_ids=set();currency=None;taxes=None
     for _ in range(100):
-        data=api.graphql(connection,'query CoffeeCatalog($after:String) { products(first:25,after:$after,sortKey:ID) { nodes { '+PRODUCT_FIELDS+' } pageInfo { hasNextPage endCursor } } }',{'after':cursor})
+        data=api.graphql(connection,'query CoffeeCatalog($after:String) { shop { currencyCode taxesIncluded } products(first:25,after:$after,sortKey:ID) { nodes { '+PRODUCT_FIELDS+' } pageInfo { hasNextPage endCursor } } }',{'after':cursor})
+        shop=data.get('shop') or {}
+        if shop:
+            if not isinstance(shop.get('currencyCode'),str) or not re.fullmatch(r'[A-Z]{3}',shop['currencyCode']) or not isinstance(shop.get('taxesIncluded'),bool):raise ValidationError('Shopify returned an invalid price currency or tax setting. The previous product check was preserved.')
+            if currency is not None and (currency!=shop['currencyCode'] or taxes!=shop['taxesIncluded']):raise ValidationError('Shopify currency or tax settings changed during the check. Refresh again.')
+            currency=shop['currencyCode'];taxes=shop['taxesIncluded']
         nodes,info=catalog_nodes(data.get('products'))
         for node in nodes:
             if not isinstance(node.get('id'),str) or not node['id'].startswith('gid://shopify/Product/') or node['id'] in seen or not isinstance(node.get('title'),str) or not node['title'].strip() or node.get('status') not in OFFERED|{'DRAFT','ARCHIVED'} or 'onlineStoreUrl' not in node:
@@ -44,6 +49,10 @@ def fetch_catalog(connection):
                 if not isinstance(variant.get('id'),str) or not variant['id'].startswith('gid://shopify/ProductVariant/') or variant['id'] in variant_ids or not isinstance(variant.get('title'),str) or not isinstance(variant.get('selectedOptions'),list) or any(not isinstance(opt,dict) or not isinstance(opt.get('name'),str) or not isinstance(opt.get('value'),str) for opt in variant['selectedOptions']):
                     raise ValidationError('Shopify returned invalid or repeated variants. The previous product check was preserved.')
                 variant_ids.add(variant['id'])
+                if variant.get('price') is not None:
+                    price=variant['price']
+                    if not isinstance(price,str) or not re.fullmatch(r'\d{1,12}(?:\.\d{1,4})?',price) or currency is None:raise ValidationError('Shopify returned an invalid variant price. The previous product check was preserved.')
+                    variant['currency']=currency;variant['taxesIncluded']=taxes
             products.append({key:node.get(key) for key in ['id','title','status','productType','description','onlineStoreUrl']}|{'variants':variants})
         if not info['hasNextPage']:return products
         cursor=info['endCursor']
@@ -140,7 +149,7 @@ def product_report(products):
                 if infer_grind(text)=='unknown':vissues.append('Grind not specified in the product/variant name — confirm on the order.')
             for issue in vissues:
                 if issue not in issues:issues.append(issue)
-            variants.append({'title':variant['title'],'sku':sku,'size':size,'mapping':kind,'issues':vissues})
+            variants.append({'title':variant['title'],'sku':sku,'size':size,'mapping':kind,'issues':vissues,'price':variant.get('price'),'currency':variant.get('currency'),'taxes_included':variant.get('taxesIncluded')})
         rows.append({'title':product['title'],'status':product['status'],'offered':offered,'published':bool(product.get('onlineStoreUrl')),'names':sorted(names),'variants':variants,'issues':issues,'issue_count':len(issues),'search':' '.join([product['title'],*names,*[v['sku'] for v in variants]]).casefold()})
     gaps=[]
     for coffee in coffees.values():

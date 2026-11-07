@@ -151,3 +151,6 @@ for model in [StoreSyncRun,StoreProductMapping,StoreEvent]:admin.site.register(m
 class StoreDirectoryAdmin(SourcingReadOnlyAdmin):
     exclude=['credentials_cipher']
     def get_readonly_fields(self,request,obj=None):return [f.name for f in self.model._meta.fields if f.name!='credentials_cipher']
+
+from .models import CostProfile,CostEstimate,CostEvent
+for model in [CostProfile,CostEstimate,CostEvent]:admin.site.register(model,SourcingReadOnlyAdmin)

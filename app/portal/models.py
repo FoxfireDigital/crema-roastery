@@ -1224,3 +1224,49 @@ class OrderImportPreview(models.Model):
     count=models.PositiveIntegerField(default=0)
     mapping_hash=models.CharField(max_length=64,blank=True)
     store_version=models.PositiveIntegerField(default=0)
+
+
+class CostProfile(models.Model):
+    """Reviewed management-cost assumptions; never stock movements or store prices."""
+    name=models.CharField(max_length=160,unique=True)
+    coffee=models.ForeignKey(Coffee,on_delete=models.PROTECT)
+    label_variant=models.ForeignKey(LabelVariant,on_delete=models.PROTECT,null=True,blank=True)
+    roast_level=models.CharField(max_length=20,choices=ROAST_LEVELS)
+    size_oz=models.DecimalField(max_digits=10,decimal_places=2)
+    currency=models.CharField(max_length=3,default='USD')
+    parameters=models.JSONField(default=dict)
+    active=models.BooleanField(default=True)
+    version=models.PositiveIntegerField(default=0)
+    updated_by=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.PROTECT)
+    created_at=models.DateTimeField(auto_now_add=True)
+    updated_at=models.DateTimeField(auto_now=True)
+    class Meta:
+        ordering=['name']
+        constraints=[models.CheckConstraint(condition=Q(size_oz__gt=0),name='cost_profile_positive_bag')]
+    def __str__(self):return self.name
+
+
+class CostEstimate(models.Model):
+    """Append-only calculation with frozen prices, sources and assumptions."""
+    profile=models.ForeignKey(CostProfile,on_delete=models.PROTECT,related_name='estimates')
+    batch=models.ForeignKey(Batch,on_delete=models.PROTECT,null=True,blank=True)
+    created_by=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.PROTECT)
+    created_at=models.DateTimeField(default=timezone.now)
+    payload=models.JSONField(default=dict)
+    class Meta:ordering=['-id']
+    def save(self,*args,**kwargs):
+        if self.pk and type(self).objects.filter(pk=self.pk).exists():raise ValidationError('Saved cost estimates are immutable. Save a new estimate instead.')
+        return super().save(*args,**kwargs)
+
+
+class CostEvent(models.Model):
+    profile=models.ForeignKey(CostProfile,on_delete=models.PROTECT,related_name='events')
+    actor=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.PROTECT)
+    action=models.CharField(max_length=20)
+    before=models.JSONField(default=dict)
+    after=models.JSONField(default=dict)
+    at=models.DateTimeField(default=timezone.now)
+    request_key=models.UUIDField(unique=True)
+    request_hash=models.CharField(max_length=64)
+    estimate=models.ForeignKey(CostEstimate,on_delete=models.PROTECT,null=True,blank=True)
+    class Meta:ordering=['-id']
