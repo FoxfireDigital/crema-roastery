@@ -41,6 +41,8 @@ from sourcing_checks import run_sourcing_cupping_checks
 run_sourcing_cupping_checks(Path(temp.name),client,owner)
 from costing_checks import run_costing_checks
 run_costing_checks(Path(temp.name),client,owner)
+from onboarding_checks import run_onboarding_checks
+run_onboarding_checks(client,owner)
 from store_checks import run_store_checks
 run_store_checks(Path(temp.name),client,owner)
 from production_checks import run_production_checks

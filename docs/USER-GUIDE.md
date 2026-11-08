@@ -15,6 +15,8 @@ A practical guide from received orders to a completed roast day. Times use **you
 
 ## Set up your roastery
 
+Staff can open **More → Getting started** for a live ten-step setup checklist. It identifies missing machine limits, catalog rules, recipes, order sources, artwork and cost assumptions and links to existing editing screens. Return after saving to refresh the indicators. Configured means saved inputs are present; it does not certify physical limits, live stores, paper alignment or a backup restore. Accounts and recovery remain operator reviews. Optional features can be completed later. The shared demo has a confined fictional preview; see [the setup guide](GETTING-STARTED.md).
+
 In Administration, add roasters with their actual minimum and maximum green-input weights. Add coffees, kind and standard roast. Blends and flavors keep their standard roast. Flavors need an eligible Medium base; exclude half-caff and decaf from ordinary flavor-base use.
 
 Portal configuration holds the display name, default Medium base, optional four-coffee frac assortment and Shopify Admin bookmark. Give people separate accounts and grant staff access deliberately. Pay-manager access is a separate permission. Choose your marketplaces before creating their connections.

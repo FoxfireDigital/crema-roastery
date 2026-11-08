@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.0-rc27 candidate — guided setup and exact release review
+
+Adds a read-only Getting started checklist, live missing-configuration indicators and existing-screen action buttons. Shared demo gets a confined fictional preview. Adds bounded source/history/manifest/archive review tooling and current public-beta decision/evidence instructions. No schema, stock, account, order or hardware changes.
+
 ## 0.1.0-rc26 candidate — costs and margins
 
 * Add staff-only product cost profiles, receipt/recipe-based or manual green costs, planned and actual-batch yield, packaging/flavor/labor allocations, retail and wholesale production/contribution comparisons and per-order fixed-fee allocation. Unknown costs remain unknown; currencies remain separate.

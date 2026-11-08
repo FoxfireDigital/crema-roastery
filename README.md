@@ -2,7 +2,9 @@
 
 Installation remains YAML based. The review candidate builds its application, proxy and database images together; [checked artifacts and digest-pinned registry YAML](docs/ARTIFACT-INSTALL.md) are also prepared and tested privately before publication.
 
-Self-hosted coffee production planning, from received orders through roasting, bagging and labels. MIT licensed. One separate installation and database per roastery. 0.1.0-rc26 is a private review candidate with an optional themed Companion and browser-approved roast preparation connections. It must pass the staged upgrade and operational gates before a public beta.
+[Guided setup](docs/GETTING-STARTED.md) · [Public beta review](docs/PUBLIC-BETA-REVIEW.md)
+
+Self-hosted coffee production planning, from received orders through roasting, bagging and labels. MIT licensed. One separate installation and database per roastery. 0.1.0-rc27 is a private review candidate with an optional themed Companion and browser-approved roast preparation connections. It must pass the staged upgrade and operational gates before a public beta.
 
 ## What it includes
 

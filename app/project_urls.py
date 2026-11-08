@@ -53,7 +53,9 @@ from portal.store_csv import csv_import,csv_example
 from portal.production_orders import review_production
 from portal.batch_combine import combine_batches
 from portal import costing
+from portal.onboarding import getting_started
 urlpatterns=[
+    path('getting-started/',getting_started,name='getting_started'),
     path('costing/',costing.dashboard,name='costing'),
     path('costing/new/',costing.profile_page,name='cost_profile_new'),
     path('costing/<int:pk>/',costing.profile_page,name='cost_profile'),

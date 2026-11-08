@@ -1,6 +1,6 @@
 {
   "name": "Crema",
-  "version": "0.1.0-rc26",
+  "version": "0.1.0-rc27",
   "license": "MIT",
   "files": [
     {
@@ -40,8 +40,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "2f5157222457f25bef65e5c3bf9f3fd62cc2d0c3385806fe0c5719c2d48b50ae",
-      "bytes": 18719
+      "sha256": "af01b85cfc1fc7252f610bcbce35a312b931a6dfd2abcac46b8f4ae6d4cac401",
+      "bytes": 19122
     },
     {
       "path": "CONTRIBUTING.md",
@@ -60,8 +60,8 @@
     },
     {
       "path": "README.md",
-      "sha256": "52e4739c949b937550a9cf0b733b2053f9ee6369684b3db839c162694d668a8e",
-      "bytes": 7923
+      "sha256": "e9d68f779ef2f27b31701fa229e6a176a1684558a3b4189216837f4d53aa354d",
+      "bytes": 8016
     },
     {
       "path": "ROADMAP.md",
@@ -290,8 +290,8 @@
     },
     {
       "path": "app/portal/instance.py",
-      "sha256": "89ae5b32a83cd15d48a3d1222d58f0c0c5c3321609eb84f48b2d13eb9b163b27",
-      "bytes": 1906
+      "sha256": "707cbee5dc935130175611c74743cfd543926788c7150ae3e7011ed19e301e4a",
+      "bytes": 1452
     },
     {
       "path": "app/portal/inventory_actor.py",
@@ -422,6 +422,11 @@
       "path": "app/portal/neutral_print.py",
       "sha256": "13075f8ca730498e8a5b20731e5456df584197d7897d47a6cb595d14c58a3a96",
       "bytes": 1403
+    },
+    {
+      "path": "app/portal/onboarding.py",
+      "sha256": "1c8d4eb57d320245fbe0e7da77dbd81947b468cb2b94f841a0edd12c8e130341",
+      "bytes": 9813
     },
     {
       "path": "app/portal/order_import.py",
@@ -640,8 +645,8 @@
     },
     {
       "path": "app/portal/templates/portal/base.html",
-      "sha256": "d3396b9eb0d81ee99fe64cbc9b978978704374a8ba4247ba57a14345765be2e8",
-      "bytes": 15092
+      "sha256": "52f4bc75c30f914a5310c48ba77b775fc6e29208bd3e2b7c073ecaed709ae4d1",
+      "bytes": 15172
     },
     {
       "path": "app/portal/templates/portal/batch.html",
@@ -795,8 +800,8 @@
     },
     {
       "path": "app/portal/templates/portal/help.html",
-      "sha256": "16eb462331c1a8e880d22f16daecd126ff8f891c92c8aa80ed70f7c1954cc89a",
-      "bytes": 32296
+      "sha256": "fb3de72879822dc3582342c9ce132fb0324493b8cec4a3996bd833a92133aa0e",
+      "bytes": 32760
     },
     {
       "path": "app/portal/templates/portal/historical_roasts.html",
@@ -975,8 +980,8 @@
     },
     {
       "path": "app/portal/templates/portal/setup.html",
-      "sha256": "38727107347751178905f3f82b4ed48da7bfb6b672da1f2ee97ff7c724514313",
-      "bytes": 3303
+      "sha256": "84230fb171ddd46ed2daf8353859acaf6a2dc702646052d8ca39fa14deaf34f5",
+      "bytes": 3842
     },
     {
       "path": "app/portal/templates/portal/shopfloor_styles.html",
@@ -1100,8 +1105,8 @@
     },
     {
       "path": "app/project_urls.py",
-      "sha256": "de48668d73d474464a99b87b25f71ba59d91b6455cf9512b7b452eb4fd2576c5",
-      "bytes": 11907
+      "sha256": "33140ecb5e0389eebe31d1f1800c763539e73c62ee060a9e0196bfdc99664c47",
+      "bytes": 12022
     },
     {
       "path": "app/project_wsgi.py",
@@ -1255,7 +1260,7 @@
     },
     {
       "path": "compose.yaml",
-      "sha256": "68a35fd2b79fbb502fb648b43afb20cd14597bf085041c53a2eb91b1af3d6a0a",
+      "sha256": "7715246627a46a0d5804cbd5298a8ecad382eee3a924033adc070e3e40cda4d5",
       "bytes": 3036
     },
     {
@@ -1309,6 +1314,11 @@
       "bytes": 5035
     },
     {
+      "path": "docs/GETTING-STARTED.md",
+      "sha256": "90ab08e55782b97c76d497e74299efffabc9521c5c42419279c409d1b51aa49a",
+      "bytes": 2678
+    },
+    {
       "path": "docs/GREEN-STOCK.md",
       "sha256": "4c3b1d571b5522f90f8a8ec54434f48605e35874468f485605711f0d2a275137",
       "bytes": 2657
@@ -1324,9 +1334,14 @@
       "bytes": 6894
     },
     {
+      "path": "docs/PUBLIC-BETA-REVIEW.md",
+      "sha256": "4202a812e560620a5fe0e3349979ca49ba883cde1068f18a7b1e60bae5cea9ec",
+      "bytes": 4941
+    },
+    {
       "path": "docs/RELEASE.md",
-      "sha256": "db06be71f2956ef8e49220e468c814b3029ba3a13781373eb46a422e0ae944ab",
-      "bytes": 4278
+      "sha256": "dc537b899d1cc3503582e4dc9702c72c58e3a4585dcf8eea40b01aa9c3dd26cb",
+      "bytes": 4615
     },
     {
       "path": "docs/SECURITY-REVIEW.md",
@@ -1365,8 +1380,8 @@
     },
     {
       "path": "docs/USER-GUIDE.md",
-      "sha256": "433dc84b627ebc6a2744be37eeb2d1510a0ddbd87db2a10ff98f7d487e1f1568",
-      "bytes": 24180
+      "sha256": "125115d5627c97ce70f2ed37ab44d1b7a865f442e3b206140f2561c0be626df9",
+      "bytes": 24766
     },
     {
       "path": "docs/companion-connections.md",
@@ -1489,6 +1504,11 @@
       "bytes": 8671
     },
     {
+      "path": "tools/onboarding_checks.py",
+      "sha256": "c8b8d8295660c430edd9a24ee0de977f6bc64ca23c29f26d0604db1c94bf62cb",
+      "bytes": 3501
+    },
+    {
       "path": "tools/privacy_check.py",
       "sha256": "9560010fa1ffd17e86474d28f5c655310d15594981e471c4553bc8b9a407eabb",
       "bytes": 3530
@@ -1502,6 +1522,11 @@
       "path": "tools/production_order_checks.py",
       "sha256": "1ed805a7a472fd192012f7e02e644d645aca6430269f5b295f4bf3ebf9dd9598",
       "bytes": 9830
+    },
+    {
+      "path": "tools/release_review.py",
+      "sha256": "9e84ce4953f0e6ccac16b957b9caff98ed3ca5affee4ea1a000ff48a9382b2bb",
+      "bytes": 4755
     },
     {
       "path": "tools/render_registry_yaml.py",
@@ -1550,8 +1575,8 @@
     },
     {
       "path": "tools/test_release.py",
-      "sha256": "a71c009039e68dfe862fb2230ddd8bf702ba1cc2298c31be581e8960d4fd3576",
-      "bytes": 5703
+      "sha256": "997cfbcb13da0bc9d86ebc21cdbc0059e650f61b7f4d08e58c07004ca616ac08",
+      "bytes": 5791
     },
     {
       "path": "tools/today_packing_checks.py",

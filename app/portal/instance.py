@@ -19,5 +19,5 @@ from django.shortcuts import render
 @staff_member_required
 @require_GET
 def setup_page(request):
-    from .models import Coffee,Roaster,GreenBeanItem,LabelArtwork,ShopifyConnection,PayrollAccess
-    return render(request,'portal/setup.html',{'coffee_count':Coffee.objects.filter(active=True).count(),'machine_count':Roaster.objects.filter(active=True,max_green_oz__gt=0).count(),'green_count':GreenBeanItem.objects.filter(active=True).count(),'art_count':LabelArtwork.objects.filter(active=True).count(),'connected':ShopifyConnection.objects.filter(connected_at__isnull=False).exists(),'pay_managers':PayrollAccess.objects.filter(manages_rates=True).count()})
+    from .onboarding import checklist
+    return render(request,'portal/setup.html',checklist(request.user))
