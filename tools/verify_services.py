@@ -62,6 +62,8 @@ def metadata(archive, prefix, binary):
 def verify(proxy_image, database_image, version, revision, output):
     proxy_info = inspect_image(proxy_image, 'Crema proxy', version, revision)
     db_info = inspect_image(database_image, 'Crema database', version, revision)
+    apt_versions = run(['docker', 'run', '--rm', '--network=none', '--read-only', '--entrypoint=dpkg-query', database_image, '-W', '-f=${Version}\n', 'apt', 'libapt-pkg6.0']).decode().splitlines()
+    assert apt_versions == ['2.6.2', '2.6.2'], 'Database image package manager fix is absent.'
     with filesystem(proxy_image) as archive:
         names = archive.getnames()
         proxy, proxy_notices = metadata(archive, 'usr/share/crema-proxy', 'usr/bin/caddy')

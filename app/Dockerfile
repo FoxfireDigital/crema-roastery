@@ -1,11 +1,12 @@
 FROM python:3.12-slim-bookworm@sha256:e697c81897302a4c4333bade000d98038fbb21eb064f8ee1fd42d02ebcd9d337 AS driver-build
+ARG APT_VERSION=2.6.2
 ARG LIBPQ_VERSION=15.19-0+deb12u1
 ARG JPEG_VERSION=1:2.1.5-2
 ARG WEBP_VERSION=1.2.4-0.2+deb12u1
 ARG FFI_VERSION=3.4.4-1
 ARG ZLIB_VERSION=1:1.2.13.dfsg-1
 WORKDIR /build
-RUN apt-get update && apt-get install --yes --no-install-recommends gcc g++ libc6-dev pkg-config libpq-dev=${LIBPQ_VERSION} libjpeg62-turbo-dev=${JPEG_VERSION} libwebp-dev=${WEBP_VERSION} libffi-dev=${FFI_VERSION} zlib1g-dev=${ZLIB_VERSION} \
+RUN apt-get -o Acquire::Retries=0 update && apt-get -o Acquire::Retries=0 install --yes --no-install-recommends apt=${APT_VERSION} libapt-pkg6.0=${APT_VERSION} gcc g++ libc6-dev pkg-config libpq-dev=${LIBPQ_VERSION} libjpeg62-turbo-dev=${JPEG_VERSION} libwebp-dev=${WEBP_VERSION} libffi-dev=${FFI_VERSION} zlib1g-dev=${ZLIB_VERSION} \
     && rm -rf /var/lib/apt/lists/* \
     && python -m pip install --no-cache-dir pip==26.2.2 setuptools==83.0.0 wheel==0.48.0 pybind11==3.0.1 pycparser==3.12 packaging==26.3
 # Retain the exact C extension source, including its license and build backend.
@@ -18,6 +19,7 @@ RUN python -m pip wheel --no-cache-dir --no-deps --no-build-isolation --wheel-di
     && python -c "import json,hashlib,importlib.metadata as m,subprocess; from pathlib import Path; files=list(Path('/build').glob('*/*')); report={'format':'crema-native-build-v2','implementation':'psycopg-c','nativeBuilds':['psycopg-c','Pillow','cffi'],'pillowCodecs':['JPEG','PNG','WEBP'],'files':[{'path':str(p.relative_to('/build')),'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in files if p.is_file()],'pythonBuildTools':{n:m.version(n) for n in ['pip','setuptools','wheel','pybind11','pycparser']},'debianBuildPackages':subprocess.check_output(['dpkg-query','-W','-f=\u0024{binary:Package}\\t\u0024{Version}\\n'],text=True).splitlines()}; Path('/build/driver-build.json').write_text(json.dumps(report,indent=2)+'\\n')"
 
 FROM python:3.12-slim-bookworm@sha256:e697c81897302a4c4333bade000d98038fbb21eb064f8ee1fd42d02ebcd9d337
+ARG APT_VERSION=2.6.2
 ARG LIBPQ_VERSION=15.19-0+deb12u1
 ARG TZDATA_VERSION=2026f-0+deb12u1
 ARG JPEG_VERSION=1:2.1.5-2
@@ -37,7 +39,7 @@ COPY --from=driver-build /build/wheels/ /tmp/driver-wheels/
 COPY --from=driver-build /build/sources/ /usr/share/crema/sources/
 COPY --from=driver-build /build/driver-build.json /usr/share/crema/driver-build.json
 RUN chmod 0444 /usr/share/crema/sources/*.tar.gz \
-    && apt-get update && apt-get install --yes --no-install-recommends libpq5=${LIBPQ_VERSION} tzdata=${TZDATA_VERSION} libjpeg62-turbo=${JPEG_VERSION} libwebp7=${WEBP_VERSION} libwebpdemux2=${WEBP_VERSION} libwebpmux3=${WEBP_VERSION} libffi8=${FFI_VERSION} zlib1g=${ZLIB_VERSION} \
+    && apt-get -o Acquire::Retries=0 update && apt-get -o Acquire::Retries=0 install --yes --no-install-recommends apt=${APT_VERSION} libapt-pkg6.0=${APT_VERSION} libpq5=${LIBPQ_VERSION} tzdata=${TZDATA_VERSION} libjpeg62-turbo=${JPEG_VERSION} libwebp7=${WEBP_VERSION} libwebpdemux2=${WEBP_VERSION} libwebpmux3=${WEBP_VERSION} libffi8=${FFI_VERSION} zlib1g=${ZLIB_VERSION} \
     && rm -rf /var/lib/apt/lists/* \
     && python -m pip install --no-cache-dir --upgrade pip==26.2.2 \
     && python -m pip install --no-cache-dir --no-deps /tmp/driver-wheels/*.whl \

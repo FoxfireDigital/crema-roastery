@@ -1,6 +1,6 @@
 {
   "name": "Crema",
-  "version": "0.1.0-rc27",
+  "version": "0.1.0-rc28",
   "license": "MIT",
   "files": [
     {
@@ -40,8 +40,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "af01b85cfc1fc7252f610bcbce35a312b931a6dfd2abcac46b8f4ae6d4cac401",
-      "bytes": 19122
+      "sha256": "13708b70db3a9efadc1ea5bc2f552486fe9019c77da82f571bc5902fa2e1884b",
+      "bytes": 19485
     },
     {
       "path": "CONTRIBUTING.md",
@@ -60,7 +60,7 @@
     },
     {
       "path": "README.md",
-      "sha256": "e9d68f779ef2f27b31701fa229e6a176a1684558a3b4189216837f4d53aa354d",
+      "sha256": "d04ad76d93cfe0e8f2fed76d6e04c28a46a158de0707fc22f84deb319f27e81b",
       "bytes": 8016
     },
     {
@@ -85,8 +85,8 @@
     },
     {
       "path": "app/Dockerfile",
-      "sha256": "0d5519ec21ffead58cd5634c47f289ea77168ec615569ac430fdfe4a0b65eb67",
-      "bytes": 5108
+      "sha256": "b5c9fa47243282efd5fb4f2d0efb377ab8a1e6345650831d284f379bd9906867",
+      "bytes": 5336
     },
     {
       "path": "app/LICENSE",
@@ -1260,7 +1260,7 @@
     },
     {
       "path": "compose.yaml",
-      "sha256": "7715246627a46a0d5804cbd5298a8ecad382eee3a924033adc070e3e40cda4d5",
+      "sha256": "51114544a6900fbb77c882c1c3c201e04f6bc6586aaadf3b316d379b549443b9",
       "bytes": 3036
     },
     {
@@ -1340,7 +1340,7 @@
     },
     {
       "path": "docs/RELEASE.md",
-      "sha256": "dc537b899d1cc3503582e4dc9702c72c58e3a4585dcf8eea40b01aa9c3dd26cb",
+      "sha256": "91ab7105827788729bad7f3b137443a43fa02ce21309db8dfc7e58c9d07d3af2",
       "bytes": 4615
     },
     {
@@ -1410,8 +1410,8 @@
     },
     {
       "path": "services/database.Dockerfile",
-      "sha256": "e5f1c9c2973e9169c55306ffc2aee40f0a61e50ef0e570f89b88d22c1d4e3d9d",
-      "bytes": 1661
+      "sha256": "7771fccc37af1f26dfde44efe75a31378df31989e99522cb830e7ef2c1e0a3b4",
+      "bytes": 1775
     },
     {
       "path": "services/go_notices.go",
@@ -1585,13 +1585,13 @@
     },
     {
       "path": "tools/verify_image.py",
-      "sha256": "fe5b182ae182aa3b26861c99cff341af206e6d3522a8016b8abd65abcc520c86",
-      "bytes": 10652
+      "sha256": "d997a6864215451da2a29cb6294c335433a56cfae45973325581deccb2993872",
+      "bytes": 10928
     },
     {
       "path": "tools/verify_services.py",
-      "sha256": "e09ef37032c41e52d0fe60405a2df9d04bf5c6d5f6c04f49a76522a5ad477752",
-      "bytes": 6166
+      "sha256": "84cdc51efecffe004cb91a5c39b8bfee40f8af77127922e6b87d30d1127bd264",
+      "bytes": 6458
     }
   ]
 }

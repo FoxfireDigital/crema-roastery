@@ -129,6 +129,8 @@ def main():
     assert data['files'] == expected, 'Image application files differ from reviewed source (missing, modified or unexpected files).'
     assert not data['writableApplicationFiles'], 'Runtime user can modify application files.'
     assert data['inventory']['python'] and data['inventory']['debian'], 'Component inventory is incomplete.'
+    apt_versions = run(['docker', 'run', '--rm', '--network=none', '--read-only', '--entrypoint=dpkg-query', args.image, '-W', '-f=${Version}\n', 'apt', 'libapt-pkg6.0']).splitlines()
+    assert apt_versions == ['2.6.2', '2.6.2'], 'Application package manager fix is absent.'
     args.output.mkdir(parents=True, exist_ok=True)
     (args.output / 'components.json').write_text(json.dumps(data['inventory'], indent=2) + '\n')
     (args.output / 'database-driver.json').write_text(json.dumps(data['driver'], indent=2) + '\n')

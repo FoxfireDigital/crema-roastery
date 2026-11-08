@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.0-rc28 candidate — patched package manager
+
+Pins Debian APT and libapt-pkg6.0 to 2.6.2 in the application build/runtime and database image. Initial package operations disable retry reuse while the older base package manager installs the fix. Exact-image checks assert the patched package versions. Remaining vendor findings are retained for assessment.
+
 ## 0.1.0-rc27 candidate — guided setup and exact release review
 
 Adds a read-only Getting started checklist, live missing-configuration indicators and existing-screen action buttons. Shared demo gets a confined fictional preview. Adds bounded source/history/manifest/archive review tooling and current public-beta decision/evidence instructions. No schema, stock, account, order or hardware changes.
