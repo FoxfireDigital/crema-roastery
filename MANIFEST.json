@@ -40,8 +40,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "bc9ee1917671bb0311e1101dc4edc1129949d023de030fd990c396dfb91bc46b",
-      "bytes": 20127
+      "sha256": "ce23b75c1ce4d594e6e5ce0bdb05f61477d52b6576db3e3d5f019a5bbab4110d",
+      "bytes": 20253
     },
     {
       "path": "CONTRIBUTING.md",
@@ -85,7 +85,7 @@
     },
     {
       "path": "app/Dockerfile",
-      "sha256": "b5c9fa47243282efd5fb4f2d0efb377ab8a1e6345650831d284f379bd9906867",
+      "sha256": "e97f0c00c96f2b9bd24f2cbfaced81674fc60547b53eb64cc7a8558ff8357b55",
       "bytes": 5336
     },
     {

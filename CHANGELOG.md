@@ -6,6 +6,7 @@
 * Edit single-origin roasts on planned orders across bag sizes, with stale-edit checks and preservation of completed work.
 * Display ordinary bag weights, allow explicit standard-artwork overrides for custom roasts, and configure grind-checkbox marks per artwork with snapshot checks.
 * Put labeling first in packing, followed by flavoring/grinding where needed, bagging and sealing. Today and Bagging share the same saved progress.
+* Update the matching Debian libpq build/runtime pins to 15.20-0+deb12u1 after the previous version left the current archive.
 
 ## 0.1.0-rc28 candidate — patched package manager
 
