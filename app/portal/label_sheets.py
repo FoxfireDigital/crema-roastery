@@ -3,6 +3,7 @@ from decimal import Decimal,InvalidOperation
 from functools import lru_cache
 from pathlib import Path
 import hashlib,io,json,uuid,re
+from urllib.parse import urlencode
 from django import forms
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -17,6 +18,7 @@ from django.shortcuts import get_object_or_404,render,redirect
 from .models import Coffee,RoastPlan,IncomingOrderLine,LabelPrintRun,LabelQueueLock,LabelArtwork,ArtworkCoffeeDecision
 from .packing import packing_token
 from .artwork_rules import NEUTRAL_ROAST,neutral_allowed,validate_masks
+from .artwork_grind import DOT_RADIUS, grind_box, grind_boxes, valid_boxes
 
 ART_ROOT=settings.BASE_DIR/'label_artwork'
 MAX_LABELS=1000
@@ -31,11 +33,20 @@ def bundled_catalog():
 def saved_art_record(art):
     neutral=art.roast_level==NEUTRAL_ROAST and neutral_allowed(art.coffee,art.size_oz,art.per_sheet)
     validate_masks(art.print_masks)
-    return {'id':str(art.pk),'db':True,'coffee':art.coffee.name,'label':art.label_variant.name if art.label_variant else '',
+    approved=next((event.get('production_roast') for event in reversed(art.events)
+                   if event.get('action')=='approved_roast_mismatch' and event.get('artwork_sha256')==art.sha256
+                   and event.get('printed_roast')==art.roast_level),None)
+    record={'id':str(art.pk),'db':True,'coffee':art.coffee.name,'label':art.label_variant.name if art.label_variant else '',
             'size_oz':str(art.size_oz),'roast':art.roast_level,'width':art.width,'height':art.height,'sha256':art.sha256,
             'per_sheet':art.per_sheet,'preferred':True,'blocked':'','created_at':art.created_at.isoformat(),
             'ground_only':any(event.get('printed_grind')=='ground' for event in art.events),
             'roast_neutral':neutral,'print_masks':art.print_masks if neutral else []}
+    if approved and approved==art.coffee.standard_roast and approved!=art.roast_level and not neutral:
+        record['approved_production_roast']=approved
+    boxes=grind_boxes(art)
+    if boxes:
+        record['grind_boxes']=boxes
+    return record
 
 
 def catalog():
@@ -69,7 +80,8 @@ def find_art(coffee,label,size,roast,temp=None,grind=None):
     candidates=[a for a in catalog() if a['coffee']==coffee and a['label']==label and Decimal(a['size_oz'])==size]
     if not candidates:
         return None,('Special-label artwork missing: '+label+'.') if label else 'No matching artwork for this coffee and bag weight.'
-    matching=[a for a in candidates if (a['roast']==roast or a.get('roast_neutral') and size==80) and not a['blocked']]
+    matching=[a for a in candidates if (a['roast']==roast or a.get('roast_neutral') and size==80
+                                      or a.get('approved_production_roast')==roast) and not a['blocked']]
     if temp is not None:
         matching=[a for a in matching if a.get('roast_neutral') and size==80]
         if not matching:return None,'Custom finish temperature: use roast-neutral 5 lb single-origin artwork.'
@@ -79,9 +91,16 @@ def find_art(coffee,label,size,roast,temp=None,grind=None):
     if grind=='whole':
         matching=[a for a in matching if not a.get('ground_only')]
         if not matching:return None,'Artwork says ground coffee. Supply whole-bean artwork for this bag.'
-    return max(matching,key=lambda a:(bool(a.get('roast_neutral')),bool(a.get('db')),a.get('created_at',''),a['preferred'],a['width']*a['height'])),''
+    approved=any(a.get('approved_production_roast')==roast for a in matching)
+    def rank(art):
+        if approved:
+            priority=2*(art['roast']==roast)+(art.get('approved_production_roast')==roast)
+        else:
+            priority=bool(art.get('roast_neutral'))
+        return priority,bool(art.get('db')),art.get('created_at',''),art['preferred'],art['width']*art['height']
+    return max(matching,key=rank),''
 
-def order_labels(plan):
+def order_labels(plan,standard_labels=()):
     rows=[]
     if not plan:return rows
     lines=IncomingOrderLine.objects.filter(group__plan=plan).select_related('group__plan','group__coffee','group__label_variant','product_coffee','product_label')
@@ -100,18 +119,30 @@ def order_labels(plan):
             rows.append({'key':f'{line.pk}-missing','coffee':coffee,'label':label,'reference':line.reference,'grind':line.get_grind_display(),'issue':'Confirm bag sizes and counts in Bagging / labels.','bags':None})
             continue
         for index,(size,bags,layout) in enumerate(packs):
-            art,issue=find_art(coffee,label,size,line.group.roast_level,line.group.target_finish_temp_f,grind=line.grind)
+            key=f'{line.pk}-{index}'
+            roast=line.group.roast_level
+            art,issue=find_art(coffee,label,size,roast,line.group.target_finish_temp_f,grind=line.grind)
             if art and art.get('per_sheet',layout)!=layout:issue='Artwork sheet layout differs from this bag’s packaging. Review it in the artwork library.'
-            if not issue and line.grind in ('unknown','ground'):issue='Confirm grind size in Bagging / labels.'
+            known_grind=line.grind in ('whole','regular','fine','coarse')
+            if not issue and not known_grind:issue='Confirm grind size in Bagging / labels.'
             if not issue and layout not in (4,8):issue='Confirm four- or eight-per-sheet layout in Bagging / labels.'
-            rows.append({'key':f'{line.pk}-{index}','line_token':packing_token(line),'coffee':coffee,'label':label,
-                         'reference':line.reference,'size':str(size.normalize()),'grind':line.get_grind_display(),
-                         'bags':bags,'layout':layout,'art':art,'issue':issue})
+            standard=line.ordered_coffee.standard_roast
+            fallback=None
+            if not art and line.ordered_coffee.kind=='single_origin' and standard and known_grind and layout in (4,8) and (roast!=standard or line.group.target_finish_temp_f is not None):
+                candidate,_=find_art(coffee,label,size,standard,grind=line.grind)
+                if candidate and candidate.get('per_sheet',layout)==layout:
+                    fallback=candidate
+            override=bool(fallback and key in standard_labels)
+            if override:art,issue=fallback,''
+            rows.append({'key':key,'line_token':packing_token(line),'coffee':coffee,'label':label,
+                         'reference':line.reference,'size':format(size.normalize(),'f'),'grind':line.get_grind_display(),'grind_code':line.grind,
+                         'bags':bags,'layout':layout,'art':art,'issue':issue,'standard_art':fallback,
+                         'standard_override':override,'planned_roast':roast})
     return rows
 
 def order_revision(plan,rows):
     body=[plan.pk if plan else None,plan.removed_at.isoformat() if plan and plan.removed_at else None,
-          [{k:r.get(k) for k in ['key','line_token','bags','layout','issue']} for r in rows],
+          [{k:r.get(k) for k in ['key','line_token','bags','layout','issue','standard_override','planned_roast']} for r in rows],
           hashlib.sha256(json.dumps(catalog(),sort_keys=True).encode()).hexdigest()]
     return hashlib.sha256(json.dumps(body,sort_keys=True).encode()).hexdigest()
 
@@ -125,6 +156,7 @@ class SheetForm(forms.Form):
     fill_subscriptions=forms.BooleanField(required=False,initial=True,label='Fill unused positions from subscriptions due in the next 14 days')
     fill_bestsellers=forms.BooleanField(required=False,initial=True,label='Fill remaining positions with the most-ordered matching label from the last 21 days')
     selected=forms.MultipleChoiceField(required=False,widget=forms.CheckboxSelectMultiple)
+    standard_labels=forms.MultipleChoiceField(required=False,widget=forms.MultipleHiddenInput)
     layout=forms.TypedChoiceField(choices=[(4,'4 labels per Letter sheet'),(8,'8 labels per Letter sheet - fracs')],coerce=int,initial=4,label='Sheet layout')
     start_slot=forms.IntegerField(min_value=1,max_value=8,initial=1,label='First unused position on the first sheet')
     left=forms.DecimalField(min_value=0,max_value=2,decimal_places=4,initial=Decimal('.0625'),label='Left margin (inches)')
@@ -139,6 +171,7 @@ class SheetForm(forms.Form):
     def __init__(self,*args,rows,**kwargs):
         super().__init__(*args,**kwargs)
         self.fields['selected'].choices=[(r['key'],r['coffee']) for r in rows if not r['issue']]
+        self.fields['standard_labels'].choices=[(r['key'],r['coffee']) for r in rows if r.get('standard_art')]
         for row in rows:
             if not row['issue']:self.fields['count_'+row['key']]=forms.IntegerField(min_value=0,max_value=row['bags'],required=False,initial=row['bags'],label='Labels to print for '+row['coffee'])
     def clean(self):
@@ -194,29 +227,33 @@ def make_pdf(rows,data,alignment=False):
         slot=data['start_slot']-1;count=0
         for r in rows:
             original_bytes=art_bytes(r['art']);reader=ImageReader(io.BytesIO(original_bytes))
+            box=grind_box(r.get('grind_code'))
+            point=valid_boxes(r['art'].get('grind_boxes')).get(box)
             for _ in range(r['bags']):
                 if slot==data['layout']:c.showPage();black_page();slot=0
                 x,y,w,h=boxes[slot]
                 iw,ih=reader.getSize()
-                if data['layout']==8 and iw<ih:
+                rotated=data['layout']==8 and iw<ih
+                c.saveState()
+                if rotated:
                     # The owner supplies portrait frac originals. Turn the
                     # complete drawing on the horizontal sheet; never rewrite
                     # its pixels, text, proportions or saved original.
-                    c.saveState();c.translate(x+w,y);c.rotate(90)
-                    c.drawImage(reader,0,0,width=h,height=w,preserveAspectRatio=True,anchor='c',mask='auto')
-                    c.restoreState()
-                else:
-                    c.drawImage(reader,x,y,width=w,height=h,preserveAspectRatio=True,anchor='c',mask='auto')
-                    # Cover only the reviewed fixed-roast line in new neutral
-                    # print masters. Original bytes and old run snapshots stay
-                    # untouched. Coordinates follow the fitted image, not box.
-                    masks=r['art'].get('print_masks',[])
-                    if masks:
-                        if not r['art'].get('roast_neutral') or data['layout']!=4:raise ValueError('Invalid neutral label print metadata.')
-                        validate_masks(masks)
-                        scale=min(w/iw,h/ih);dw,dh=iw*scale,ih*scale;left=x+(w-dw)/2;bottom=y+(h-dh)/2
-                        from .neutral_print import cover_fixed_roast
-                        cover_fixed_roast(c,original_bytes,masks,left,bottom,dw,dh)
+                    c.translate(x+w,y);c.rotate(90)
+                    x,y,w,h=0,0,h,w
+                scale=min(w/iw,h/ih);dw,dh=iw*scale,ih*scale
+                left,bottom=x+(w-dw)/2,y+(h-dh)/2
+                c.drawImage(reader,left,bottom,width=dw,height=dh,mask='auto')
+                masks=r['art'].get('print_masks',[])
+                if masks and not rotated:
+                    if not r['art'].get('roast_neutral') or data['layout']!=4:raise ValueError('Invalid neutral label print metadata.')
+                    validate_masks(masks)
+                    from .neutral_print import cover_fixed_roast
+                    cover_fixed_roast(c,original_bytes,masks,left,bottom,dw,dh)
+                if point:
+                    c.setFillColorRGB(0,0,0)
+                    c.circle(left+dw*point[0],bottom+dh*(1-point[1]),min(dw,dh)*DOT_RADIUS,stroke=0,fill=1)
+                c.restoreState()
                 slot+=1;count+=1
         if not count:raise ValueError('No labels selected.')
         c.showPage()
@@ -241,7 +278,7 @@ def artwork_print_preview(request,asset_id):
     art=get_object_or_404(LabelArtwork.objects.select_related('coffee','label_variant'),pk=asset_id)
     settings={'layout':4,'start_slot':1,**{k:Decimal(v) for k,v in {'left':'.0625','top':'.0625','width':'4.15625','height':'5.40625','gap_x':'.0625','gap_y':'.0625','offset_x':'0','offset_y':'0'}.items()}}
     if art.per_sheet==8:settings.update(layout=8,left=Decimal('.25'),top=Decimal('.25'),width=Decimal(4),height=Decimal('2.625'),gap_x=Decimal(0),gap_y=Decimal(0))
-    return pdf_response(make_pdf([{'art':saved_art_record(art),'bags':1}],settings),'preview','label-print-preview')
+    return pdf_response(make_pdf([{'art':saved_art_record(art),'bags':1,'grind_code':request.GET.get('grind')}],settings),'preview','label-print-preview')
 
 @login_required
 def reprint_run(request,pk):
@@ -283,9 +320,12 @@ def label_sheets(request):
     from .label_filler import upcoming_labels,fill_last_sheet,forecast_revision
     plan_id=request.POST.get('plan') if request.method=='POST' else request.GET.get('plan')
     plan=get_object_or_404(RoastPlan.all_objects,pk=plan_id) if plan_id else RoastPlan.objects.filter(accepted_at__isnull=False).first() or RoastPlan.objects.first()
-    rows=order_labels(plan);revision=sheet_revision(plan,rows)
+    standard_labels=set((request.POST if request.method=='POST' else request.GET).getlist('standard_labels'))
+    rows=order_labels(plan,standard_labels);revision=sheet_revision(plan,rows)
     token=signing.dumps({'nonce':str(uuid.uuid4()),'user':request.user.pk,'plan':plan.pk if plan else None},salt='coffee-label-sheet')
-    initial={'revision':revision,'queue_token':token,'selected':[r['key'] for r in rows if not r['issue']]}
+    active_overrides={r['key'] for r in rows if r.get('standard_override')}
+    initial={'revision':revision,'queue_token':token,'selected':[r['key'] for r in rows if not r['issue']],
+             'standard_labels':sorted(active_overrides)}
     form=SheetForm(request.POST if request.method=='POST' else None,rows=rows,initial=initial)
     if request.method=='POST' and form.is_valid():
         data=form.cleaned_data;mode=request.POST.get('action')
@@ -306,7 +346,7 @@ def label_sheets(request):
             with transaction.atomic():
                 lock=LabelQueueLock.objects.select_for_update().get(pk=1)
                 if plan:plan.refresh_from_db()
-                current_rows=order_labels(plan);current_revision=order_revision(plan,current_rows)
+                current_rows=order_labels(plan,set(data['standard_labels']));current_revision=order_revision(plan,current_rows)
                 source_revision=forecast_revision(include_queue=False)
                 request_hash=hashlib.sha256(json.dumps({k:v for k,v in data.items() if k!='queue_token'},sort_keys=True,default=str).encode()).hexdigest()
                 run=LabelPrintRun.objects.filter(request_key=nonce).first()
@@ -335,12 +375,17 @@ def label_sheets(request):
     for r in rows:
         r['selected']=r['key'] in selected
         if not r['issue']:r['count_field']=form['count_'+r['key']]
+        if r.get('standard_art'):
+            toggled=active_overrides ^ {r['key']}
+            r['standard_toggle']='?'+urlencode([('plan',plan.pk), *[('standard_labels',key) for key in sorted(toggled)]])
     choices=[]
     standards=dict(Coffee.objects.values_list('name','standard_roast'))
     for art in catalog():
         item=dict(art)
         standard=standards.get(art['coffee'])
         item['warning']=art['blocked'] or (f"Artwork says {art['roast']}; standard {art['coffee']} is {standard}." if standard and art['roast']!=standard and not art.get('roast_neutral') else '')
+        if art.get('approved_production_roast')==standard and standard:
+            item['warning']+=f' Approved for {standard} orders.'
         choices.append(item)
     pool,forecast_issues=upcoming_labels()
     from .label_bestsellers import bestseller_labels

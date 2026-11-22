@@ -1,0 +1,69 @@
+{% extends 'portal/base.html' %}
+{% block content %}
+<h1>Grind checkboxes</h1>
+<p>{{ artwork.coffee }} · {{ artwork.source_name }}</p>
+<a href="{% url 'artwork_library' %}" class="button secondary">Back to artwork</a>
+<section class="card">
+  <p>Choose a box below, then click its center on the image. You can also enter the position as a percentage from the artwork’s left and top edges. Leave both coordinates empty for artwork without that box.</p>
+  <form method="post" id="grind-box-form">
+    {% csrf_token %}{{ form.revision }}{{ form.non_field_errors }}
+    <div style="display:flex;gap:1rem;flex-wrap:wrap;align-items:start">
+      <fieldset>
+        <legend>Whole Bean</legend>
+        <button type="button" class="secondary" data-place="whole" aria-pressed="true">Place Whole Bean dot</button>
+        <p>{{ form.whole_x.label_tag }}{{ form.whole_x }}{{ form.whole_x.errors }}</p>
+        <p>{{ form.whole_y.label_tag }}{{ form.whole_y }}{{ form.whole_y.errors }}</p>
+      </fieldset>
+      <fieldset>
+        <legend>Ground</legend>
+        <button type="button" class="secondary" data-place="ground" aria-pressed="false">Place Ground dot</button>
+        <p>{{ form.ground_x.label_tag }}{{ form.ground_x }}{{ form.ground_x.errors }}</p>
+        <p>{{ form.ground_y.label_tag }}{{ form.ground_y }}{{ form.ground_y.errors }}</p>
+      </fieldset>
+    </div>
+    <div id="grind-art" style="position:relative;width:min(100%,620px);margin:1rem 0">
+      <img src="{% url 'label_artwork' asset_id=artwork.pk %}" alt="Original {{ artwork.coffee }} label" width="{{ artwork.width }}" height="{{ artwork.height }}" style="display:block;width:100%;height:auto;cursor:crosshair">
+      <span hidden data-marker="whole" style="pointer-events:none;position:absolute;transform:translate(-50%,-50%);background:black;outline:1px solid white;border-radius:50%"></span>
+      <span hidden data-marker="ground" style="pointer-events:none;position:absolute;transform:translate(-50%,-50%);background:black;outline:1px solid white;border-radius:50%"></span>
+    </div>
+    <button>Save positions</button>
+  </form>
+  {% if boxes %}
+  <p>PDF previews use the saved positions.</p>
+  {% if boxes.whole %}<a class="button secondary" href="{% url 'artwork_print_preview' asset_id=artwork.pk %}?grind=whole" target="_blank" rel="noopener">Preview Whole Bean PDF</a>{% endif %}
+  {% if boxes.ground %}<a class="button secondary" href="{% url 'artwork_print_preview' asset_id=artwork.pk %}?grind=ground" target="_blank" rel="noopener">Preview Ground PDF</a>{% endif %}
+  {% endif %}
+</section>
+<script nonce="{{ request.csp_nonce }}">
+(() => {
+  const form = document.querySelector('#grind-box-form');
+  const art = document.querySelector('#grind-art img');
+  const buttons = [...form.querySelectorAll('[data-place]')];
+  let selected = 'whole';
+  function updateMarkers() {
+    const bounds = art.getBoundingClientRect();
+    for (const marker of form.querySelectorAll('[data-marker]')) {
+      const box = marker.dataset.marker;
+      const x = form.elements[`${box}_x`].value;
+      const y = form.elements[`${box}_y`].value;
+      marker.hidden = !x || !y;
+      marker.style.left = `${x}%`;
+      marker.style.top = `${y}%`;
+      marker.style.width = marker.style.height = `${Math.min(bounds.width, bounds.height)*0.012}px`;
+    }
+  }
+  buttons.forEach(button => button.addEventListener('click', () => {
+    selected = button.dataset.place;
+    buttons.forEach(choice => choice.setAttribute('aria-pressed', choice === button));
+  }));
+  art.addEventListener('click', event => {
+    const bounds = art.getBoundingClientRect();
+    form.elements[`${selected}_x`].value = ((event.clientX-bounds.left)*100/bounds.width).toFixed(3);
+    form.elements[`${selected}_y`].value = ((event.clientY-bounds.top)*100/bounds.height).toFixed(3);
+    updateMarkers();
+  });
+  form.addEventListener('input', updateMarkers);
+  new ResizeObserver(updateMarkers).observe(art);
+})();
+</script>
+{% endblock %}

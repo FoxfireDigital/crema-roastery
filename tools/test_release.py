@@ -45,10 +45,12 @@ from onboarding_checks import run_onboarding_checks
 run_onboarding_checks(client,owner)
 from store_checks import run_store_checks
 run_store_checks(Path(temp.name),client,owner)
-from production_checks import run_production_checks
+from production_checks import run_production_checks, run_standard_label_checks
 run_production_checks(Path(temp.name),client,owner)
-from roast_pooling_checks import run_roast_pooling_checks
+run_standard_label_checks(client,owner)
+from roast_pooling_checks import run_order_roast_edit_checks, run_roast_pooling_checks
 run_roast_pooling_checks(client,owner)
+run_order_roast_edit_checks(client,owner)
 from batch_combine_checks import run_batch_combine_checks
 run_batch_combine_checks(client,owner)
 from minimum_load_checks import run_minimum_load_checks

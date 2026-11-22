@@ -1,6 +1,6 @@
 # Exact-candidate public beta review
 
-This is a release procedure, not evidence of approval. A private candidate and an operational demonstration are separate from public source/image distribution. Freeze one exact commit and its artifacts; a source or dependency change invalidates the affected evidence.
+This is a release procedure, not evidence of independent audit or legal clearance. Public MIT source, prebuilt images/installers and managed hosting are separate stages. Source publication checks cover the exact source, all exposed history/refs, public metadata and automated behavior. Independent assessment, outside pilots and native-image distribution review remain goals for broader distribution and hosting; they are not claims made by this source beta. A source or dependency change invalidates the affected evidence.
 
 | Gate | Evidence required | Decision owner |
 | --- | --- | --- |
@@ -37,4 +37,4 @@ Crema's MIT license covers its own code. Third-party components retain their lic
 
 Provide the exact commit/archive hash, installation/recovery instructions, synthetic accounts and fixture data, threat model, component inventories, unfiltered advisory results, disposition worksheet and a findings template. Do not include production dumps, real merchant credentials, customer artwork, payroll or instance keys. Collect defect severity, reproducible steps, expected/actual behavior and affected version privately. Do not contact reviewers or testers or create third-party accounts as an automatic release step.
 
-Keep the review candidate private until the remaining decisions and exact publication approval are recorded. Source publication, image publication, paid hosting and deployment to an operational roastery have separate authorization and verification boundaries.
+Publish source only after the owner authorizes it and the source/publication-surface checks pass. Do not publish unreviewed binary assets alongside it. Record remaining assessments as limitations. Image publication, paid hosting and deployment to an operational roastery have separate authorization and verification boundaries.

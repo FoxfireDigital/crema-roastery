@@ -1,10 +1,10 @@
 # Crema
 
-Installation remains YAML based. The review candidate builds its application, proxy and database images together; [checked artifacts and digest-pinned registry YAML](docs/ARTIFACT-INSTALL.md) are also prepared and tested privately before publication.
+Self-hosted coffee production planning, from received orders through roasting, packing and labels. **MIT-licensed source beta**, with one separate installation and database per roastery.
 
 [Guided setup](docs/GETTING-STARTED.md) · [Public beta review](docs/PUBLIC-BETA-REVIEW.md)
 
-Self-hosted coffee production planning, from received orders through roasting, bagging and labels. MIT licensed. One separate installation and database per roastery. 0.1.0-rc28 is a private review candidate with an optional themed Companion and browser-approved roast preparation connections. It must pass the staged upgrade and operational gates before a public beta.
+The source is available for self-hosting, review and contributions. Install by building the included Docker Compose YAML. Prebuilt service images and Windows Companion installers are a separate distribution step; the repository does not promise a public image registry or a one-click hosted service. This beta has automated checks and operational use, but has not received an independent security audit. Back up important records and rehearse upgrades on a restored copy.
 
 ## What it includes
 
@@ -15,6 +15,7 @@ Self-hosted coffee production planning, from received orders through roasting, b
 - Stock-first planning, separate custom roasts, safe configured machine capacities, actual yield history by machine/load, and clear finished-weight coverage.
 - Green recipes and automatic measured-load deductions, supplier contacts, receipt costs, bean details and a tasting notebook with flavor charts.
 - Bagging/grind instructions, user-supplied retail/wholesale artwork, Letter PDFs and optional final-sheet fillers.
+- Editable single-origin order roasts across bag sizes, explicit standard-artwork exceptions, configurable printed grind marks and label-first packing checklists shared between Today and Bagging.
 - Artisan profile uploads, guarded alarm preparation, completed logs, an optional Windows helper and optional roast photos.
 - Manual supply inventory, maintenance, forecasts, editable audited hours, effective-dated rates and downloadable records.
 
@@ -24,9 +25,9 @@ Self-hosted coffee production planning, from received orders through roasting, b
 
 The YAML starts a one-time initializer, PostgreSQL, the web app, the background worker and HTTPS proxy. Unique keys are created inside a dedicated persistent Docker volume. They survive restarts and upgrades. No default administrator or password is supplied.
 
-### This review candidate
+### Build and install the source beta
 
-The application image has **not been published**. Build it from the included clean source, then deploy the YAML:
+Clone this repository, enter its directory, and edit `compose.yaml` for your domain and time zone. Build all three service images, then deploy:
 
 ```sh
 docker compose -f compose.yaml -f compose.build.yaml build web postgres proxy
@@ -35,7 +36,7 @@ docker compose up -d
 docker compose exec web python manage.py createsuperuser
 ```
 
-The candidate deliberately uses `pull_policy: never` for the application so an unrelated registry image cannot be pulled under its temporary name. PostgreSQL and Caddy use their official images. A published release will specify an approved versioned registry image, ideally pinned by digest, and permit pulling that image. That publication remains a separate approval and release step.
+The YAML uses `pull_policy: never` for the locally built services. Database and proxy builds extend pinned official PostgreSQL and Caddy base images and apply the package changes described in [service images](docs/SERVICE-IMAGES.md). Public prebuilt images will need their own reviewed versions, digests and distribution notices; source availability does not imply those images are published.
 
 Visit your HTTPS domain and sign in. Open the first-run “Set up your roastery” checklist, also under More → Roastery setup. PostgreSQL and the app have no public host ports; only the proxy publishes 80/443. If those ports belong to an existing NAS interface or proxy, follow docs/DEPLOYMENT.md rather than starting another proxy on them. This release does not change DNS, NAS addresses or existing applications.
 

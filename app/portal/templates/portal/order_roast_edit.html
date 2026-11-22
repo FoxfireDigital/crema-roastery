@@ -1,0 +1,18 @@
+{% if not frontpage and line.roast_editable %}
+<details>
+  <summary>Change roast</summary>
+  <form action="/planning/" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="plan" value="{{ plan.pk }}">
+    <input type="hidden" name="version" value="{{ plan.version }}">
+    <input type="hidden" name="line" value="{{ line.pk }}">
+    <select name="roast_level" aria-label="Roast level for {{ line.reference|default:'order' }} · {{ line.ordered_coffee }}">
+      {% for value, label in roast_levels %}
+      <option value="{{ value }}"{% if value == line.group.roast_level %} selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+    {% if line.group.target_finish_temp_f %}<small>Requested finish temperature stays at {{ line.group.target_finish_temp_f }} °F.</small>{% endif %}
+    <button name="action" value="change_order_roast" class="secondary">Save roast</button>
+  </form>
+</details>
+{% endif %}

@@ -59,7 +59,7 @@ def upcoming_labels(now=None):
             if key in pool:pool[key]['bags']+=bags;continue
             pool[key]={'cycle_key':key,'contract_id':contract.pk,'contract':contract.external_id,'due_at':contract.next_billing_at.isoformat(),
                'due_display':timezone.localtime(contract.next_billing_at).strftime('%b %d, %Y'),'coffee':coffee.name,'label':label.name if label else '',
-               'size':format(size.normalize(),'f'),'grind':dict(GRIND_CHOICES)[grind],
+               'size':format(size.normalize(),'f'),'grind':dict(GRIND_CHOICES)[grind],'grind_code':grind,
                'bags':bags,'layout':layout,'art':art,'reference':'Advance label - '+contract.external_id,'issue':''}
     result=[]
     for key,row in pool.items():

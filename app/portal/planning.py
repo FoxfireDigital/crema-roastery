@@ -69,8 +69,9 @@ class IncomingForm(forms.Form):
     roast_level=forms.ChoiceField(choices=ROAST_LEVELS,initial='Medium')
     target_finish_temp_f=forms.DecimalField(max_digits=5,decimal_places=1,min_value=Decimal('.1'),required=False,label='Custom finish temperature (°F, optional)')
     grind=forms.ChoiceField(choices=GRIND_CHOICES,initial='unknown',required=False,label='Bagging / grind')
-    def __init__(self,*args,wholesale_customer=None,**kwargs):
+    def __init__(self,*args,wholesale_customer=None,allow_small_custom_roast=False,**kwargs):
         super().__init__(*args,**kwargs)
+        self.allow_small_custom_roast=allow_small_custom_roast
         from django.db.models import Q
         coffees=Coffee.objects.filter(active=True,experimental=False)
         coffees=coffees.filter(Q(wholesale_only_customer__isnull=True)|Q(wholesale_only_customer=wholesale_customer)) if wholesale_customer and wholesale_customer.active else coffees.filter(wholesale_only_customer__isnull=True)
@@ -86,11 +87,12 @@ class IncomingForm(forms.Form):
         c=data.get('coffee');label=data.get('label_variant')
         if c:
             if c.kind=='flavored' and (not c.roast_base_id or not c.roast_base.active):self.add_error('coffee','Choose an active Medium default roast base for this flavor in Coffee Admin.')
-            locked=c.roast_locked or quantity<80
+            locked=c.roast_locked or (quantity<80 and not self.allow_small_custom_roast)
             if locked:
                 if not c.standard_roast:self.add_error('coffee','Set this coffee’s standard roast in Admin first.')
-                elif data.get('roast_level')!=c.standard_roast:self.add_error('roast_level',f'This order uses standard {c.standard_roast}. Only single-origin lines of 5 lb or more can change roast.')
-                if data.get('target_finish_temp_f') is not None:self.add_error('target_finish_temp_f','This order cannot request a custom temperature.')
+                elif data.get('roast_level')!=c.standard_roast:self.add_error('roast_level',f'This order uses standard {c.standard_roast}. To change a smaller single-origin order, use Change roast on its plan.')
+            if data.get('target_finish_temp_f') is not None and (c.roast_locked or quantity<80):
+                self.add_error('target_finish_temp_f','Custom temperatures require a single-origin order of 5 lb or more.')
             if label and label.coffee_id!=c.pk:self.add_error('label_variant','This label belongs to a different coffee.')
         return data
 
@@ -155,7 +157,7 @@ def planner(request):
                     raise ValidationError('This plan changed in another tab. Refresh before saving so you do not overwrite that change.')
                 if action in ('add_order','edit_order'):
                     if action=='edit_order':editing=get_object_or_404(IncomingOrderLine,pk=request.POST.get('line'),group__plan=plan,source='manual')
-                    form=IncomingForm(request.POST)
+                    form=IncomingForm(request.POST,allow_small_custom_roast=True)
                     if not form.is_valid():
                         status=400
                     else:
@@ -180,6 +182,12 @@ def planner(request):
                             packaging=[{**pack,'bags':int(bags)}]
                         line.group=g;line.reference=data['reference'];line.customer=data['customer'];line.finished_oz=data['finished_oz'];line.product_coffee=data['coffee'];line.product_label=data.get('label_variant');line.packaging=packaging;line.grind=data.get('grind') or 'unknown';line.save()
                         messages.success(request,'Order saved. Suggested drafts update automatically; any manually adjusted drafts keep their saved weights.')
+                elif action=='change_order_roast':
+                    from .plan_roast import change_roast
+                    destination=f'/planning/?plan={plan.pk}#incoming-orders'
+                    if not change_roast(plan,request.POST.get('line'),request.POST.get('roast_level'),request.user):
+                        return redirect(destination)
+                    messages.success(request,'Order roast saved. Review the updated batch suggestions below.')
                 elif action=='remove_order':
                     line=get_object_or_404(IncomingOrderLine,pk=request.POST.get('line'),group__plan=plan,source='manual')
                     from .roasted_stock import used_for
@@ -296,6 +304,7 @@ def planner(request):
                     if action!='start_batch' and mark_revised(plan,request.user):messages.info(request,'Plan changed. Accept the updated plan to return it to the front page.')
                     plan.version+=1;plan.save(update_fields=['version','estimated_loss_pct','spillage_pct'])
                     if action=='start_batch':return redirect('batch_detail',pk=row.batch_id)
+                    if action=='change_order_roast':return redirect(destination)
                     return redirect('/planning/?plan='+str(plan.pk))
         except (ValidationError,InvalidOperation,ValueError) as error:
             messages.error(request,'; '.join(error.messages) if isinstance(error,ValidationError) else 'Enter a valid quantity.')
@@ -316,9 +325,17 @@ def planner(request):
             data['references']=list(group.orders.values_list('reference',flat=True).distinct())
             if data['target'] or data['rows']:groups.append(data)
             total_target+=data['target'];total_green+=data['green_needed']
-    orders=IncomingOrderLine.objects.filter(group__plan=plan).select_related('group__coffee','group__label_variant','import_order__store') if plan else []
+    orders=list(IncomingOrderLine.objects.filter(group__plan=plan).select_related('group__coffee','group__label_variant','product_coffee','product_label','import_order__store')) if plan else []
+    if orders:
+        from .plan_roast import blocked_groups, eligible, started_packing
+        eligible_lines=[line for line in orders if eligible(line)]
+        if eligible_lines:
+            blocked=blocked_groups({line.group_id for line in eligible_lines})
+            packing=started_packing([line.pk for line in eligible_lines])
+            for line in eligible_lines:
+                line.roast_editable=line.group_id not in blocked and line.pk not in packing
     missing_defaults=Coffee.objects.filter(active=True,experimental=False,kind='single_origin',standard_roast='')
-    context={'plan':plan,'plans':RoastPlan.objects.all()[:25],'form':form,'editing':editing,'groups':groups,'orders':orders,'roasters':Roaster.objects.filter(active=True),'total_target':total_target,'total_green':total_green,'missing_defaults':missing_defaults}
+    context={'plan':plan,'plans':RoastPlan.objects.all()[:25],'form':form,'editing':editing,'groups':groups,'orders':orders,'roasters':Roaster.objects.filter(active=True),'total_target':total_target,'total_green':total_green,'missing_defaults':missing_defaults,'roast_levels':ROAST_LEVELS}
     for machine in context['roasters']:machine.yield_mid=(machine.capacity or Decimal(0))/2
     context['coverage']=finished if plan else None
     from .views import clock_context

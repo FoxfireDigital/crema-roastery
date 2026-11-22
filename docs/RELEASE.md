@@ -1,12 +1,12 @@
 # Current exact-candidate procedure
 
-Use [PUBLIC-BETA-REVIEW.md](PUBLIC-BETA-REVIEW.md) and [GETTING-STARTED.md](GETTING-STARTED.md). Earlier rc-specific results below are historical evidence; repeat affected checks for the current candidate. Qualified review, tester feedback and exact publication approval remain open until recorded.
+Use [PUBLIC-BETA-REVIEW.md](PUBLIC-BETA-REVIEW.md) and [GETTING-STARTED.md](GETTING-STARTED.md). rc29 is the public MIT source beta, installed using source-build Compose. Prebuilt image/installer distribution, an independent audit and broader outside testing remain separate work. Earlier rc-specific results below are historical evidence; repeat affected checks for each release.
 
 # Release candidate and launch checklist
 
 The rc16 review adds patched service-image builds, system-linked supported image codecs/FFI, expanded notices and a complete anonymous local-registry/artifact/YAML rehearsal. See [ARTIFACT-INSTALL.md](ARTIFACT-INSTALL.md), [SERVICE-IMAGES.md](SERVICE-IMAGES.md) and [DEPENDENCY-PACKET.md](DEPENDENCY-PACKET.md). The local rehearsal does not publish an Internet registry or replace independent assessment, pilot evidence and final visibility approval.
 
-0.1.0-rc28 is being prepared privately for review. A public repository or download has not been published. The selected name is Crema. Domain, registry and name availability have not been cleared for public launch.
+The selected name is Crema. Source availability is not a claim of trademark clearance, independent audit or a published image registry.
 
 The primary installation artifact is compose.yaml. It generates its own persistent instance keys and embeds the proxy config. The application image is currently built locally using compose.build.yaml. A public YAML-only release needs an approved published image reference/digest and pull policy; no registry has been published yet. A review install and a rerun/restart were tested against an isolated PostgreSQL stack, including nonempty-database and partial-key recovery guards.
 

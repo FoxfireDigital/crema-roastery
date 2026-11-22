@@ -108,3 +108,111 @@ def run_production_checks(root,client,user):
         blend_custom=IncomingForm({'coffee':coffee.pk,'bags_5lb':1,'roast_level':'French'});assert not blend_custom.is_valid()
         transaction.set_rollback(True)
     print('PASS: order-to-closure workflow, bulk credit versus usage, frozen green deduction/replay, roast/packing saves, labels, completed-record protection, no surprise loads and separate custom roasts.')
+
+
+def run_standard_label_checks(client, user):
+    import hashlib
+    import io
+    from django.db import transaction
+    from PIL import Image
+    from portal.label_sheets import find_art, order_labels
+    from portal.models import Coffee, IncomingOrderLine, LabelArtwork, LabelVariant, RoastPlan
+    from portal.planning import group_for
+
+    with transaction.atomic():
+        coffee = Coffee.objects.create(name='Fictional Label Origin', standard_roast='Light')
+        plan = RoastPlan.objects.create(created_by=user)
+        french = group_for(plan, {'coffee':coffee,'roast_level':'French'})
+        light = group_for(plan, {'coffee':coffee,'roast_level':'Light'})
+        label = LabelVariant.objects.create(name='Fictional Account Label',coffee=coffee)
+        raw = io.BytesIO()
+        Image.new('RGB',(30,40),'black').save(raw,format='PNG')
+        artwork = LabelArtwork.objects.create(coffee=coffee,size_oz=16,roast_level='Light',per_sheet=4,
+            image_data=raw.getvalue(),image_format='PNG',source_name='fictional.png',active=True,
+            width=30,height=40,sha256=hashlib.sha256(raw.getvalue()).hexdigest(),uploaded_by=user)
+
+        def allocation(group, size, reference, **kwargs):
+            return IncomingOrderLine.objects.create(group=group, finished_oz=size, reference=reference,
+                packaging=[{'size_oz':str(size),'bags':1}], product_coffee=coffee, **kwargs)
+
+        custom = allocation(french, 16, 'TEST-LABEL', grind='regular')
+        special = allocation(french, 16, 'TEST-SPECIAL', grind='regular', product_label=label)
+        unknown = allocation(french, 16, 'TEST-GRIND', grind='unknown')
+        allocation(light, 80, 'TEST-5-LB', grind='regular')
+        key = f'{custom.pk}-0'
+        url = f'/labels/?plan={plan.pk}'
+        page = client.get(url)
+        assert page.status_code == 200 and b'8E+1' not in page.content and b'<td>5 lb<' in page.content
+        assert page.content.count(b'Use standard label') == 1
+        assert b'<td>5 lb<' in client.get(f'/packing/?plan={plan.pk}').content
+        blocked = {r['key']:r for r in order_labels(plan, [f'{special.pk}-0',f'{unknown.pk}-0'])}
+        assert not blocked[f'{special.pk}-0']['standard_override'] and not blocked[f'{unknown.pk}-0']['standard_override']
+        with_override = client.get(url+'&standard_labels='+key)
+        assert b'Standard label selected' in with_override.content and b'Artwork says Light.' in with_override.content
+        assert with_override.context['rows'][0]['art']['id'] == str(artwork.pk)
+        form = with_override.context['form']
+        data = {name:form[name].value() for name in ('revision','queue_token','layout','start_slot',
+            'left','top','width','height','gap_x','gap_y','offset_x','offset_y')}
+        data.update(plan=plan.pk, selected=[key], standard_labels=[key], checked='on')
+        for mode in ('preview','download'):
+            pdf = client.post(url,{**data,'action':mode})
+            assert pdf['Content-Type']=='application/pdf' and pdf.content.startswith(b'%PDF-')
+        assert client.post(url,{**data,'action':'download','standard_labels':[]})['Content-Type']!='application/pdf'
+        assert client.post(url,{**data,'action':'download','standard_labels':[key,f'{special.pk}-0']})['Content-Type']!='application/pdf'
+        custom.refresh_from_db()
+        assert custom.group.roast_level == 'French' and custom.packaging==[{'size_oz':'16','bags':1}]
+        assert b'Standard label selected' not in client.get(url).content
+        # Asset-specific approval can cover the actual standard roast while
+        # retaining the artwork's printed roast and exact matching boundaries.
+        coffee.standard_roast='French'
+        coffee.save(update_fields=['standard_roast'])
+        approval={'action':'approved_roast_mismatch','printed_roast':'Light','production_roast':'French',
+                  'artwork_sha256':artwork.sha256}
+        artwork.events=[{**approval,'artwork_sha256':'different'}]
+        artwork.save(update_fields=['events'])
+        assert not find_art(coffee.name,'',16,'French',grind='regular')[0]
+        artwork.events=[approval]
+        artwork.save(update_fields=['events'])
+        approved, issue=find_art(coffee.name,'',16,'French',grind='regular')
+        assert not issue and approved['id']==str(artwork.pk) and approved['roast']=='Light'
+        assert not find_art(coffee.name,'',12,'French',grind='regular')[0]
+        assert not find_art(coffee.name,'',16,'French',temp=410,grind='regular')[0]
+        assert not find_art(coffee.name,label.name,16,'French',grind='regular')[0]
+        assert b'Approved artwork says Light.' in client.get(url).content
+        from portal.artwork_grind import grind_box, grind_boxes, revision
+        from portal.label_sheets import saved_art_record
+        from unittest.mock import patch
+        mapping_url=f'/labels/artwork/{artwork.pk}/grind-boxes/'
+        assert client.get(mapping_url).status_code==200
+        before=revision(artwork)
+        assert client.post(mapping_url,{'revision':before,'whole_x':'5'}).status_code==400
+        coordinates={'revision':before,'whole_x':'5','whole_y':'85','ground_x':'5','ground_y':'90'}
+        assert client.post(mapping_url,coordinates).status_code==302
+        assert client.post(mapping_url,coordinates).status_code==400
+        artwork.refresh_from_db()
+        assert grind_boxes(artwork)=={'whole':[.05,.85],'ground':[.05,.9]}
+        assert [grind_box(code) for code in ('whole','regular','fine','coarse','unknown',None)]==[
+            'whole','ground','ground','ground',None,None]
+        assert b'Preview Ground PDF' in client.get(mapping_url).content
+        import reportlab.pdfgen.canvas as pdf_canvas
+        from portal.label_sheets import make_pdf
+        from decimal import Decimal
+        preview=f'/labels/artwork/{artwork.pk}/preview/'
+        calls=[]
+        original_circle=pdf_canvas.Canvas.circle
+        def record_dot(self,x,y,radius,*args,**kwargs):
+            calls.append((x,y,radius,self._currentMatrix))
+            return original_circle(self,x,y,radius,*args,**kwargs)
+        with patch.object(pdf_canvas.Canvas,'circle',record_dot):
+            for code in ('whole','regular','fine','coarse','unknown'):
+                assert client.get(preview+f'?grind={code}').content.startswith(b'%PDF-')
+            assert len(calls)==4 and calls[1]==calls[2]==calls[3] and calls[0][1]>calls[1][1]
+            geometry={k:Decimal(str(v)) for k,v in {'left':.25,'top':.25,'width':4,'height':2.625,
+                       'gap_x':0,'gap_y':0,'offset_x':0,'offset_y':0}.items()}
+            data={'layout':8,'start_slot':1,**geometry}
+            row={'art':saved_art_record(artwork),'bags':1,'grind_code':'whole'}
+            assert make_pdf([row],data).startswith(b'%PDF-')
+            assert len(calls)==5 and tuple(round(value, 8) for value in calls[-1][3][:4])==(0.0,1.0,-1.0,0.0)
+            assert make_pdf([{**row,'grind_code':None}],data).startswith(b'%PDF-') and len(calls)==5
+        transaction.set_rollback(True)
+    print('PASS: approved artwork, standard-label override, 5 lb display and automatic grind dots on regular and rotated PDFs.')

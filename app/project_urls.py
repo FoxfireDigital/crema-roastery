@@ -25,6 +25,7 @@ from portal.green_review import green_review_action
 from portal.batch_removal import delete_batch
 from portal.payroll import payroll_page,export_payroll
 from portal.artwork_library import library
+from portal.artwork_grind import edit_grind_boxes
 from portal.shopify import connection_page,callback,refresh
 from portal.information_review import information_review
 from portal.roasted_stock import stock_page
@@ -125,6 +126,7 @@ urlpatterns=[
     path('labels/',label_sheets,name='label_sheets'),
     path('labels/artwork/',library,name='artwork_library'),
     path('labels/artwork/<uuid:asset_id>/preview/',artwork_print_preview,name='artwork_print_preview'),
+    path('labels/artwork/<uuid:asset_id>/grind-boxes/',edit_grind_boxes,name='edit_label_grind_boxes'),
     path('labels/artwork/<str:asset_id>/',artwork,name='label_artwork'),
     path('labels/runs/<uuid:pk>/pdf/',reprint_run,name='reprint_label_run'),
     path('labels/runs/<uuid:pk>/',update_run,name='update_label_run'),

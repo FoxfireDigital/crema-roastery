@@ -1,6 +1,6 @@
 {
   "name": "Crema",
-  "version": "0.1.0-rc28",
+  "version": "0.1.0-rc29",
   "license": "MIT",
   "files": [
     {
@@ -40,8 +40,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "13708b70db3a9efadc1ea5bc2f552486fe9019c77da82f571bc5902fa2e1884b",
-      "bytes": 19485
+      "sha256": "bc9ee1917671bb0311e1101dc4edc1129949d023de030fd990c396dfb91bc46b",
+      "bytes": 20127
     },
     {
       "path": "CONTRIBUTING.md",
@@ -60,8 +60,8 @@
     },
     {
       "path": "README.md",
-      "sha256": "d04ad76d93cfe0e8f2fed76d6e04c28a46a158de0707fc22f84deb319f27e81b",
-      "bytes": 8016
+      "sha256": "5b1991f210e390754d4420ceb91ba57c73f52c630d96b7b3a2fde87fb05c9024",
+      "bytes": 8301
     },
     {
       "path": "ROADMAP.md",
@@ -70,8 +70,8 @@
     },
     {
       "path": "SECURITY.md",
-      "sha256": "00c5d99da68eada7210e7aed5d97e5b8a105048016c9f0f5c715ef82d20b9e00",
-      "bytes": 1633
+      "sha256": "7effb3496e0a055fbddb5c4d2c914450b3c0e967846c4bf3ac8b4a04eb03158f",
+      "bytes": 1704
     },
     {
       "path": "THIRD_PARTY_NOTICES.md",
@@ -179,9 +179,14 @@
       "bytes": 5503
     },
     {
+      "path": "app/portal/artwork_grind.py",
+      "sha256": "b7885dd820d8f623767dc7d8d3bfcd6d7d1634b5fc0e9c3d54c8b0a16eb312c9",
+      "bytes": 4613
+    },
+    {
       "path": "app/portal/artwork_library.py",
-      "sha256": "9309b0abdaf50fc24e267f1bf9cb7ae81b5e1f8625aa4a021cf99ba875f48b3a",
-      "bytes": 11268
+      "sha256": "4848b45bbc782b84e012eb232d82d80a70807e5c2547b0b4b7f764254301cecf",
+      "bytes": 11199
     },
     {
       "path": "app/portal/artwork_rules.py",
@@ -305,13 +310,13 @@
     },
     {
       "path": "app/portal/label_filler.py",
-      "sha256": "6584fe10ec3cd5d223cd23546f6d7d187be165ae9c5588d0d6f49fc833f0e10d",
-      "bytes": 6183
+      "sha256": "b1462979b24e983f5864eb9789a2f0143840871c9563e6a6cff0c9c99334840d",
+      "bytes": 6202
     },
     {
       "path": "app/portal/label_sheets.py",
-      "sha256": "eab04dbfc0a2cdbed098754aae9ec00da0ac5ff1878853d5faf5c7660687e91f",
-      "bytes": 24937
+      "sha256": "ac2da5d55d9fc3c8300f2bfe88da7ce7a462005c0615b2d6a1aaa6b4f82df005",
+      "bytes": 27639
     },
     {
       "path": "app/portal/load_override.py",
@@ -415,8 +420,8 @@
     },
     {
       "path": "app/portal/models.py",
-      "sha256": "ace954a711c4836ac93c109d11d075119c830505414e90ef34323a4149e42a3b",
-      "bytes": 73779
+      "sha256": "29907f9c1cf24a33686bb0287af134ceba8ae02ec10e05010604d1632fa12bb7",
+      "bytes": 73933
     },
     {
       "path": "app/portal/neutral_print.py",
@@ -445,8 +450,8 @@
     },
     {
       "path": "app/portal/packing.py",
-      "sha256": "aa057db01c0c3e955bead527e9bde0f8c8d6e3724c1a07210b111049c8719916",
-      "bytes": 13681
+      "sha256": "a319a3004cba2c09a857a4825d594cbf780b807430a695af906f9f3ea1c71784",
+      "bytes": 13904
     },
     {
       "path": "app/portal/payments.py",
@@ -469,9 +474,14 @@
       "bytes": 9372
     },
     {
+      "path": "app/portal/plan_roast.py",
+      "sha256": "108202420829b99272db53b5225eea332fd22c1b9b64240dbd65bb03c21b0560",
+      "bytes": 3427
+    },
+    {
       "path": "app/portal/planning.py",
-      "sha256": "f713b44a3f8efb057241ff6442313dd08f5cfaa2722f46eb04daa169ceeb9bcd",
-      "bytes": 31242
+      "sha256": "028dc62d33ab883d525010c959c3b69d67df40d92a35e2d58ef901191ec5a098",
+      "bytes": 32568
     },
     {
       "path": "app/portal/product_checks.py",
@@ -629,9 +639,14 @@
       "bytes": 2546
     },
     {
+      "path": "app/portal/templates/portal/artwork_grind_boxes.html",
+      "sha256": "5157ea6ce5b1f2a0051f7262d3afc3bc56a3b007076f0f8c5fa70c67f49d588f",
+      "bytes": 3980
+    },
+    {
       "path": "app/portal/templates/portal/artwork_library.html",
-      "sha256": "a0d7ff58cdf59a05c3bcb8eb9bdeab36f324dd75b804be9195b7042ab2a9b0d8",
-      "bytes": 5496
+      "sha256": "6de20c27b6cda12fa1af7c0b24915f75a2784fffc9a3b83dc3e5049edacc00ae",
+      "bytes": 5613
     },
     {
       "path": "app/portal/templates/portal/artwork_missing_table.html",
@@ -800,8 +815,8 @@
     },
     {
       "path": "app/portal/templates/portal/help.html",
-      "sha256": "fb3de72879822dc3582342c9ce132fb0324493b8cec4a3996bd833a92133aa0e",
-      "bytes": 32760
+      "sha256": "63cdf2d08971911386f386a4ee4dcdf924771b305bd81cd5cd5d312c0ae5bc8d",
+      "bytes": 33287
     },
     {
       "path": "app/portal/templates/portal/historical_roasts.html",
@@ -825,8 +840,8 @@
     },
     {
       "path": "app/portal/templates/portal/label_sheets.html",
-      "sha256": "e902d8d9f1122bedb5871c40aeb529b0cee73fd0ff05175293cfcb4a3776a543",
-      "bytes": 16518
+      "sha256": "316b17f572fea6fdbd480caeda43f2bea11f962e6272f54c0711c4ad9c0e780c",
+      "bytes": 17462
     },
     {
       "path": "app/portal/templates/portal/load_override.html",
@@ -874,24 +889,29 @@
       "bytes": 16096
     },
     {
+      "path": "app/portal/templates/portal/order_roast_edit.html",
+      "sha256": "8e0f96bf98b7b800bd16c117829ee9eea1a0a71295f31b6771a023020235d837",
+      "bytes": 938
+    },
+    {
       "path": "app/portal/templates/portal/orders.html",
       "sha256": "a383c35b567e4651c2d206868cc4ea8c3770049010e5ec3d7bf558f56ec1e963",
       "bytes": 866
     },
     {
       "path": "app/portal/templates/portal/packing.html",
-      "sha256": "4fee0051838355de9eb4d52f1d84f647ec3a45b3e0d2c91c14369ecc867fb2da",
-      "bytes": 3362
+      "sha256": "997729be05fddb0e30c2bd4af84d6c08af96ae1d5db1ae01216d3d6e726dc9a9",
+      "bytes": 3433
     },
     {
       "path": "app/portal/templates/portal/packing_assets.html",
-      "sha256": "4e09e6e93671b7e717374609867e1daad4a92c981588f16bc7f3ff2ecd5b4cf9",
-      "bytes": 5913
+      "sha256": "8a1d2ddf026b0615463f74bcdfd89ef72da5600299759764aa89fb548786fd92",
+      "bytes": 6059
     },
     {
       "path": "app/portal/templates/portal/packing_item.html",
-      "sha256": "ed888a2e0fbb2ba09819f0fb09d3fe666294a1f1305257b8d5404ddf258131df",
-      "bytes": 3151
+      "sha256": "9c6a5de0a36df10ade007dd25bc3d761501f2654bf2d2d8286b40524166d7722",
+      "bytes": 3200
     },
     {
       "path": "app/portal/templates/portal/packing_sections.html",
@@ -915,8 +935,8 @@
     },
     {
       "path": "app/portal/templates/portal/planning.html",
-      "sha256": "82df5dff401b005fb65912f1697c64c6e8c23857323a338208e8b5d035288ad0",
-      "bytes": 31648
+      "sha256": "f427527eba36c9d780e227d8a2a2000cc092e5eba3a5047647efdf4f7415addb",
+      "bytes": 31686
     },
     {
       "path": "app/portal/templates/portal/plans.html",
@@ -965,8 +985,8 @@
     },
     {
       "path": "app/portal/templates/portal/roast_sheet.html",
-      "sha256": "633b31930c9e6e23e7d90597b3273ff969bbb60f9b2e43984598bba5a50a0bf5",
-      "bytes": 17566
+      "sha256": "cddc30196fa489bf7d7eb3a5c87986ea1e80bf49ac58279a1079a63b3cea0b1b",
+      "bytes": 17593
     },
     {
       "path": "app/portal/templates/portal/roasted_stock.html",
@@ -1105,8 +1125,8 @@
     },
     {
       "path": "app/project_urls.py",
-      "sha256": "33140ecb5e0389eebe31d1f1800c763539e73c62ee060a9e0196bfdc99664c47",
-      "bytes": 12022
+      "sha256": "63ee260d22bc0fd68600f5b42c22674b4947d563ee4c51316bca3a9c2a1ace32",
+      "bytes": 12176
     },
     {
       "path": "app/project_wsgi.py",
@@ -1260,7 +1280,7 @@
     },
     {
       "path": "compose.yaml",
-      "sha256": "51114544a6900fbb77c882c1c3c201e04f6bc6586aaadf3b316d379b549443b9",
+      "sha256": "942f8d2203863e5f0ba143b973954d16a30435f9b688171f2358e35d81ed76c8",
       "bytes": 3036
     },
     {
@@ -1335,13 +1355,13 @@
     },
     {
       "path": "docs/PUBLIC-BETA-REVIEW.md",
-      "sha256": "4202a812e560620a5fe0e3349979ca49ba883cde1068f18a7b1e60bae5cea9ec",
-      "bytes": 4941
+      "sha256": "d528b6a395a165079b65eec1dd38f6ec1ed41a860cf4d389147146ba03b7b462",
+      "bytes": 5265
     },
     {
       "path": "docs/RELEASE.md",
-      "sha256": "91ab7105827788729bad7f3b137443a43fa02ce21309db8dfc7e58c9d07d3af2",
-      "bytes": 4615
+      "sha256": "ffb9d99d4d7afee0f7071ea1f69049fc91c4711092c6ea62de6d4fa08e507534",
+      "bytes": 4618
     },
     {
       "path": "docs/SECURITY-REVIEW.md",
@@ -1515,8 +1535,8 @@
     },
     {
       "path": "tools/production_checks.py",
-      "sha256": "f1f849ffafede02e2f20469b7d67cf2739b48a9e7204b8b0fb80923d8c1f300c",
-      "bytes": 10231
+      "sha256": "1ca4f7f0352e6fbe66f7887c7c35eefdfe2193860093df958717283edee55028",
+      "bytes": 17415
     },
     {
       "path": "tools/production_order_checks.py",
@@ -1545,8 +1565,8 @@
     },
     {
       "path": "tools/roast_pooling_checks.py",
-      "sha256": "e5efb2dffc0bf7385a53697001065e894dbb2385f15835741822fe39a1bc937d",
-      "bytes": 5882
+      "sha256": "0e9332e51512f8ac62e81fab20054eff2e202f2222738c68b98c5bff6f47208f",
+      "bytes": 11346
     },
     {
       "path": "tools/sourcing_checks.py",
@@ -1575,13 +1595,13 @@
     },
     {
       "path": "tools/test_release.py",
-      "sha256": "997cfbcb13da0bc9d86ebc21cdbc0059e650f61b7f4d08e58c07004ca616ac08",
-      "bytes": 5791
+      "sha256": "297d70629a561f0dc7fdcdde7b2a3a16e1daa21975014f394f6d88a9df9e1ed3",
+      "bytes": 5929
     },
     {
       "path": "tools/today_packing_checks.py",
-      "sha256": "aaca8a3b693d3313c8613f0005d1a98010247f15c9e5ce495f96cbe71e9c9e36",
-      "bytes": 5634
+      "sha256": "c288a2e41c118e88c0b9298a99950d825fde7e39b2d016d8f63032f4caf5b7b7",
+      "bytes": 6804
     },
     {
       "path": "tools/verify_image.py",

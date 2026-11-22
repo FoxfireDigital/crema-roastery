@@ -68,8 +68,8 @@ class ArtworkForm(forms.Form):
         if values.get('roast_level')==NEUTRAL_ROAST and coffee and not neutral_allowed(coffee,values.get('size_oz'),values.get('per_sheet')):
             self.add_error('roast_level','No fixed roast is only available for 5 lb single origins, four per sheet.')
         if values.get('ready') and coffee:
-            size=values.get('size_oz');roast=values.get('roast_level')
-            if roast and roast!=NEUTRAL_ROAST and size and (coffee.roast_locked or size<80) and roast!=coffee.standard_roast:self.add_error('roast_level','This coffee uses '+coffee.standard_roast+'. Supply an original with the correct roast before marking it ready.')
+            roast=values.get('roast_level')
+            if roast and roast!=NEUTRAL_ROAST and coffee.roast_locked and roast!=coffee.standard_roast:self.add_error('roast_level','This coffee uses '+coffee.standard_roast+'. Supply an original with the correct roast before marking it ready.')
         return values
 
 
@@ -124,7 +124,7 @@ def library(request):
                     messages.error(request,'This coffee is inactive. Its original is retained for history. Review the coffee’s availability before enabling new labels.');return redirect('/labels/artwork/')
                 if active and art.roast_level==NEUTRAL_ROAST and not neutral_allowed(art.coffee,art.size_oz,art.per_sheet):
                     messages.error(request,'Roast-neutral artwork is only for 5 lb single origins, four per sheet.');return redirect('/labels/artwork/')
-                if active and art.roast_level!=NEUTRAL_ROAST and (art.coffee.roast_locked or art.size_oz<80) and art.roast_level!=art.coffee.standard_roast:
+                if active and art.roast_level!=NEUTRAL_ROAST and art.coffee.roast_locked and art.roast_level!=art.coffee.standard_roast:
                     messages.error(request,'The artwork metadata conflicts with the roast rule. Upload a corrected original.');return redirect('/labels/artwork/')
                 if active and request.POST.get('checked')!='on':
                     messages.error(request,'Check the original image before marking it ready.');return redirect('/labels/artwork/')

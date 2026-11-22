@@ -23,8 +23,13 @@ def run_today_packing_checks(client,owner):
         assert 'Label requirements</h2>' not in html
         for plan in plans:assert f'/labels/?plan={plan.pk}' in html
         assert 'name="ground_at"' in html and 'Adjust grind / bags' not in html
+        assert html.index('name="labeled_at"') < html.index('name="ground_at"') < html.index('name="bagged_at"') < html.index('name="sealed_at"')
         line=IncomingOrderLine.objects.select_related('group__plan').get(pk=lines[0].pk);initial=progress_token(line,None)
         result=operator_client.post(f'/packing/{line.pk}/progress/',{'revision':initial,'ground_at':'on','bagged_at':'on'})
+        assert result.status_code==400 and not PackingProgress.objects.filter(line=line).exists()
+        result=operator_client.post(f'/packing/{line.pk}/progress/',{'revision':initial,'labeled_at':'on'})
+        assert result.status_code==200 and result.json()['steps']['labeled_at'] and not result.json()['steps']['ground_at']
+        result=operator_client.post(f'/packing/{line.pk}/progress/',{'revision':result.json()['revision'],'labeled_at':'on','ground_at':'on','bagged_at':'on'})
         assert result.status_code==200,result.content
         assert PackingProgress.objects.get(line=line).bagged_at
         bagging=operator_client.get(f'/packing/?plan={plans[0].pk}')
@@ -37,7 +42,7 @@ def run_today_packing_checks(client,owner):
         assert result.status_code==200
         today=operator_client.get('/')
         assert today.context['packing_lists'][0]['completed']==1 and today.context['packing_lists'][1]['completed']==0
-        assert PackingProgressEvent.objects.filter(progress__line=line).count()==2
+        assert PackingProgressEvent.objects.filter(progress__line=line).count()==3
         # Real CSRF validation and non-staff edit boundaries apply on Today too.
         csrf_client=Client(enforce_csrf_checks=True,HTTP_HOST='localhost');csrf_client.force_login(operator)
         assert csrf_client.post(f'/packing/{line.pk}/progress/',{'revision':result.json()['revision']}).status_code==403
@@ -50,6 +55,12 @@ def run_today_packing_checks(client,owner):
         # Never allow a return URL to become an open redirect.
         form=packing_context(plans[1])['rows'][0]['form'];data.update(revision=form.initial['revision'],return_to='https://invalid.example/')
         assert client.post(f'/packing/{lines[1].pk}/',data)['Location']==f'/packing/?plan={plans[1].pk}'
+        # Previously saved packing steps can be kept while labeling is added.
+        packed_at=timezone.now()
+        old_progress=PackingProgress.objects.create(line=lines[1], ground_at=packed_at, bagged_at=packed_at)
+        assert operator_client.post(f'/packing/{lines[1].pk}/progress/',{'revision':progress_token(lines[1],old_progress),
+            'labeled_at':'on','ground_at':'on','bagged_at':'on'}).status_code==200
+        old_progress.refresh_from_db();assert old_progress.labeled_at and old_progress.bagged_at==packed_at
         plans[0].closed_at=timezone.now();plans[0].save(update_fields=['closed_at'])
         assert operator_client.post(f'/packing/{line.pk}/progress/',{'revision':result.json()['revision']}).status_code==404
         assert f'id="packing-plan-{plans[0].pk}"' not in operator_client.get('/').content.decode()

@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.0-rc29 — public source beta
+
+* Make the generic MIT source available with source-build Compose instructions. Public image/installer distribution and independent security review remain separate work.
+* Edit single-origin roasts on planned orders across bag sizes, with stale-edit checks and preservation of completed work.
+* Display ordinary bag weights, allow explicit standard-artwork overrides for custom roasts, and configure grind-checkbox marks per artwork with snapshot checks.
+* Put labeling first in packing, followed by flavoring/grinding where needed, bagging and sealing. Today and Bagging share the same saved progress.
+
 ## 0.1.0-rc28 candidate — patched package manager
 
 Pins Debian APT and libapt-pkg6.0 to 2.6.2 in the application build/runtime and database image. Initial package operations disable retry reuse while the older base package manager installs the fix. Exact-image checks assert the patched package versions. Remaining vendor findings are retained for assessment.

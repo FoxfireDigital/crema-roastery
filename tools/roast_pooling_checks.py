@@ -71,3 +71,89 @@ def run_roast_pooling_checks(client,user):
         assert a.orders.count()==1 and b.orders.count()==1
         transaction.set_rollback(True)
     print('PASS: packaging labels share compatible loads; legacy allocation labels, grind/pack sizes, history, capacity, custom profiles and started/manual guards preserved.')
+
+
+def run_order_roast_edit_checks(client, user):
+    from django.db import transaction
+    from django.utils import timezone
+    from portal.autobatches import sync_plan
+    from portal.models import Batch, Coffee, ImportOrder, IncomingOrderLine, LabelVariant, PackingProgress, RoastPlan
+    from portal.planning import group_for
+    from portal.roast_sheet import row_token
+
+    with transaction.atomic():
+        coffee = Coffee.objects.create(name='Fictional Edit Origin', standard_roast='Light')
+        label = LabelVariant.objects.create(coffee=coffee, name='Fictional Edit Label')
+        plan = RoastPlan.objects.create(created_by=user)
+        group = group_for(plan, {'coffee': coffee, 'roast_level': 'Light'})
+        original_items = [{'title': 'Fictional Edit Origin', 'coffee': coffee.pk, 'quantity': 6,
+                           'size_oz': '16', 'roast_level': 'Light', 'line_key': '1'}]
+        source = ImportOrder.objects.create(external_id='fictional-roast-edit', reference='TEST-ROAST',
+            received_at=timezone.now(), imported_at=timezone.now(), imported_plan=plan,
+            financial_status='paid', fulfillment_status='unfulfilled', lines=original_items)
+        custom = IncomingOrderLine.objects.create(group=group, import_order=source, source='shopify',
+            external_id='fictional-roast-edit:1', reference=source.reference, product_coffee=coffee,
+            product_label=label, finished_oz=96, grind='regular', packaging=[{'size_oz': '16', 'bags': 6}])
+        standard = IncomingOrderLine.objects.create(group=group, finished_oz=16, grind='whole')
+        sizes = (12, 16)
+        smaller = [IncomingOrderLine.objects.create(group=group, finished_oz=size, grind='whole',
+                   packaging=[{'size_oz':str(size), 'bags':1}]) for size in sizes]
+        blend = Coffee.objects.create(name='Fictional Fixed Blend', kind='blend', standard_roast='Medium')
+        blend_group = group_for(plan, {'coffee':blend, 'roast_level':'Medium'})
+        fixed = IncomingOrderLine.objects.create(group=blend_group, finished_oz=80, grind='whole')
+        sync_plan(plan, user)
+        plan.accepted_at = timezone.now()
+        plan.save(update_fields=['accepted_at'])
+        url = f'/planning/?plan={plan.pk}'
+
+        def change(line, roast, version=None):
+            return client.post(url, {'action': 'change_order_roast', 'line': line.pk, 'roast_level': roast,
+                                    'version': plan.version if version is None else version})
+
+        assert client.get(url).content.count(b'value="change_order_roast"') == 4
+        assert change(fixed, 'French').status_code == 400
+        assert change(custom, 'French', version=plan.version + 1).status_code == 400
+        assert change(custom, 'French').status_code == 302
+        custom.refresh_from_db()
+        standard.refresh_from_db()
+        source.refresh_from_db()
+        plan.refresh_from_db()
+        assert plan.accepted_at is None and plan.version == 1
+        assert source.lines == original_items and source.imported_plan_id == plan.pk
+        assert custom.group.roast_level == 'French' and custom.group.planned_batches.exists()
+        assert standard.group_id == group.pk and standard.group.planned_batches.exists()
+        assert (custom.product_label_id, custom.finished_oz, custom.grind, custom.packaging) == (
+            label.pk, 96, 'regular', [{'size_oz': '16', 'bags': 6}])
+        event = plan.events.get(action='order_roast_changed')
+        assert event.details['line'] == custom.pk and event.details['after']['roast'] == 'French'
+        assert change(custom, 'French').status_code == 302
+        plan.refresh_from_db()
+        assert plan.version == 1
+        for line, roast in zip(smaller, ('Dark','Medium/Dark')):
+            assert change(line, roast).status_code == 302
+            plan.refresh_from_db()
+            line.refresh_from_db()
+            assert line.group.roast_level == roast
+        standard.refresh_from_db()
+        assert standard.group.roast_level == 'Light'
+        assert client.post(f'/plans/{plan.pk}/accept/', {'version':plan.version}).url == '/'
+        plan.refresh_from_db()
+        assert plan.accepted_at
+        for line, size in zip(smaller, sizes):
+            row = line.group.planned_batches.get()
+            response = client.post(f'/roasts/{row.pk}/', {'revision':row_token(row), 'measured_at':'on',
+                                   'roasted_oz':f'{size}.0', 'cooled_at':'on', 'roasted_at':'on'})
+            assert response.status_code == 200, response.content
+            row.refresh_from_db()
+            assert row.batch.roast_level == line.group.roast_level and row.batch.roasted_oz == size
+            assert change(line, 'Light').status_code == 400
+        packing = PackingProgress.objects.create(line=custom, ground_at=timezone.now())
+        assert change(custom, 'Light').status_code == 400
+        packing.delete()
+        draft = custom.group.planned_batches.first()
+        draft.batch = Batch.objects.create(operator=user, coffee=coffee, roaster=draft.roaster,
+            planned_group=custom.group, roast_level='French', green_oz=draft.green_oz, measured_at=timezone.now())
+        draft.save(update_fields=['batch'])
+        assert change(custom, 'Light').status_code == 400
+        transaction.set_rollback(True)
+    print('PASS: Plans edits one eligible order roast, separates standard demand, preserves packing and source, and protects started work.')

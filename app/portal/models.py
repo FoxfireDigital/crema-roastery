@@ -141,8 +141,11 @@ class Batch(models.Model):
                 errors['roast_level']=f'{self.coffee.name} must use its standard {self.coffee.standard_roast} roast.'
             changed=self._state.adding or (self.pk and Batch.objects.filter(pk=self.pk).exclude(coffee_id=self.coffee_id,roast_level=self.roast_level).exists())
             if changed and not self.coffee.experimental and not self.coffee.roast_locked and self.roast_level!=self.coffee.standard_roast:
-                approved=(self.order_id and self.order.roast_level==self.roast_level) or (self.planned_group_id and self.planned_group.orders.filter(finished_oz__gte=80).exists())
-                if not approved:errors['roast_level']='A custom roast needs a linked single-origin order of 5 lb or more.'
+                approved=(self.order_id and self.order.roast_level==self.roast_level) or (
+                    self.planned_group_id and self.planned_group.roast_level==self.roast_level
+                    and self.planned_group.orders.filter(Q(product_coffee_id=self.coffee_id)|Q(product_coffee__isnull=True)).exists()
+                )
+                if not approved:errors['roast_level']='A custom roast needs a matching single-origin order on the plan.'
         if self.planned_group_id and (self.planned_group.coffee_id!=self.coffee_id or self.planned_group.roast_level!=self.roast_level or self.planned_group.label_variant_id!=self.label_variant_id):
             errors['planned_group']='Batch coffee, roast and label must match its plan.'
         if self._state.adding and self.planned_group_id and not self.coffee.flavor_base_eligible and self.planned_group.orders.filter(product_coffee__kind='flavored').exists():
@@ -400,11 +403,10 @@ class IncomingOrderLine(models.Model):
                 historical=self.pk and type(self).all_objects.filter(pk=self.pk,group_id=self.group_id,product_coffee_id=self.product_coffee_id).exists()
                 if not historical:raise ValidationError('The order must use the selected coffee’s roast base.')
             if self.product_label_id and self.product_label.coffee_id!=c.pk:raise ValidationError('This packaging label belongs to a different finished coffee.')
-            if c.roast_locked or self.finished_oz<80:
-                if not c.standard_roast or self.group.roast_level!=c.standard_roast:
-                    raise ValidationError('This order must use the coffee’s standard roast.')
-                if self.group.target_finish_temp_f is not None:
-                    raise ValidationError('Custom temperatures require a single-origin order 5 lb or more.')
+            if c.roast_locked and (not c.standard_roast or self.group.roast_level!=c.standard_roast):
+                raise ValidationError('This order must use the coffee’s standard roast.')
+            if self.group.target_finish_temp_f is not None and (c.roast_locked or self.finished_oz<80):
+                raise ValidationError('Custom temperatures require a single-origin order of 5 lb or more.')
     def save(self,*args,**kwargs):
         self.full_clean()
         return super().save(*args,**kwargs)

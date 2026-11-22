@@ -4,7 +4,7 @@ Use HTTPS through a trusted proxy, keep database/app ports private, create uniqu
 
 The application includes CSRF checks, signed review forms, stale-edit checks, replay protection, login limits, private caching and a nonce-based script policy. Inline styles are permitted. These controls do not replace an independent security audit. The optional Artisan helper prepares files and asks before loading; hardware safety remains the operator’s responsibility.
 
-Do not include credentials, customer records, screenshots of private data or exploit-ready production details in public issues. Report suspected vulnerabilities privately to the repository maintainer using the eventual repository’s private vulnerability-reporting facility. No public security mailbox has been invented for this candidate.
+Do not include credentials, customer records, screenshots of private data or exploit-ready production details in public issues. Report suspected vulnerabilities using [GitHub private vulnerability reporting](https://github.com/FoxfireDigital/crema-roastery/security/advisories/new). If that facility is temporarily unavailable, keep sensitive details private until a confidential reporting channel is available.
 
 Check dependency advisories before each release and update pinned versions deliberately. A first public launch and any paid hosting offering should receive an independent review of authentication, proxy configuration, access boundaries, backup recovery and merchant data handling.
 

@@ -9,18 +9,18 @@ from django.shortcuts import get_object_or_404,render,redirect
 from django.views.decorators.http import require_POST
 from .models import IncomingOrderLine,RoastPlan,PackingEvent,GRIND_CHOICES,PackingProgress,PackingProgressEvent
 
-PROGRESS_STEPS=['flavored_at','ground_at','bagged_at','labeled_at','sealed_at']
+PROGRESS_STEPS=(('labeled_at','Labeled'),('flavored_at','Flavored'),('ground_at','Ground'),
+                ('bagged_at','Bagged'),('sealed_at','Sealed'))
 
-def progress_state(progress):return {key:getattr(progress,key).isoformat() if progress and getattr(progress,key) else None for key in PROGRESS_STEPS}
+def progress_state(progress):return {key:getattr(progress,key).isoformat() if progress and getattr(progress,key) else None for key,_ in PROGRESS_STEPS}
 
 def progress_token(line,progress):
-    return hashlib.sha256(json.dumps([packing_token(line),progress.version if progress else None,progress_state(progress)],sort_keys=True).encode()).hexdigest()
+    return hashlib.sha256(json.dumps([packing_token(line),progress.version if progress else None,progress_state(progress),PROGRESS_STEPS],sort_keys=True).encode()).hexdigest()
 
 def applicable_steps(line):
-    steps=[]
-    if line.ordered_coffee.kind=='flavored':steps.append(('flavored_at','Flavored'))
-    if line.grind!='whole':steps.append(('ground_at','Ground'))
-    return steps+[('bagged_at','Bagged'),('labeled_at','Labeled'),('sealed_at','Sealed')]
+    return [step for step in PROGRESS_STEPS
+            if (step[0]!='flavored_at' or line.ordered_coffee.kind=='flavored')
+            and (step[0]!='ground_at' or line.grind!='whole')]
 
 def progress_result(line,progress):
     event=progress.events.order_by('-pk').first() if progress else None
@@ -83,10 +83,10 @@ def packing_context(plan,group_by='order'):
         if not confirmed or line.grind in ['unknown','ground']:needs_review+=1
         initial={'revision':packing_token(line),'grind':line.grind}
         if len(packages)==1:initial.update(size_oz=packages[0]['size'],bags=packages[0]['bags'],per_sheet=str(packages[0]['layout'] or ''))
-        steps=[]
+        steps=['Apply the finished-product label']
         if line.ordered_coffee.kind=='flavored':steps.append('Flavor as '+line.ordered_coffee.name)
         steps.append('Keep whole bean' if line.grind=='whole' else 'Grind '+line.get_grind_display().replace('Ground — ','') if line.grind in ['regular','fine','coarse'] else 'Confirm grind before bagging')
-        steps.extend(['Weigh and bag','Apply the finished-product label','Seal'])
+        steps.extend(['Weigh and bag','Seal'])
         progress=progresses.get(line.pk);result=progress_result(line,progress)
         bulk_sources=[{'coffee':a.stock.coffee.name,'amount':a.amount_oz,'status':a.status} for a in line.stock_allocations.filter(status__in=['reserved','used']).select_related('stock__coffee')]
         rows.append({'line':line,'bulk_sources':bulk_sources,'packages':packages,'confirmed':confirmed,'bags':bags_total,'steps':steps,'form':PackingForm(line=line,initial=initial),'progress':progress,'progress_revision':result['revision'],'undo_event':result['undo_event'],'progress_steps':[{'key':key,'label':label,'done':bool(progress and getattr(progress,key))} for key,label in applicable_steps(line)]})
@@ -135,11 +135,13 @@ def save_progress(request,pk):
                 except (KeyError,TypeError,ValueError,InvalidOperation):raise ValidationError('Confirm the package sizes before bagging.')
                 if not line.packaging or accounted!=line.finished_oz or line.grind in ['unknown','ground']:raise ValidationError('Confirm the bag sizes and grind before recording bagging steps.')
                 keys=[key for key,_ in applicable_steps(line)];checked={key:request.POST.get(key)=='on' for key in keys}
+                if not checked['labeled_at'] and any(checked[key] for key in keys[1:]):
+                    raise ValidationError('Mark the bags Labeled before recording the next packing step.')
                 for previous,current in zip(keys,keys[1:]):
                     if checked[current] and not checked[previous]:raise ValidationError('Complete the preceding bagging steps first.')
                 if not progress and not any(checked.values()):return JsonResponse(progress_result(line,None))
                 progress=progress or PackingProgress(line=line);now=timezone.now()
-                for key in PROGRESS_STEPS:setattr(progress,key,(getattr(progress,key) or now) if checked.get(key) else None)
+                for key,_ in PROGRESS_STEPS:setattr(progress,key,(getattr(progress,key) or now) if checked.get(key) else None)
                 after=progress_state(progress)
                 if before!=after:
                     progress.version+=1;progress.save();PackingProgressEvent.objects.create(progress=progress,actor=request.user,before=before,after=after)
