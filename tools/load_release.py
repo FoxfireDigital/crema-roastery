@@ -6,6 +6,40 @@ import json
 import re
 import subprocess
 import tarfile
+import tempfile
+
+_CONFIG_IDS = {}
+
+
+def archive_config_id(path, expected):
+    """Read Docker's saved config without extracting or trusting its filename."""
+    with tarfile.open(path) as archive:
+        entry = archive.getmember('manifest.json')
+        assert entry.isfile() and entry.size < 2_000_000
+        records = json.load(archive.extractfile(entry))
+        assert len(records) == 1
+        member = archive.getmember(records[0]['Config'])
+        assert member.isfile() and member.size < 2_000_000
+        raw = archive.extractfile(member).read()
+    config = json.loads(raw)
+    assert config['os'] == expected['Os'] and config['architecture'] == expected['Architecture']
+    assert config['rootfs']['diff_ids'] == expected['RootFS']['Layers']
+    return 'sha256:' + hashlib.sha256(raw).hexdigest()
+
+
+def image_config_id(reference, info=None):
+    """Normalize legacy config IDs and containerd index/manifest IDs."""
+    info = info if info is not None else inspect(reference)
+    assert info is not None, 'Expected image is missing'
+    if not info.get('Descriptor'):
+        return info['Id']
+    if info['Id'] not in _CONFIG_IDS:
+        with tempfile.TemporaryDirectory(prefix='crema-image-identity-') as folder:
+            path = Path(folder) / 'image.tar'
+            # Export the immutable inspected identity, not a mutable tag.
+            subprocess.run(['docker', 'image', 'save', '--output', str(path), info['Id']], capture_output=True, check=True)
+            _CONFIG_IDS[info['Id']] = archive_config_id(path, info)
+    return _CONFIG_IDS[info['Id']]
 
 
 def inspect(reference):
@@ -46,7 +80,7 @@ def validate(folder):
             data = archive.extractfile(config).read()
             assert 'sha256:' + hashlib.sha256(data).hexdigest() == item['imageId']
         existing = inspect(item['reference'])
-        assert existing is None or existing['Id'] == item['imageId'], 'An existing image tag identifies different content; nothing loaded'
+        assert existing is None or image_config_id(item['reference'], existing) == item['imageId'], 'An existing image tag identifies different content; nothing loaded'
     return manifest
 
 
@@ -57,7 +91,7 @@ def load(folder):
     for item in manifest['images']:
         subprocess.run(['docker', 'load', '--input', str(folder / item['file'])], capture_output=True, check=True)
         info = inspect(item['reference'])
-        assert info['Id'] == item['imageId']
+        assert image_config_id(item['reference'], info) == item['imageId']
         labels = info['Config'].get('Labels') or {}
         assert labels.get('org.opencontainers.image.title') == titles[item['role']]
         assert labels.get('org.opencontainers.image.version') == manifest['version']

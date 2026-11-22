@@ -5,6 +5,8 @@ from decimal import Decimal
 ROOT=Path(__file__).resolve().parents[1];APP=Path(os.environ.get('PORTAL_APP_ROOT',str(ROOT/'app')));sys.path.insert(0,str(APP))
 if os.environ.get('DB_HOST') and os.environ.get('PORTAL_RELEASE_QA_DISPOSABLE')!='1':raise SystemExit('Refusing an external database. Use an isolated disposable QA stack, or unset DB_HOST for in-memory tests.')
 temp=tempfile.TemporaryDirectory(prefix='roastery-release-test-')
+from registry_identity_checks import run_registry_identity_checks
+run_registry_identity_checks(Path(temp.name))
 os.environ.update(DJANGO_SETTINGS_MODULE='project_settings',DJANGO_SECRET_KEY='synthetic-release-test-key-only-not-for-deployment',PORTAL_LOCAL_DEVELOPMENT='1',PORTAL_BASE_URL='http://localhost',PORTAL_SQLITE_PATH=':memory:')
 if os.environ.get('TEST_DB_HOST'):os.environ['DB_HOST']=os.environ['TEST_DB_HOST']
 import django;django.setup()

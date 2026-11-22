@@ -7,6 +7,7 @@
 * Display ordinary bag weights, allow explicit standard-artwork overrides for custom roasts, and configure grind-checkbox marks per artwork with snapshot checks.
 * Put labeling first in packing, followed by flavoring/grinding where needed, bagging and sealing. Today and Bagging share the same saved progress.
 * Update the matching Debian libpq build/runtime pins to 15.20-0+deb12u1 after the previous version left the current archive.
+* Verify offline image configuration hashes on both classic and containerd Docker stores, retaining registry manifest and layer-integrity checks.
 
 ## 0.1.0-rc28 candidate — patched package manager
 

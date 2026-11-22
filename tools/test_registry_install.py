@@ -13,7 +13,7 @@ import tarfile
 import tempfile
 import time
 import urllib.request
-from load_release import load, validate, inspect
+from load_release import load, validate, inspect, image_config_id
 from render_registry_yaml import render
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -59,9 +59,10 @@ def fetch_image(origin, repository, tag, expected, reference, output, work):
         candidates = [entry for entry in manifest['manifests'] if entry.get('platform', {}).get('os') == expected['Os'] and entry.get('platform', {}).get('architecture') == expected['Architecture']]
         assert len(candidates) == 1
         manifest, digest = manifest_at(candidates[0]['digest'])
-    assert manifest['config']['digest'] == expected['Id']
+    config_id = image_config_id(reference, expected)
+    assert manifest['config']['digest'] == config_id
     config_file = work / 'config.json'
-    assert 'sha256:' + download(origin + '/v2/' + repository + '/blobs/' + expected['Id'], config_file) == expected['Id']
+    assert 'sha256:' + download(origin + '/v2/' + repository + '/blobs/' + config_id, config_file) == config_id
     config = json.loads(config_file.read_text())
     assert len(config['rootfs']['diff_ids']) == len(manifest['layers'])
     layers, blob_bytes = [], 0
@@ -83,7 +84,7 @@ def fetch_image(origin, repository, tag, expected, reference, output, work):
         compressed.unlink()
     filename = reference.replace(':', '-') + '-linux-' + expected['Architecture'] + '.tar.gz'
     artifact = output / filename
-    config_name = expected['Id'].split(':')[1] + '.json'
+    config_name = config_id.split(':')[1] + '.json'
     with tarfile.open(artifact, 'w:gz', compresslevel=1) as archive:
         add_bytes(archive, config_name, config_file.read_bytes())
         add_bytes(archive, 'manifest.json', json.dumps([{'Config': config_name, 'RepoTags': [reference], 'Layers': [p.name for p in layers]}]).encode())
@@ -91,7 +92,7 @@ def fetch_image(origin, repository, tag, expected, reference, output, work):
             archive.add(path, arcname=path.name, recursive=False)
     with artifact.open('rb') as stream:
         checksum = hashlib.file_digest(stream, 'sha256').hexdigest()
-    return {'reference': reference, 'file': filename, 'bytes': artifact.stat().st_size, 'sha256': checksum, 'imageId': expected['Id'], 'registryIndexDigest': index_digest, 'registryManifestDigest': digest, 'downloadedBlobBytes': blob_bytes, 'layersDownloaded': len(layers)}
+    return {'reference': reference, 'file': filename, 'bytes': artifact.stat().st_size, 'sha256': checksum, 'imageId': config_id, 'registryIndexDigest': index_digest, 'registryManifestDigest': digest, 'downloadedBlobBytes': blob_bytes, 'layersDownloaded': len(layers)}
 
 
 def main():
@@ -163,7 +164,7 @@ def main():
             reference = registry + '/crema-' + item['role'] + '@' + item['registryManifestDigest']
             run(['docker', '--config', str(config_dir), 'pull', '--platform', 'linux/amd64', reference])
             pulled.append(reference)
-            assert inspect(reference)['Id'] == item['imageId']
+            assert image_config_id(reference) == item['imageId']
             registry_images[item['role']] = reference
         (output / 'registry-image-map.json').write_text(json.dumps(registry_images, indent=2) + '\n')
         registry_yaml = render(registry_images, output / 'registry-install-rehearsal.yaml')
