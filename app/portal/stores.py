@@ -28,7 +28,7 @@ def mapped_lines(store,lines):
     result=copy.deepcopy(lines)
     for line in result:
         mapping=rows.get(line.get('store_product_key'))
-        if not mapping or line.get('cycle_choice') or line.get('frac_bag'):continue
+        if not mapping or line.get('cycle_choice') or line.get('frac_bag') or line.get('bundle_id'):continue
         if mapping.skip:line['skip']=True;continue
         if not mapping.coffee or not mapping.coffee.active or mapping.label_variant and not mapping.label_variant.active:continue
         line.update(coffee=mapping.coffee_id,label_variant=mapping.label_variant_id,size_oz=str(mapping.size_oz),grind=mapping.grind,roast_level=line.get('roast_level') or mapping.coffee.standard_roast,mapping_saved=True)

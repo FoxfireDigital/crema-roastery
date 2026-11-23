@@ -1,6 +1,32 @@
 from django.contrib import admin
 from .models import Coffee,LabelVariant,Roaster,Batch,CustomOrder,Shift,WorkBreak,TimeEvent,TimeAdjustment,HistoricalRoast,ProductMapping,HoursPayment,BatchProgressEvent,PlanEvent,BatchMergeEvent,PackingEvent,LabelPrintRun
 admin.site.site_header='Crema Administration'
+from django.forms.models import BaseInlineFormSet
+from django.core.exceptions import ValidationError
+from .models import ProductBundle,ProductBundleItem
+
+class BundleItemFormSet(BaseInlineFormSet):
+    def clean(self):
+        super().clean()
+        if any(self.errors):return
+        rows=[form.cleaned_data for form in self.forms if form.cleaned_data and not form.cleaned_data.get('DELETE')]
+        if len(rows)>20 or self.instance.active and not rows:raise ValidationError('An active box needs between one and twenty coffee rows.')
+
+class BundleItemInline(admin.TabularInline):
+    model=ProductBundleItem
+    formset=BundleItemFormSet
+    extra=1
+
+@admin.register(ProductBundle)
+class ProductBundleAdmin(admin.ModelAdmin):
+    list_display=['name','source_title','sku','default_grind','active','updated_at']
+    list_filter=['active']
+    search_fields=['name','source_title','sku']
+    readonly_fields=['updated_by','updated_at']
+    inlines=[BundleItemInline]
+    def save_model(self,request,obj,form,change):
+        obj.updated_by=request.user
+        super().save_model(request,obj,form,change)
 @admin.register(Coffee)
 class CoffeeAdmin(admin.ModelAdmin):
     list_display=['name','kind','standard_roast','experimental','roast_base','flavor_base_allowed','bulk_stock_enabled','active']

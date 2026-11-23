@@ -32,12 +32,17 @@ def source_signature(lines,instructions):
         if line.get('bundle_key'):
             if line['bundle_key'] in seen:continue
             seen.add(line['bundle_key'])
-        original.append({key:line.get(key) for key in ['title','sku','quantity','selling_plan']})
+        facts={key:line.get(key) for key in ['title','sku','quantity','selling_plan']}
+        if line.get('bundle_key'):facts['quantity']=line.get('bundle_pack_count',line.get('quantity'))
+        original.append(facts)
     return hashlib.sha256(json.dumps({'items':original,'instructions':instructions},sort_keys=True).encode()).hexdigest()
 
 
 def expand_frac_line(line):
     """One sold pack contains four individually labeled 2.5 oz bags."""
+    from .product_bundles import expand_bundle_line
+    configured=expand_bundle_line(line)
+    if configured is not None:return configured
     if not re.search(r'\b(?:frac|fraq)\s*(?:packs?|pacs?)\b',line['title'],re.I):return [line]
     result=[]
     from .instance import assortment_names
@@ -220,6 +225,7 @@ def readiness(order):
     if not payment_allows_production(order) and not (cycle and order.financial_status=='scheduled'):return False,'Payment / refund status needs review'
     if order.subscription=='prepaid':return False,'Prepaid subscription: delivery scheduling must be connected before import'
     if order.instructions and not order.instructions_confirmed:return False,'Review the order’s instructions before adding it'
+    if any(line.get('bundle_id') and line.get('bundle_grind_explicit') and line.get('grind')=='unknown' for line in order.lines):return False,'Confirm the coffee box’s grind choice'
     if any(line.get('cycle_choice') and not line.get('coffee') and not line.get('skip') for line in order.lines):return False,'Choose this cycle’s coffees'
     expected={};actual={}
     for line in order.lines:
@@ -488,7 +494,7 @@ def review_import(request,pk):
                 return redirect('review_import',pk=order.pk)
             order.save()
             for index,line in enumerate(order.lines):
-                if request.POST.get(f'line-{index}-remember')!='on' or line.get('cycle_choice') or line.get('frac_bag') or '.p' in str(line.get('line_key')):continue
+                if request.POST.get(f'line-{index}-remember')!='on' or line.get('cycle_choice') or line.get('frac_bag') or line.get('bundle_id') or '.p' in str(line.get('line_key')):continue
                 try:data=line_data(line)
                 except ValidationError:continue
                 if data is not None and not IncomingForm(data).is_valid():continue
