@@ -190,6 +190,8 @@ def normalize_order(node):
         item=infer_item(line['name'],quantity,line.get('sku') or '',selling,use_saved=True)
         item.update(line_key=str(index),source_line=str(index),source_total=str(Decimal(item['size_oz'])*quantity) if item['size_oz'] else None,
                     fulfilled=int(line['unfulfilledQuantity'])==0,api_line_id=line['id'])
+        from .product_bundles import bundle_source_grind
+        bundle_source_grind(item,line.get('customAttributes'))
         lines.extend(expand_frac_line(item))
         for attr in line.get('customAttributes') or []:
             if attr.get('value'):notes.append(line['name']+' — '+str(attr.get('key',''))+': '+str(attr['value']))

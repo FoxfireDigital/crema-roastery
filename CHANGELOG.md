@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased — configurable coffee boxes
+
+* Configure coffee boxes in Administration with exact source titles, optional SKUs, a default grind and individually labeled bag components. Empty or inactive recipes never silently drop coffee demand.
+* Expand imported quantities into separate roast/packing rows; retain original sold-box counts, protect component composition during review, and carry explicit grind choices through to labels.
+* Keep installation-specific products and artwork outside the public source.
+
 ## 0.1.0-rc29 — public source beta
 
 * Make the generic MIT source available with source-build Compose instructions. Public image/installer distribution and independent security review remain separate work.

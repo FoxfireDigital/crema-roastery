@@ -16,6 +16,7 @@ The source is available for self-hosting, review and contributions. Install by b
 - Green recipes and automatic measured-load deductions, supplier contacts, receipt costs, bean details and a tasting notebook with flavor charts.
 - Bagging/grind instructions, user-supplied retail/wholesale artwork, Letter PDFs and optional final-sheet fillers.
 - Editable single-origin order roasts across bag sizes, explicit standard-artwork exceptions, configurable printed grind marks and label-first packing checklists shared between Today and Bagging.
+- Configurable coffee boxes: expand a sold product into separate coffee, bag-size and packaging-label rows, carrying through its grind and sold quantity.
 - Artisan profile uploads, guarded alarm preparation, completed logs, an optional Windows helper and optional roast photos.
 - Manual supply inventory, maintenance, forecasts, editable audited hours, effective-dated rates and downloadable records.
 

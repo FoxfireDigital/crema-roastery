@@ -12,10 +12,10 @@ def review_token(order):
 def source_groups(order):
     groups={}
     for index,item in enumerate(order.lines):
-        key=str(item.get('line_key',index+1)) if item.get('frac_bag') else str(item.get('source_line',item.get('line_key',index+1)))
-        group=groups.setdefault(key,{'key':key,'title':item['title'],'items':[],'expected_oz':item.get('source_total'),'frac':bool(item.get('frac_bag')),'fulfilled':bool(item.get('fulfilled')),'cycle':bool(item.get('cycle_choice'))})
+        key=str(item.get('line_key',index+1)) if item.get('frac_bag') or item.get('bundle_id') else str(item.get('source_line',item.get('line_key',index+1)))
+        group=groups.setdefault(key,{'key':key,'title':item['title'],'items':[],'expected_oz':item.get('source_total'),'frac':bool(item.get('frac_bag')),'bundle':bool(item.get('bundle_id')),'fulfilled':bool(item.get('fulfilled')),'cycle':bool(item.get('cycle_choice'))})
         group['items'].append(item)
-        if group['frac']:
+        if group['frac'] or group['bundle']:
             group['expected_oz']=str(Decimal(str(item.get('size_oz') or '2.5'))*int(item['quantity']))
     for group in groups.values():
         group['allocations']=[]
@@ -65,7 +65,11 @@ def save_allocations(order,payload,revision,actor,instructions_confirmed=False):
             if grind not in dict(GRIND_CHOICES):raise ValidationError('Choose a valid grind.')
             item.update(coffee=c.pk,label_variant=label.pk if label else None,roast_level=roast,target_finish_temp_f=str(temp) if temp else None,grind=grind,quantity=int(total/bag),size_oz=str(bag),skip=False)
         else:item.update(skip=True,quantity=1,size_oz=str(total) if total else None)
-        if group['frac']:
+        if group['bundle']:
+            original=group['items'][0]
+            if skip or any(str(line.get('allocation_source'))==key for line in lines) or item.get('coffee')!=original.get('coffee') or item.get('label_variant')!=original.get('label_variant') or bag!=Decimal(str(original['size_oz'])) or total!=Decimal(group['expected_oz']):raise ValidationError('Box components keep their coffee, packaging label, bag count and bag size. You can change their grind.')
+            item['line_key']=original['line_key']
+        elif group['frac']:
             if len([line for line in lines if str(line.get('allocation_source'))==key]) or item.get('coffee')!=group['items'][0].get('coffee') or (not skip and (bag!=Decimal('2.5') or total!=Decimal(group['expected_oz']))):raise ValidationError('Frac components keep their coffee, bag count and 2.5 oz bag size.')
             item['line_key']=group['items'][0]['line_key']
         else:item['line_key']=key+'.a'+str(index)
@@ -81,7 +85,7 @@ def save_allocations(order,payload,revision,actor,instructions_confirmed=False):
     from .order_import import mapping_key
     for key,group in groups.items():
         portions=[(entry,line) for entry,line in zip(payload,lines) if str(entry.get('source'))==key]
-        if group['cycle'] or group['frac'] or len(portions)!=1 or not portions[0][0].get('remember'):continue
+        if group['cycle'] or group['frac'] or group['bundle'] or len(portions)!=1 or not portions[0][0].get('remember'):continue
         entry,line=portions[0];original=group['items'][0]
         original_quantity=int(original.get('source_quantity',original.get('quantity')) or 1)
         size=Decimal(str(group['expected_oz']))/original_quantity if group['expected_oz'] is not None else Decimal(str(line.get('size_oz') or 0))*int(line.get('quantity',1))/original_quantity

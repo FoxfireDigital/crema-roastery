@@ -21,6 +21,8 @@ runpy.run_path(str(APP/'bootstrap.py'))
 assert not Coffee.objects.exists() and not Roaster.objects.exists() and not get_user_model().objects.exists()
 owner=get_user_model().objects.create_superuser('test-owner','', 'Only-synthetic-test-password-192!')
 setup_test_environment();client=Client(HTTP_HOST='localhost');client.force_login(owner)
+from bundle_checks import run_bundle_checks
+run_bundle_checks(client,owner)
 for path in ['/setup/','/','/planning/','/plans/','/packing/','/imports/','/stock/','/green-beans/','/suppliers/','/purchases/','/cupping/','/artisan/','/products/','/subscriptions/','/wholesale/','/information/','/help/','/payroll/','/recovery/','/labels/artwork/']:
     response=client.get(path);assert response.status_code==200,(path,response.status_code)
 assert not Coffee.objects.exists() and not Batch.objects.exists()

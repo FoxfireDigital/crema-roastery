@@ -509,6 +509,45 @@ class ProductMapping(models.Model):
         if self.label_variant_id and self.label_variant.coffee_id!=self.coffee_id:raise ValidationError('This packaging label belongs to a different coffee.')
 
 
+class ProductBundle(models.Model):
+    name=models.CharField(max_length=120)
+    source_title=models.CharField(max_length=500,help_text='Exact store product title, without its grind variant.')
+    sku=models.CharField(max_length=150,blank=True,help_text='Optional exact SKU; blank matches any SKU for this title.')
+    fingerprint=models.CharField(max_length=64,unique=True,editable=False,blank=True)
+    default_grind=models.CharField(max_length=12,choices=GRIND_CHOICES,default='whole')
+    active=models.BooleanField(default=False)
+    updated_by=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.PROTECT,null=True,blank=True)
+    updated_at=models.DateTimeField(auto_now=True)
+    def clean(self):
+        import hashlib,json
+        self.source_title=self.source_title.strip();self.sku=self.sku.strip()
+        if not self.source_title:raise ValidationError({'source_title':'Enter the exact product title.'})
+        self.fingerprint=hashlib.sha256(json.dumps([self.source_title.casefold(),self.sku.casefold()]).encode()).hexdigest()
+    def save(self,*args,**kwargs):
+        self.full_clean()
+        if kwargs.get('update_fields') is not None:kwargs['update_fields']=set(kwargs['update_fields'])|{'fingerprint','updated_at'}
+        return super().save(*args,**kwargs)
+    def __str__(self):return self.name
+    class Meta:ordering=['name','pk']
+
+
+class ProductBundleItem(models.Model):
+    bundle=models.ForeignKey(ProductBundle,on_delete=models.CASCADE,related_name='items')
+    coffee=models.ForeignKey(Coffee,on_delete=models.PROTECT)
+    label_variant=models.ForeignKey(LabelVariant,on_delete=models.PROTECT,null=True,blank=True)
+    size_oz=models.DecimalField(max_digits=10,decimal_places=2)
+    bags=models.PositiveSmallIntegerField(default=1,help_text='Bags of this coffee inside one sold box.')
+    def clean(self):
+        if self.size_oz is None or not self.size_oz.is_finite() or self.size_oz<=0:raise ValidationError({'size_oz':'Enter a positive bag weight.'})
+        if not self.bags or self.bags>1000:raise ValidationError({'bags':'Choose between 1 and 1,000 bags per box.'})
+        if self.coffee_id and (not self.coffee.active or self.coffee.experimental or not self.coffee.standard_roast):raise ValidationError({'coffee':'Choose an active coffee with a standard roast.'})
+        if self.label_variant_id and (self.label_variant.coffee_id!=self.coffee_id or not self.label_variant.active):raise ValidationError({'label_variant':'Choose an active packaging label belonging to this coffee.'})
+    def save(self,*args,**kwargs):
+        self.full_clean();return super().save(*args,**kwargs)
+    def __str__(self):return str(self.coffee)+' · '+str(self.bags)+' × '+str(self.size_oz)+' oz'
+    class Meta:ordering=['pk']
+
+
 class BatchProgressEvent(models.Model):
     batch=models.ForeignKey(Batch,on_delete=models.PROTECT,related_name='progress_events')
     actor=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.PROTECT)

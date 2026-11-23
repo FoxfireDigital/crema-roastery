@@ -113,8 +113,19 @@ def product_report(products):
             sku=str(variant.get('sku') or '').strip()
             if sku and offered and skus[sku.casefold()]>1:vissues.append('SKU is shared by multiple offered variants: '+sku)
             if not sku:vissues.append('SKU missing — matching currently depends on names/options.')
+            from .product_bundles import expand_bundle_line
+            item['source_line']='1'
+            box_parts=expand_bundle_line(item)
             if item['skip']:kind='Excluded non-roasting product'
             elif item['cycle_choice']:kind='Subscription assortment — choose coffees for each paid delivery'
+            elif box_parts is not None:
+                kind='Coffee box — '+box_parts[0]['bundle_name']
+                size=sum(Decimal(part['size_oz'])*part['quantity'] for part in box_parts)
+                for part in box_parts:
+                    c=coffees[part['coffee']];label=labels.get(part['label_variant'])
+                    names.add(c.name);matched.setdefault(c.pk,set()).add(product['status'])
+                    art,issue=find_art(c.name,label.name if label else '',Decimal(part['size_oz']),part['roast_level'])
+                    if issue:vissues.append(c.name+' '+part['size_oz']+' oz label: '+issue)
             elif re.search(r'\b(?:frac|fraq)\s*(?:packs?|pacs?)\b',title,re.I):
                 kind='Four-coffee frac pack';item['source_line']='1'
                 for part in expand_frac_line(item):
